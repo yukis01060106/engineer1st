@@ -1,0 +1,836 @@
+{
+ "exportedAt": "2026-09-27T06:24:36.769Z",
+ "users": [
+  {
+   "id": "cmr9izvx90000jh6wwtov5p12",
+   "email": "tanaka@example.com",
+   "name": "青木 耶雲",
+   "invoiceRegistrationNumber": "T9876543210987",
+   "workStyle": "freelance",
+   "role": "member",
+   "interests": "[\"money\",\"health\",\"study\"]",
+   "signupSource": null,
+   "birthYear": 1994,
+   "lastCheckupDate": "2025-07-27T06:24:36.404Z",
+   "joinedAt": "2024-07-06T18:00:36.185Z",
+   "createdAt": "2026-07-06T18:00:36.190Z"
+  },
+  {
+   "id": "cmujeh8tw001b134bydyvpwfs",
+   "email": "admin@example.com",
+   "name": "運営 事務局",
+   "invoiceRegistrationNumber": null,
+   "workStyle": "freelance",
+   "role": "admin",
+   "interests": "[]",
+   "signupSource": null,
+   "birthYear": null,
+   "lastCheckupDate": null,
+   "joinedAt": "2026-09-27T05:50:56.757Z",
+   "createdAt": "2026-09-27T05:50:56.757Z"
+  },
+  {
+   "id": "cmujeh8tx001c134br3v6lkbw",
+   "email": "sato@example.com",
+   "name": "佐藤 陸",
+   "invoiceRegistrationNumber": null,
+   "workStyle": "ses_employee",
+   "role": "member",
+   "interests": "[]",
+   "signupSource": "club:running",
+   "birthYear": null,
+   "lastCheckupDate": null,
+   "joinedAt": "2026-09-15T05:50:56.757Z",
+   "createdAt": "2026-09-15T05:50:56.757Z"
+  },
+  {
+   "id": "cmujeh8ty001f134b32bax9r3",
+   "email": "kimura@example.com",
+   "name": "木村 葵",
+   "invoiceRegistrationNumber": null,
+   "workStyle": "considering",
+   "role": "member",
+   "interests": "[]",
+   "signupSource": "club:bouldering",
+   "birthYear": null,
+   "lastCheckupDate": null,
+   "joinedAt": "2026-09-23T05:50:56.758Z",
+   "createdAt": "2026-09-23T05:50:56.758Z"
+  },
+  {
+   "id": "cmujeh8u0001k134bk5k8oxxe",
+   "email": "ito@example.com",
+   "name": "伊藤 湊",
+   "invoiceRegistrationNumber": null,
+   "workStyle": "freelance",
+   "role": "member",
+   "interests": "[]",
+   "signupSource": "event",
+   "birthYear": null,
+   "lastCheckupDate": null,
+   "joinedAt": "2026-09-07T05:50:56.760Z",
+   "createdAt": "2026-09-07T05:50:56.760Z"
+  },
+  {
+   "id": "cmujeh8u0001l134b4dkbtdiq",
+   "email": "yamada@example.com",
+   "name": "山田 結衣",
+   "invoiceRegistrationNumber": null,
+   "workStyle": "ses_employee",
+   "role": "member",
+   "interests": "[]",
+   "signupSource": "club:futsal",
+   "birthYear": null,
+   "lastCheckupDate": null,
+   "joinedAt": "2026-08-23T05:50:56.760Z",
+   "createdAt": "2026-08-23T05:50:56.760Z"
+  },
+  {
+   "id": "cmujeh8u2001o134bxh5jpeia",
+   "email": "nakamura@example.com",
+   "name": "中村 蒼",
+   "invoiceRegistrationNumber": null,
+   "workStyle": "considering",
+   "role": "member",
+   "interests": "[]",
+   "signupSource": null,
+   "birthYear": null,
+   "lastCheckupDate": null,
+   "joinedAt": "2026-09-25T05:50:56.762Z",
+   "createdAt": "2026-09-25T05:50:56.762Z"
+  }
+ ],
+ "projects": [
+  {
+   "id": "cmr9izvxf0001jh6w09jkfqce",
+   "title": "大手ECサイト リプレイス案件",
+   "client": "コマースフロンティア株式会社",
+   "skills": "React,TypeScript,Node.js",
+   "unitPrice": 700000,
+   "workStyle": "フルリモート",
+   "description": "大手ECサイトのフロントエンド刷新プロジェクト。React+TypeScriptでの開発経験者募集。",
+   "createdAt": "2026-07-06T18:00:36.196Z"
+  },
+  {
+   "id": "cmr9izvxh0002jh6waqzu7cnp",
+   "title": "金融系基幹システム保守開発",
+   "client": "レガシーソリューションズ株式会社",
+   "skills": "Java,Spring,AWS",
+   "unitPrice": 650000,
+   "workStyle": "一部常駐（月2回）",
+   "description": "金融機関向け基幹システムの保守・機能改修。",
+   "createdAt": "2026-07-06T18:00:36.198Z"
+  },
+  {
+   "id": "cmr9izvxi0003jh6woro7dyv2",
+   "title": "SaaSプロダクト新規機能開発",
+   "client": "クラウドギア株式会社",
+   "skills": "TypeScript,React,Next.js,AWS",
+   "unitPrice": 800000,
+   "workStyle": "フルリモート",
+   "description": "急成長中のSaaSプロダクトにおける新規機能開発。裁量大きめ。",
+   "createdAt": "2026-07-06T18:00:36.199Z"
+  },
+  {
+   "id": "cmr9izvxk0004jh6w6jokrjd2",
+   "title": "AIチャットボット開発",
+   "client": "テックパートナーズ合同会社",
+   "skills": "Python,TypeScript,AWS",
+   "unitPrice": 750000,
+   "workStyle": "フルリモート",
+   "description": "生成AIを活用した社内向けチャットボットの開発。",
+   "createdAt": "2026-07-06T18:00:36.200Z"
+  },
+  {
+   "id": "cmr9izvxl0005jh6w3web0x2k",
+   "title": "モバイルアプリ新規開発",
+   "client": "スマイルモバイル株式会社",
+   "skills": "TypeScript,React,Node.js",
+   "unitPrice": 680000,
+   "workStyle": "週1出社",
+   "description": "toC向けモバイルアプリのバックエンドAPI開発。",
+   "createdAt": "2026-07-06T18:00:36.201Z"
+  }
+ ],
+ "engagements": [
+  {
+   "id": "seed-engagement-current",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "projectId": "cmr9izvxk0004jh6w6jokrjd2",
+   "monthlyRate": 750000,
+   "startDate": "2026-05-06T18:00:36.202Z",
+   "endDate": "2026-10-22T06:24:36.369Z",
+   "status": "稼働中",
+   "settlementMin": 140,
+   "settlementMax": 180,
+   "paymentTermDays": 30
+  },
+  {
+   "id": "seed-engagement-past",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "projectId": "cmr9izvxf0001jh6w09jkfqce",
+   "monthlyRate": 700000,
+   "startDate": "2025-07-06T18:00:36.203Z",
+   "endDate": "2026-05-27T06:24:36.370Z",
+   "status": "終了",
+   "settlementMin": 140,
+   "settlementMax": 180,
+   "paymentTermDays": 30
+  }
+ ],
+ "invoices": [
+  {
+   "id": "seed-invoice-0",
+   "engagementId": "seed-engagement-past",
+   "targetMonth": "2026-03",
+   "amount": 700000,
+   "baseAmount": 700000,
+   "workHours": 162,
+   "adjustment": 0,
+   "withholding": 0,
+   "dueDate": "2026-04-30T14:59:59.000Z",
+   "paidAt": "2026-04-28T14:59:59.000Z",
+   "taxRate": 10,
+   "taxAmount": 70000,
+   "totalAmount": 770000,
+   "registrationNumber": "T9876543210987",
+   "invoiceNumber": "INV-202603-SEED0",
+   "status": "入金済み",
+   "issuedAt": "2026-09-27T06:24:36.372Z"
+  },
+  {
+   "id": "seed-invoice-1",
+   "engagementId": "seed-engagement-past",
+   "targetMonth": "2026-04",
+   "amount": 731104,
+   "baseAmount": 700000,
+   "workHours": 188,
+   "adjustment": 31104,
+   "withholding": 0,
+   "dueDate": "2026-05-30T14:59:59.000Z",
+   "paidAt": "2026-05-28T14:59:59.000Z",
+   "taxRate": 10,
+   "taxAmount": 73110,
+   "totalAmount": 804214,
+   "registrationNumber": "T9876543210987",
+   "invoiceNumber": "INV-202604-SEED1",
+   "status": "入金済み",
+   "issuedAt": "2026-09-27T06:24:36.383Z"
+  },
+  {
+   "id": "seed-invoice-2",
+   "engagementId": "seed-engagement-current",
+   "targetMonth": "2026-07",
+   "amount": 750000,
+   "baseAmount": 750000,
+   "workHours": 171,
+   "adjustment": 0,
+   "withholding": 0,
+   "dueDate": "2026-08-30T14:59:59.000Z",
+   "paidAt": null,
+   "taxRate": 10,
+   "taxAmount": 75000,
+   "totalAmount": 825000,
+   "registrationNumber": "T9876543210987",
+   "invoiceNumber": "INV-202607-SEED2",
+   "status": "発行済み",
+   "issuedAt": "2026-09-27T06:24:36.384Z"
+  },
+  {
+   "id": "seed-invoice-3",
+   "engagementId": "seed-engagement-current",
+   "targetMonth": "2026-08",
+   "amount": 731250,
+   "baseAmount": 750000,
+   "workHours": 136.5,
+   "adjustment": -18750,
+   "withholding": 0,
+   "dueDate": "2026-09-30T14:59:59.000Z",
+   "paidAt": null,
+   "taxRate": 10,
+   "taxAmount": 73125,
+   "totalAmount": 804375,
+   "registrationNumber": "T9876543210987",
+   "invoiceNumber": "INV-202608-SEED3",
+   "status": "発行済み",
+   "issuedAt": "2026-09-27T06:24:36.384Z"
+  }
+ ],
+ "contracts": [
+  {
+   "id": "seed-contract-current",
+   "engagementId": "seed-engagement-current",
+   "title": "業務委託契約書（AIチャットボット開発）",
+   "body": "本契約は、株式会社エンジニア1stを通じて青木耶雲氏がテックパートナーズ合同会社の業務に従事するにあたっての条件を定めるものです。稼働期間、報酬、秘密保持等の一般条項を含みます。",
+   "status": "未締結",
+   "signedAt": null,
+   "signedName": null,
+   "createdAt": "2026-07-06T18:00:36.207Z"
+  },
+  {
+   "id": "seed-contract-past",
+   "engagementId": "seed-engagement-past",
+   "title": "業務委託契約書（大手ECサイト リプレイス案件）",
+   "body": "本契約は、株式会社エンジニア1stを通じて青木耶雲氏がコマースフロンティア株式会社の業務に従事した業務委託の条件を定めるものです。",
+   "status": "締結済み",
+   "signedAt": "2026-03-06T18:00:36.208Z",
+   "signedName": "青木 耶雲",
+   "createdAt": "2026-07-06T18:00:36.209Z"
+  }
+ ],
+ "skillSheets": [
+  {
+   "id": "cmr9izvxt0007jh6w4ih4zgtr",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "summary": "■ 基本情報\n氏名   ：青木 耶雲\n年齢   ：32歳\n最寄駅  ：東京都 ※フルリモート希望（月1回は出社可能）\n稼働開始 ：2026-08-02以降（応相談）\n単価   ：750,000円〜\n\n■ スキルサマリー（★＝特に強い領域）\n フロントエンド：★ TypeScript / ★ React\n バックエンド：Node.js / Java\n インフラ・環境：AWS\n\n■ 対応可能工程\n 設計 → 開発（フロントエンド） → 開発（バックエンド） → テスト\n\n■ アピールポイント\n1. TypeScript / React / Node.js を軸としたモダン開発スキルで、画面構築からAPI開発まで独力かつハイレベルに遂行可能。\n2. 生成AIを活用したチャットボット開発プロジェクトに参画し、AI技術の実務応用への知見を保有。\n\n■ 経験概要（IT開発経験：約3年）\n バックエンドエンジニアとして3件のプロジェクトに参画。プロジェクト経歴・保有スキルをもとに自動生成されたサマリーです（必要に応じて編集してください）。",
+   "skills": "[{\"name\":\"TypeScript\",\"level\":4,\"years\":3},{\"name\":\"React\",\"level\":4,\"years\":3},{\"name\":\"Node.js\",\"level\":3,\"years\":2},{\"name\":\"AWS\",\"level\":2,\"years\":1}]",
+   "experiences": "[{\"title\":\"AIチャットボット開発\",\"period\":\"2026-05〜稼働中\",\"role\":\"バックエンドエンジニア\",\"tech\":\"Python, TypeScript, AWS\",\"description\":\"生成AIを活用した社内向けチャットボットのバックエンドAPI開発を担当。\"},{\"title\":\"大手ECサイト リプレイス案件\",\"period\":\"2026-04〜2026-06\",\"role\":\"フロントエンドエンジニア\",\"tech\":\"React, TypeScript, Node.js\",\"description\":\"ECサイトのフロントエンド刷新。コンポーネント設計・API連携を担当。\"},{\"title\":\"金融系基幹システム保守開発\",\"period\":\"2025-03〜2026-03\",\"role\":\"バックエンドエンジニア\",\"tech\":\"Java, Spring, AWS\",\"description\":\"基幹システムの保守・機能改修を担当。\"}]",
+   "age": 32,
+   "nearestStation": "東京都 ※フルリモート希望（月1回は出社可能）",
+   "availability": "2026-08-02以降（応相談）",
+   "desiredRate": 750000,
+   "totalExperienceYears": 3,
+   "workProcesses": "[\"設計\",\"開発（フロントエンド）\",\"開発（バックエンド）\",\"テスト\"]",
+   "appealPoints": "[\"TypeScript / React / Node.js を軸としたモダン開発スキルで、画面構築からAPI開発まで独力かつハイレベルに遂行可能。\",\"生成AIを活用したチャットボット開発プロジェクトに参画し、AI技術の実務応用への知見を保有。\"]",
+   "remarks": "フルリモート環境でも自走力高く安定した成果を出せる自信があります。生成AIを活用した開発にも意欲的に取り組んでいます。",
+   "updatedAt": "2026-09-27T06:24:36.387Z"
+  }
+ ],
+ "events": [
+  {
+   "id": "cmujfoj7000093y3ru4lzrndt",
+   "title": "Claude Code 実践：レビューとテストをAIに任せる開発フロー",
+   "type": "勉強会",
+   "date": "2026-10-02T11:00:00.000Z",
+   "durationMin": 90,
+   "location": "オンライン（Zoom）",
+   "isOnline": true,
+   "joinUrl": "https://zoom.us/j/0000000001",
+   "speaker": "エンジニア1st 技術顧問",
+   "tags": "生成AI,Claude Code,開発効率化",
+   "description": "AIエージェントに実装・テスト・レビューを任せるときの、現場で使える手順を紹介します。SESの現場でAIツールが使えない場合の、個人での練習方法もお話しします。",
+   "capacity": 100,
+   "clubId": null,
+   "createdAt": "2026-09-27T06:24:36.397Z"
+  },
+  {
+   "id": "cmujfoj71000a3y3reedddmyx",
+   "title": "Next.js 16 と React 19 の変更点をまとめて押さえる",
+   "type": "勉強会",
+   "date": "2026-10-09T11:00:00.000Z",
+   "durationMin": 60,
+   "location": "オンライン（Google Meet）",
+   "isOnline": true,
+   "joinUrl": "https://meet.google.com/aaa-bbbb-ccc",
+   "speaker": "フロントエンド部会",
+   "tags": "React,Next.js,フロントエンド",
+   "description": "Server Components、Actions、キャッシュまわりの変更を、実務で困るポイントに絞って解説します。",
+   "capacity": 80,
+   "clubId": null,
+   "createdAt": "2026-09-27T06:24:36.397Z"
+  },
+  {
+   "id": "cmujfoj71000b3y3ren0i24d4",
+   "title": "40代からの単価の上げ方：要件定義・調整役の経験を積む",
+   "type": "勉強会",
+   "date": "2026-10-16T11:00:00.000Z",
+   "durationMin": 60,
+   "location": "オンライン（Zoom）",
+   "isOnline": true,
+   "joinUrl": "https://zoom.us/j/0000000002",
+   "speaker": "PM経験者メンター",
+   "tags": "キャリア,PM,単価",
+   "description": "開発工程に閉じがちなSESの現場で、調整役・要件定義の経験をどう積むか。実例をもとに話します。",
+   "capacity": 60,
+   "clubId": null,
+   "createdAt": "2026-09-27T06:24:36.398Z"
+  },
+  {
+   "id": "cmujfoj72000d3y3rvoz3gccs",
+   "title": "ランニング部：皇居1周＋モーニング",
+   "type": "部活",
+   "date": "2026-10-03T22:30:00.000Z",
+   "durationMin": 90,
+   "location": "桜田門 集合",
+   "isOnline": false,
+   "joinUrl": null,
+   "speaker": null,
+   "tags": "ランニング,朝活",
+   "description": "ゆっくりペースで1周（約5km）。走り終わったら近くのカフェでモーニングです。",
+   "capacity": 20,
+   "clubId": "cmujeh8te0003134b6e3eyax7",
+   "createdAt": "2026-09-27T06:24:36.398Z"
+  },
+  {
+   "id": "cmujfoj72000f3y3rtjnhkd8g",
+   "title": "フットサル部：ミニゲーム＆ごはん会",
+   "type": "部活",
+   "date": "2026-10-07T10:30:00.000Z",
+   "durationMin": 120,
+   "location": "渋谷のフットサルコート",
+   "isOnline": false,
+   "joinUrl": null,
+   "speaker": null,
+   "tags": "フットサル",
+   "description": "ミニゲームを中心に2時間。シューズのレンタルあり。",
+   "capacity": 16,
+   "clubId": "cmujeh8tf0004134badl5cm21",
+   "createdAt": "2026-09-27T06:24:36.399Z"
+  },
+  {
+   "id": "cmujfoj73000h3y3rvyxzluh2",
+   "title": "ボルダリング部：はじめての人向けの回",
+   "type": "部活",
+   "date": "2026-10-06T10:00:00.000Z",
+   "durationMin": 120,
+   "location": "秋葉原のボルダリングジム",
+   "isOnline": false,
+   "joinUrl": null,
+   "speaker": null,
+   "tags": "ボルダリング",
+   "description": "登り方の基本から。初回はジムの講習（15分）を受けてから始めます。",
+   "capacity": 12,
+   "clubId": "cmujeh8tg0005134b7s4kzjpm",
+   "createdAt": "2026-09-27T06:24:36.399Z"
+  },
+  {
+   "id": "cmujfoj74000j3y3rouro7e7t",
+   "title": "朝ストレッチ部：肩こり・首こりリセット",
+   "type": "部活",
+   "date": "2026-09-27T23:30:00.000Z",
+   "durationMin": 15,
+   "location": "オンライン（Google Meet）",
+   "isOnline": true,
+   "joinUrl": "https://meet.google.com/xyz-stretch-am",
+   "speaker": null,
+   "tags": "ストレッチ,朝活",
+   "description": "座りっぱなしで固まった首・肩・腰を15分でほぐします。",
+   "capacity": 200,
+   "clubId": "cmujeh8th0006134bsxokd5jc",
+   "createdAt": "2026-09-27T06:24:36.400Z"
+  },
+  {
+   "id": "cmujfoj74000k3y3r5v9va6lb",
+   "title": "フリーランス・SESエンジニア交流会（渋谷）",
+   "type": "交流会",
+   "date": "2026-10-13T10:00:00.000Z",
+   "durationMin": 120,
+   "location": "東京・渋谷",
+   "isOnline": false,
+   "joinUrl": null,
+   "speaker": null,
+   "tags": "交流会",
+   "description": "独立している人も、これから考えている人も。案件の選び方やお金の話を気軽に聞ける会です。",
+   "capacity": 30,
+   "clubId": null,
+   "createdAt": "2026-09-27T06:24:36.400Z"
+  }
+ ],
+ "eventApplications": [
+  {
+   "id": "cmujfoj74000m3y3rbbkvrqzu",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "eventId": "cmujfoj7000093y3ru4lzrndt",
+   "purpose": "現場でのAI活用を知りたい",
+   "level": "実務で少し",
+   "question": null,
+   "appliedAt": "2026-09-27T06:24:36.401Z"
+  },
+  {
+   "id": "cmujfoj75000o3y3rgv85wslh",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "eventId": "cmujfoj72000d3y3rvoz3gccs",
+   "purpose": null,
+   "level": null,
+   "question": null,
+   "appliedAt": "2026-09-27T06:24:36.401Z"
+  },
+  {
+   "id": "cmujfoj7d001s3y3ra4ulrgto",
+   "userId": "cmujeh8ty001f134b32bax9r3",
+   "eventId": "cmujfoj71000b3y3ren0i24d4",
+   "purpose": "独立前に単価の相場を知りたい",
+   "level": "実務でがっつり",
+   "question": null,
+   "appliedAt": "2026-09-27T06:24:36.409Z"
+  }
+ ],
+ "clubs": [
+  {
+   "id": "cmujeh8te0003134b6e3eyax7",
+   "slug": "running",
+   "name": "ランニング部",
+   "catchphrase": "座りっぱなしの1週間を、土曜の朝にリセット。",
+   "description": "皇居の外周（約5km）を、それぞれのペースで走る部活です。歩いてもOK。走ったあとは近くのカフェで、案件や技術のゆるい雑談をしています。",
+   "schedule": "毎月第2・第4土曜 7:30〜9:00",
+   "place": "皇居外周（桜田門集合）",
+   "level": "初心者・ウォーキング歓迎",
+   "photo": "club-running.webp",
+   "color": "yellow",
+   "sortOrder": 1
+  },
+  {
+   "id": "cmujeh8tf0004134badl5cm21",
+   "slug": "futsal",
+   "name": "フットサル部",
+   "catchphrase": "チームで動くと、現場のコミュニケーションもうまくなる。",
+   "description": "平日夜に2時間、コートを借りてミニゲームをしています。経験者と未経験者が半々くらい。終わったあとのごはん会で、横のつながりが生まれています。",
+   "schedule": "隔週水曜 19:30〜21:30",
+   "place": "渋谷のフットサルコート",
+   "level": "未経験者歓迎",
+   "photo": "club-futsal.webp",
+   "color": "mint",
+   "sortOrder": 2
+  },
+  {
+   "id": "cmujeh8tg0005134b7s4kzjpm",
+   "slug": "bouldering",
+   "name": "ボルダリング部",
+   "catchphrase": "課題を分解して、一手ずつ解く。登るのも、デバッグも。",
+   "description": "ボルダリングジムで、同じ課題をみんなで攻略します。道具はすべてレンタルできるので、手ぶらで参加できます。",
+   "schedule": "毎月第1・第3金曜 19:00〜21:00",
+   "place": "秋葉原のボルダリングジム",
+   "level": "はじめての人が半分",
+   "photo": "club-bouldering.webp",
+   "color": "pink",
+   "sortOrder": 3
+  },
+  {
+   "id": "cmujeh8th0006134bsxokd5jc",
+   "slug": "stretch",
+   "name": "朝ストレッチ部（オンライン）",
+   "catchphrase": "肩・首・腰。エンジニアの三大不調を、朝15分で。",
+   "description": "平日の朝8:30から15分、オンラインでストレッチをします。カメラオフでもOK。始業前のスイッチ代わりに使ってください。",
+   "schedule": "平日 8:30〜8:45",
+   "place": "オンライン（Google Meet）",
+   "level": "どなたでも",
+   "photo": "club-stretch.webp",
+   "color": "violet",
+   "sortOrder": 4
+  }
+ ],
+ "clubMemberships": [
+  {
+   "id": "cmujeh8ti0008134bnhhvq8x4",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "clubId": "cmujeh8te0003134b6e3eyax7",
+   "joinedAt": "2026-09-27T05:50:56.742Z"
+  },
+  {
+   "id": "cmujeh8ty001e134b4r5umn3t",
+   "userId": "cmujeh8tx001c134br3v6lkbw",
+   "clubId": "cmujeh8te0003134b6e3eyax7",
+   "joinedAt": "2026-09-27T05:50:56.758Z"
+  },
+  {
+   "id": "cmujeh8tz001h134bi9byg7pn",
+   "userId": "cmujeh8ty001f134b32bax9r3",
+   "clubId": "cmujeh8tg0005134b7s4kzjpm",
+   "joinedAt": "2026-09-27T05:50:56.759Z"
+  },
+  {
+   "id": "cmujeh8tz001j134blffuq1ym",
+   "userId": "cmujeh8ty001f134b32bax9r3",
+   "clubId": "cmujeh8th0006134bsxokd5jc",
+   "joinedAt": "2026-09-27T05:50:56.760Z"
+  },
+  {
+   "id": "cmujeh8u1001n134bmptzvm3n",
+   "userId": "cmujeh8u0001l134b4dkbtdiq",
+   "clubId": "cmujeh8tf0004134badl5cm21",
+   "joinedAt": "2026-09-27T05:50:56.762Z"
+  },
+  {
+   "id": "cmujeh8u4001q134bipdpvz2a",
+   "userId": "cmujeh8u2001o134bxh5jpeia",
+   "clubId": "cmujeh8th0006134bsxokd5jc",
+   "joinedAt": "2026-09-27T05:50:56.764Z"
+  }
+ ],
+ "healthLogs": [
+  {
+   "id": "cmujeh8to000q134bznbip28d",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "date": "2026-09-26",
+   "steps": 3200,
+   "sleepHours": 6,
+   "exerciseMin": 0,
+   "mood": 3,
+   "createdAt": "2026-09-27T05:50:56.749Z"
+  },
+  {
+   "id": "cmujeh8tp000s134bayjw4bud",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "date": "2026-09-25",
+   "steps": 8400,
+   "sleepHours": 7,
+   "exerciseMin": 30,
+   "mood": 4,
+   "createdAt": "2026-09-27T05:50:56.750Z"
+  },
+  {
+   "id": "cmujeh8tq000u134b9jpc9glj",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "date": "2026-09-24",
+   "steps": 2900,
+   "sleepHours": 5.5,
+   "exerciseMin": 0,
+   "mood": 2,
+   "createdAt": "2026-09-27T05:50:56.750Z"
+  },
+  {
+   "id": "cmujeh8tr000w134b320wqgmy",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "date": "2026-09-23",
+   "steps": 4100,
+   "sleepHours": 6.5,
+   "exerciseMin": 10,
+   "mood": 3,
+   "createdAt": "2026-09-27T05:50:56.751Z"
+  },
+  {
+   "id": "cmujeh8tr000y134blqgk72b7",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "date": "2026-09-22",
+   "steps": 11200,
+   "sleepHours": 7.5,
+   "exerciseMin": 60,
+   "mood": 5,
+   "createdAt": "2026-09-27T05:50:56.751Z"
+  },
+  {
+   "id": "cmujeh8ts0010134b7pd1uv79",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "date": "2026-09-21",
+   "steps": 3600,
+   "sleepHours": 6,
+   "exerciseMin": 0,
+   "mood": 3,
+   "createdAt": "2026-09-27T05:50:56.752Z"
+  },
+  {
+   "id": "cmujeh8tt0012134b7r1eykrd",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "date": "2026-09-20",
+   "steps": 2500,
+   "sleepHours": 5,
+   "exerciseMin": 0,
+   "mood": 2,
+   "createdAt": "2026-09-27T05:50:56.753Z"
+  },
+  {
+   "id": "cmujeh8tt0014134bxbugoflv",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "date": "2026-09-19",
+   "steps": 7800,
+   "sleepHours": 7,
+   "exerciseMin": 25,
+   "mood": 4,
+   "createdAt": "2026-09-27T05:50:56.754Z"
+  },
+  {
+   "id": "cmujeh8tu0016134be2kz4iij",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "date": "2026-09-18",
+   "steps": 3900,
+   "sleepHours": 6.5,
+   "exerciseMin": 0,
+   "mood": 3,
+   "createdAt": "2026-09-27T05:50:56.754Z"
+  },
+  {
+   "id": "cmujeh8tu0018134b48hr5612",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "date": "2026-09-17",
+   "steps": 5200,
+   "sleepHours": 6,
+   "exerciseMin": 15,
+   "mood": 3,
+   "createdAt": "2026-09-27T05:50:56.755Z"
+  }
+ ],
+ "wealthPlans": [
+  {
+   "id": "cmujeh8tv001a134bovip1brg",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "monthlyLivingCost": 280000,
+   "cashSavings": 1200000,
+   "investedAssets": 800000,
+   "kyosaiMonthly": 20000,
+   "idecoMonthly": 0,
+   "nisaMonthly": 30000,
+   "expectedReturn": 0.03,
+   "retireAge": 65,
+   "updatedAt": "2026-09-27T06:24:36.405Z"
+  }
+ ],
+ "rateDiagnoses": [
+  {
+   "id": "seed-rate-0",
+   "userId": null,
+   "primarySkill": "React",
+   "role": "フロントエンドエンジニア",
+   "yearsOfExperience": 2,
+   "monthlyRate": 600000,
+   "chainDepth": null,
+   "createdAt": "2026-07-06T18:00:36.210Z"
+  },
+  {
+   "id": "seed-rate-1",
+   "userId": null,
+   "primarySkill": "React",
+   "role": "フロントエンドエンジニア",
+   "yearsOfExperience": 3,
+   "monthlyRate": 630000,
+   "chainDepth": null,
+   "createdAt": "2026-07-06T18:00:36.211Z"
+  },
+  {
+   "id": "seed-rate-2",
+   "userId": null,
+   "primarySkill": "React",
+   "role": "フロントエンドエンジニア",
+   "yearsOfExperience": 3,
+   "monthlyRate": 680000,
+   "chainDepth": null,
+   "createdAt": "2026-07-06T18:00:36.211Z"
+  },
+  {
+   "id": "seed-rate-3",
+   "userId": null,
+   "primarySkill": "React",
+   "role": "フロントエンドエンジニア",
+   "yearsOfExperience": 4,
+   "monthlyRate": 700000,
+   "chainDepth": null,
+   "createdAt": "2026-07-06T18:00:36.212Z"
+  },
+  {
+   "id": "seed-rate-4",
+   "userId": null,
+   "primarySkill": "React",
+   "role": "フロントエンドエンジニア",
+   "yearsOfExperience": 4,
+   "monthlyRate": 720000,
+   "chainDepth": null,
+   "createdAt": "2026-07-06T18:00:36.212Z"
+  },
+  {
+   "id": "seed-rate-5",
+   "userId": null,
+   "primarySkill": "React",
+   "role": "フロントエンドエンジニア",
+   "yearsOfExperience": 5,
+   "monthlyRate": 750000,
+   "chainDepth": null,
+   "createdAt": "2026-07-06T18:00:36.213Z"
+  },
+  {
+   "id": "seed-rate-6",
+   "userId": null,
+   "primarySkill": "React",
+   "role": "フロントエンドエンジニア",
+   "yearsOfExperience": 2,
+   "monthlyRate": 610000,
+   "chainDepth": null,
+   "createdAt": "2026-07-06T18:00:36.213Z"
+  },
+  {
+   "id": "seed-rate-7",
+   "userId": null,
+   "primarySkill": "Java",
+   "role": "バックエンドエンジニア",
+   "yearsOfExperience": 3,
+   "monthlyRate": 650000,
+   "chainDepth": null,
+   "createdAt": "2026-07-06T18:00:36.214Z"
+  },
+  {
+   "id": "seed-rate-8",
+   "userId": null,
+   "primarySkill": "Java",
+   "role": "バックエンドエンジニア",
+   "yearsOfExperience": 4,
+   "monthlyRate": 690000,
+   "chainDepth": null,
+   "createdAt": "2026-07-06T18:00:36.215Z"
+  },
+  {
+   "id": "seed-rate-9",
+   "userId": null,
+   "primarySkill": "AWS",
+   "role": "インフラエンジニア",
+   "yearsOfExperience": 4,
+   "monthlyRate": 720000,
+   "chainDepth": null,
+   "createdAt": "2026-07-06T18:00:36.215Z"
+  },
+  {
+   "id": "cmujfo8b200056c1noongpcbn",
+   "userId": null,
+   "primarySkill": "React",
+   "role": "フロントエンドエンジニア",
+   "yearsOfExperience": 3,
+   "monthlyRate": 750000,
+   "chainDepth": null,
+   "createdAt": "2026-09-27T06:24:22.287Z"
+  },
+  {
+   "id": "cmujfoj7e001u3y3rg2qrm35w",
+   "userId": "cmujeh8ty001f134b32bax9r3",
+   "primarySkill": "Java",
+   "role": "バックエンドエンジニア",
+   "yearsOfExperience": 6,
+   "monthlyRate": 550000,
+   "chainDepth": 3,
+   "createdAt": "2026-09-27T06:24:36.410Z"
+  }
+ ],
+ "expenses": [
+  {
+   "id": "seed-expense-0",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "date": "2026-09-24T06:24:36.390Z",
+   "vendor": "JR東日本",
+   "amount": 1200,
+   "category": "旅費交通費",
+   "memo": "客先訪問の交通費",
+   "ocrRawText": null,
+   "createdAt": "2026-07-10T06:52:38.448Z"
+  },
+  {
+   "id": "seed-expense-1",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "date": "2026-09-17T06:24:36.390Z",
+   "vendor": "コワーキングスペース渋谷",
+   "amount": 3300,
+   "category": "会議費",
+   "memo": null,
+   "ocrRawText": null,
+   "createdAt": "2026-07-10T06:52:38.448Z"
+  },
+  {
+   "id": "seed-expense-2",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "date": "2026-09-12T06:24:36.390Z",
+   "vendor": "Amazon",
+   "amount": 8980,
+   "category": "消耗品費",
+   "memo": "外付けキーボード",
+   "ocrRawText": null,
+   "createdAt": "2026-07-10T06:52:38.449Z"
+  },
+  {
+   "id": "cmrel2yal00014j5hzu6n1ax8",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "date": "2026-07-08T00:00:00.000Z",
+   "vendor": "コワーキングスペース渋谷",
+   "amount": 3300,
+   "category": "旅費交通費",
+   "memo": null,
+   "ocrRawText": "コワ ー キ ング スペ ー ス 渋谷\n領収 書\n2026 年 07 月 08 日\n利用 料 3.000 円\nドリ ンク 300 円\n合計 3.300 円\n",
+   "createdAt": "2026-07-10T06:57:49.342Z"
+  }
+ ],
+ "mentorRequests": []
+}

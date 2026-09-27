@@ -1,7 +1,5 @@
-import { Project } from "@prisma/client";
-
 // 簡易AIレコメンド（モック）: 保有スキルとのマッチ度でスコアリングする
-export function scoreProjectsBySkills<T extends Project>(
+export function scoreProjectsBySkills<T extends { skills: string }>(
   projects: T[],
   userSkillNames: string[]
 ): (T & { matchScore: number })[] {

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Brand } from "./Brand";
+import { asset } from "../lib/demo";
 
 export function SiteFooter() {
   return (
@@ -11,7 +12,7 @@ export function SiteFooter() {
           <Link href="/events">勉強会・イベント</Link>
           <Link href="/register">無料登録</Link>
           <Link href="/login">ログイン</Link>
-          <a href="/photos/credits.json">写真クレジット</a>
+          <a href={asset("/photos/credits.json")}>写真クレジット</a>
         </nav>
         <p>© エンジニア1st</p>
       </div>

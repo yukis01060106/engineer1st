@@ -3,10 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "sync-shared": "node scripts/sync-shared.mjs",
+    "predev": "node scripts/sync-shared.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/sync-shared.mjs",
     "build": "next build",
+    "build:demo": "NEXT_PUBLIC_DEMO=1 NEXT_PUBLIC_BASE_PATH=/engineer1st next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "pretypecheck": "node scripts/sync-shared.mjs",
+    "typecheck": "tsc --noEmit",
+    "deploy:demo": "node scripts/sync-shared.mjs && bash scripts/deploy-demo.sh"
   },
   "dependencies": {
     "lucide-react": "^1.48.0",

@@ -2757,3 +2757,27 @@ a.event-row:hover {
 .alert-message {
   font-size: 14px;
 }
+
+/* ---------- デモ版の帯 ---------- */
+.demo-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  padding: 7px 16px;
+  background: var(--yellow);
+  color: var(--ink);
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+}
+.demo-banner button {
+  border: 1.5px solid var(--ink);
+  background: transparent;
+  border-radius: 999px;
+  padding: 2px 12px;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+}

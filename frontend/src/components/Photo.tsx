@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { asset } from "../lib/demo";
 
 type Blob = "yellow" | "pink" | "mint" | "violet";
 
@@ -26,7 +27,7 @@ export function Photo({
     <div className={`photo ${className}`}>
       <span className="dots" aria-hidden />
       <div className="photo-frame">
-        <Image src={src} alt={alt} fill sizes={sizes} priority={priority} style={{ objectFit: "cover" }} />
+        <Image src={asset(src)} alt={alt} fill sizes={sizes} priority={priority} style={{ objectFit: "cover" }} />
       </div>
       <span className={`blob blob-${blob}`} aria-hidden />
       {extraBlob && <span className={`blob blob-${extraBlob}`} aria-hidden />}

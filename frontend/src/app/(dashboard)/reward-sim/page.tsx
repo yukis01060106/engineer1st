@@ -6,6 +6,7 @@ import { apiFetch } from "../../../api/client";
 import { useAuth } from "../../../context/AuthContext";
 import { PageHeader } from "../../../components/PageHeader";
 import { yen, man } from "../../../lib/format";
+import Link from "next/link";
 
 interface SimResult {
   annualRevenue: number;
@@ -127,7 +128,7 @@ export default function RewardSimPage() {
                 </span>
                 <span className="card-sub small">
                   ※ 会社員には厚生年金・有給・退職金があり、フリーランスは自分で備える必要があります。差額の一部は
-                  <a href="/wealth" style={{ textDecoration: "underline" }}>小規模企業共済・iDeCo</a>に回すのがおすすめです。
+                  <Link href="/wealth" style={{ textDecoration: "underline" }}>小規模企業共済・iDeCo</Link>に回すのがおすすめです。
                 </span>
               </div>
             )}
@@ -160,9 +161,9 @@ export default function RewardSimPage() {
           <p className="disclaimer">
             ※ 概算モデルによる試算です。実際の税額・保険料は自治体や扶養・控除の状況で変わります。正確な金額は税理士にご確認ください。
           </p>
-          <a href="/wealth" className="btn-link">
+          <Link href="/wealth" className="btn-link">
             手取りから、積立の目安を出す <ArrowRight size={14} />
-          </a>
+          </Link>
         </section>
       )}
     </div>

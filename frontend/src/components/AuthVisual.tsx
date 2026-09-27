@@ -1,9 +1,10 @@
 import Image from "next/image";
+import { asset } from "../lib/demo";
 
 export function AuthVisual({ photo = "hero.webp", title, body }: { photo?: string; title: string; body: string }) {
   return (
     <aside className="auth-visual">
-      <Image src={`/photos/${photo}`} alt="" fill sizes="50vw" priority style={{ objectFit: "cover" }} />
+      <Image src={asset(`/photos/${photo}`)} alt="" fill sizes="50vw" priority style={{ objectFit: "cover" }} />
       <div className="auth-visual-caption">
         <span className="eyebrow">Engineer 1st</span>
         <strong>{title}</strong>

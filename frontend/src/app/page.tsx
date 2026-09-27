@@ -24,6 +24,7 @@ import { EventDate } from "../components/EventDate";
 import { serverFetchOr } from "../lib/serverApi";
 import { dateParts } from "../lib/format";
 import type { ClubSummary, EventItem } from "../lib/types";
+import { asset } from "../lib/demo";
 
 export const revalidate = 300;
 
@@ -297,7 +298,7 @@ export default async function LandingPage() {
               <Reveal key={c.slug} delay={i * 80}>
                 <Link href={`/clubs/${c.slug}`} className="club-card">
                   <div className="club-card-photo">
-                    <Image src={`/photos/${c.photo}`} alt={c.name} fill sizes="(max-width: 640px) 100vw, 300px" />
+                    <Image src={asset(`/photos/${c.photo}`)} alt={c.name} fill sizes="(max-width: 640px) 100vw, 300px" />
                     <span className={`badge badge-${c.color === "violet" ? "violet" : c.color} club-card-tag`}>{c.level}</span>
                   </div>
                   <h3>{c.name}</h3>

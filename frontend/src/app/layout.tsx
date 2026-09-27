@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Noto_Sans_JP, Zen_Kaku_Gothic_New, Heebo } from "next/font/google";
 import "./globals.css";
 import { Providers } from "../components/Providers";
+import { DemoBanner } from "../components/DemoBanner";
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from "../lib/site";
 
 // 本文
@@ -60,6 +61,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="ja">
       <body className={`${notoSansJP.variable} ${zenKaku.variable} ${heebo.variable}`}>
+        <DemoBanner />
         <Providers>{children}</Providers>
       </body>
     </html>

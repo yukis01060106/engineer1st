@@ -6,12 +6,17 @@ import { SiteLayout } from "../../../components/SiteLayout";
 import { Photo } from "../../../components/Photo";
 import { Reveal } from "../../../components/Reveal";
 import { EventApply } from "../../../components/EventApply";
-import { serverFetch } from "../../../lib/serverApi";
+import { serverFetch, serverFetchOr } from "../../../lib/serverApi";
 import { fmtDateTime } from "../../../lib/format";
 import { SITE_URL } from "../../../lib/site";
 import type { EventItem } from "../../../lib/types";
 
 export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const { events } = await serverFetchOr<{ events: { id: string }[] }>("/events", { events: [] });
+  return events.map((e) => ({ id: e.id }));
+}
 
 async function getEvent(id: string): Promise<EventItem | null> {
   try {

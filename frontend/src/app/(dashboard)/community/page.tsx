@@ -9,6 +9,7 @@ import { PageHeader } from "../../../components/PageHeader";
 import { EventDate } from "../../../components/EventDate";
 import { dateParts } from "../../../lib/format";
 import type { ClubSummary, EventItem } from "../../../lib/types";
+import { asset } from "../../../lib/demo";
 
 interface MyApplication {
   id: string;
@@ -99,7 +100,7 @@ export default function CommunityPage() {
           {[...joined, ...others].map((c) => (
             <Link href={`/clubs/${c.slug}`} className="club-card" key={c.slug}>
               <div className="club-card-photo" style={{ borderRadius: 16 }}>
-                <Image src={`/photos/${c.photo}`} alt={c.name} fill sizes="240px" />
+                <Image src={asset(`/photos/${c.photo}`)} alt={c.name} fill sizes="240px" />
                 {c.joined && (
                   <span className="badge badge-success club-card-tag">
                     <Check size={12} /> 入部中

@@ -3,10 +3,25 @@
 フリーランス・SESエンジニアのための無料プラットフォーム（プロトタイプ）。
 **部活・勉強会で集客し、無料ツールで毎月使ってもらいながら、見込み客をためていく**アプリです。
 
+## デモ
+
+**https://yukis01060106.github.io/engineer1st/**
+
+インストール不要で、ブラウザで開くだけで触れます。
+
+- 会員として: `tanaka@example.com` / `password123`
+- 運営として: `admin@example.com` / `password123`
+- 新規登録も試せます。操作した内容は、見ている人のブラウザにだけ保存されます（画面上部の「最初からやり直す」で初期化）
+- デモ版ではサーバーを使わず、ブラウザの中のデモサーバー（`frontend/src/demo`）が答えます。PDF・Excelの出力、レシートの読み取り、Claude版のAI FPは、実際のアプリでのみ動きます
+
+デモを更新するときは `cd frontend && npm run deploy:demo`（ビルドして `gh-pages` ブランチに公開します）。
+デモの初期データを更新するときは `cd backend && npm run seed && npm run export:demo` を実行して、`frontend/src/demo/seed.json` をコミットしてください。
+
 ## 構成
 
 - `backend/` — Express + TypeScript + Prisma(SQLite)。ポート 4000
 - `frontend/` — Next.js 16（App Router）。ポート 3001（3000 は別プロジェクトが使用中）
+  - 請求・税金・資産形成などの計算は `backend/src/lib` が正本。デモ版でも使うため、build / dev の前に `frontend/src/shared` へ自動コピーされる
   - 公開ページ（`/` `/clubs` `/clubs/[slug]` `/events` `/events/[id]`）は SSG / ISR
   - ログイン後の画面は `(dashboard)` 配下の CSR
 

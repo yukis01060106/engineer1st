@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { apiFetch, ApiError, getToken } from "../../../api/client";
+import { apiFetch, apiUpload, ApiError, downloadFile } from "../../../api/client";
 import { PageHeader } from "../../../components/PageHeader";
 
 interface Expense {
@@ -31,19 +31,8 @@ const CATEGORY_OPTIONS = [
 
 const yen = (n: number) => `${n.toLocaleString()}円`;
 
-async function downloadCsv() {
-  const token = getToken();
-  const res = await fetch("/api/expenses/export.csv", {
-    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-  });
-  if (!res.ok) return;
-  const blob = await res.blob();
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "expenses.csv";
-  a.click();
-  URL.revokeObjectURL(url);
+function downloadCsv() {
+  return downloadFile("/expenses/export.csv", "expenses.csv");
 }
 
 export default function ExpensesPage() {
@@ -75,17 +64,9 @@ export default function ExpensesPage() {
     setOcrLoading(true);
     setOcrError(null);
     try {
-      const token = getToken();
       const formData = new FormData();
       formData.append("image", file);
-
-      const res = await fetch("/api/expenses/ocr", {
-        method: "POST",
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-        body: formData,
-      });
-      const data = await res.json();
-      if (!res.ok) throw new ApiError(data.error ?? "OCRに失敗しました", res.status);
+      const data = await apiUpload<{ extracted: ExtractedExpense; rawText: string }>("/expenses/ocr", formData);
 
       const extracted: ExtractedExpense = data.extracted;
       setDate(extracted.date ?? "");

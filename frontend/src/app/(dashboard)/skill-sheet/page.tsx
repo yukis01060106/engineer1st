@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { apiFetch, getToken } from "../../../api/client";
+import { apiFetch, downloadFile } from "../../../api/client";
 import { PageHeader } from "../../../components/PageHeader";
 
 interface SkillItem {
@@ -44,19 +44,8 @@ const WORK_PROCESS_OPTIONS = [
   "運用保守",
 ];
 
-async function downloadExcel() {
-  const token = getToken();
-  const res = await fetch("/api/skill-sheet/excel", {
-    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-  });
-  if (!res.ok) return;
-  const blob = await res.blob();
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "スキルシート.xlsx";
-  a.click();
-  URL.revokeObjectURL(url);
+function downloadExcel() {
+  return downloadFile("/skill-sheet/excel", "スキルシート.xlsx");
 }
 
 export default function SkillSheetPage() {

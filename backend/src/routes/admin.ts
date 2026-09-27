@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { prisma } from "../lib/prisma";
 import { requireAuth, requireAdmin, AuthedRequest } from "../middleware/auth";
+import { scoreLead } from "../lib/leadScore";
 
 export const adminRouter = Router();
 adminRouter.use(requireAuth, requireAdmin);
@@ -24,40 +25,18 @@ adminRouter.get("/leads", async (_req: AuthedRequest, res) => {
   });
 
   const leads = users.map((u) => {
-    const reasons: string[] = [];
-    let score = 0;
     const current = u.engagements[0];
     const daysLeft = current?.endDate ? Math.ceil((current.endDate.getTime() - now) / DAY) : null;
-
-    if (daysLeft != null && daysLeft <= 60) {
-      score += 40;
-      reasons.push(`契約終了まで${daysLeft}日`);
-    }
-    if (u.workStyle === "freelance" && !current) {
-      score += 35;
-      reasons.push("稼働中の案件なし");
-    }
-    if (u.workStyle === "considering") {
-      score += 30;
-      reasons.push("独立を検討中");
-    }
-    if (u.workStyle === "ses_employee") {
-      score += 10;
-      reasons.push("SES会社員（将来の独立候補）");
-    }
-    if (u.skillSheet) {
-      score += 15;
-      reasons.push("スキルシート作成済み");
-    }
-    if (u.rateDiagnoses.length > 0) {
-      score += 10;
-      reasons.push("単価診断を利用");
-    }
-    const engagement = u.clubMemberships.length + u.eventApplications.length + (u.healthLogs.length > 0 ? 1 : 0);
-    if (engagement > 0) {
-      score += Math.min(15, engagement * 5);
-      reasons.push(`コミュニティ参加 ${u.clubMemberships.length}部・${u.eventApplications.length}イベント`);
-    }
+    const { score, reasons } = scoreLead({
+      workStyle: u.workStyle,
+      currentEngagementDaysLeft: daysLeft,
+      hasCurrentEngagement: !!current,
+      hasSkillSheet: !!u.skillSheet,
+      rateDiagnosisCount: u.rateDiagnoses.length,
+      clubCount: u.clubMemberships.length,
+      eventCount: u.eventApplications.length,
+      loggedHealthRecently: u.healthLogs.length > 0,
+    });
 
     return {
       id: u.id,
@@ -69,7 +48,7 @@ adminRouter.get("/leads", async (_req: AuthedRequest, res) => {
       clubs: u.clubMemberships.map((m) => m.club.name),
       currentProject: current ? { title: current.project.title, monthlyRate: current.monthlyRate, daysLeft } : null,
       desiredRate: u.skillSheet?.desiredRate ?? null,
-      score: Math.min(100, score),
+      score,
       reasons,
     };
   });

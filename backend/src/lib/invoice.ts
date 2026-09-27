@@ -1,5 +1,5 @@
 // インボイス制度対応: 適格請求書に必要な税率区分・消費税額の計算と、SES特有の精算幅・支払期日の計算
-import { randomBytes } from "crypto";
+// ※ このファイルはフロントのデモ版（GitHub Pages）からも読み込むため、Node専用のモジュールに依存しないこと
 
 export interface TaxBreakdown {
   amount: number; // 税抜金額
@@ -99,7 +99,8 @@ export function invoiceState(inv: { paidAt: Date | null; dueDate: Date | null },
 
 // 請求書番号: 年月＋ランダム。サーバー再起動で連番がリセットされても重複しないようにする
 export function nextInvoiceNumber(targetMonth: string): string {
-  return `INV-${targetMonth.replace("-", "")}-${randomBytes(3).toString("hex").toUpperCase()}`;
+  const suffix = Math.floor(Math.random() * 0xffffff).toString(16).toUpperCase().padStart(6, "0");
+  return `INV-${targetMonth.replace("-", "")}-${suffix}`;
 }
 
 // 支払いが遅れているときの催促文（丁寧・事実ベース・根拠条文を添える）

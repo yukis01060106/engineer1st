@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // backend/src/lib からの自動コピー
+    "src/shared/**",
   ]),
 ]);
 

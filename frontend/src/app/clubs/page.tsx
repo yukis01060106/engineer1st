@@ -6,6 +6,7 @@ import { SiteLayout } from "../../components/SiteLayout";
 import { Reveal } from "../../components/Reveal";
 import { serverFetchOr } from "../../lib/serverApi";
 import type { ClubSummary } from "../../lib/types";
+import { asset } from "../../lib/demo";
 
 export const revalidate = 300;
 
@@ -39,7 +40,7 @@ export default async function ClubsPage() {
               <Reveal key={c.slug} delay={i * 80}>
                 <Link href={`/clubs/${c.slug}`} className="club-card">
                   <div className="club-card-photo">
-                    <Image src={`/photos/${c.photo}`} alt={c.name} fill sizes="(max-width: 640px) 100vw, 300px" />
+                    <Image src={asset(`/photos/${c.photo}`)} alt={c.name} fill sizes="(max-width: 640px) 100vw, 300px" />
                     <span className={`badge badge-${c.color} club-card-tag`}>{c.level}</span>
                   </div>
                   <h3>{c.name}</h3>

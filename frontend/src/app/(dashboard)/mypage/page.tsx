@@ -27,6 +27,7 @@ import { apiFetch } from "../../../api/client";
 import { MembershipCard } from "../../../components/MembershipCard";
 import { EventDate } from "../../../components/EventDate";
 import { yen, man, pct, dateParts } from "../../../lib/format";
+import { asset } from "../../../lib/demo";
 
 interface Alert {
   type: string;
@@ -253,7 +254,7 @@ export default function MyPage() {
               <div>
                 {data.clubs.map((c) => (
                   <Link href={`/clubs/${c.slug}`} className="mini-club" key={c.slug}>
-                    <Image src={`/photos/${c.photo}`} alt="" width={52} height={52} />
+                    <Image src={asset(`/photos/${c.photo}`)} alt="" width={52} height={52} />
                     <strong>{c.name}</strong>
                     <ArrowRight size={16} style={{ marginLeft: "auto" }} />
                   </Link>

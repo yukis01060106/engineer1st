@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# backend/src/lib からのコピー（scripts/sync-shared.mjs が生成）
+/src/shared/
