@@ -179,7 +179,7 @@ export default function HealthPage() {
       <div className="stat-row">
         <div className="stat-tile" style={{ background: "#fff", border: "1px solid var(--line)" }}>
           <div className="stat-label">歩数（7日平均）</div>
-          <div className="stat-value">{data.weekly.steps?.toLocaleString() ?? "—"}<small>歩</small></div>
+          <div className="stat-value">{data.weekly.steps != null ? Math.round(data.weekly.steps).toLocaleString() : "—"}<small>歩</small></div>
         </div>
         <div className="stat-tile" style={{ background: "#fff", border: "1px solid var(--line)" }}>
           <div className="stat-label">睡眠（7日平均）</div>

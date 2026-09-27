@@ -6,6 +6,8 @@ import { CalendarPlus, Check, Flame, Megaphone, Users, ChevronDown, ChevronUp } 
 import { apiFetch, ApiError } from "../../../api/client";
 import { useAuth } from "../../../context/AuthContext";
 import { PageHeader } from "../../../components/PageHeader";
+import { AdminInbox } from "../../../components/AdminInbox";
+import { PageError } from "../../../components/PageError";
 import { fmtDate, fmtDateTime, man, WORK_STYLE_LABEL } from "../../../lib/format";
 
 interface Lead {
@@ -45,8 +47,16 @@ interface Applicant {
   user: { name: string; email: string; workStyle: string };
 }
 
-const SOURCE_LABEL = (s: string) =>
-  s === "direct" ? "直接" : s === "event" ? "イベントページ" : s === "referral" ? "会員の紹介" : s.startsWith("club:") ? `部活（${s.slice(5)}）` : s;
+const SOURCE_LABEL = (s: string, clubs: { slug: string; name: string }[] = []) =>
+  s === "direct"
+    ? "直接"
+    : s === "event"
+      ? "イベントページ"
+      : s === "referral"
+        ? "会員の紹介"
+        : s.startsWith("club:")
+          ? `部活：${clubs.find((c) => c.slug === s.slice(5))?.name ?? s.slice(5)}`
+          : s;
 
 const EMPTY_EVENT = {
   title: "",
@@ -74,15 +84,19 @@ export default function AdminPage() {
   const [openEvent, setOpenEvent] = useState<string | null>(null);
   const [applicants, setApplicants] = useState<Applicant[]>([]);
 
+  const isAdmin = user?.role === "admin";
   function load() {
     apiFetch<AdminData>("/admin/leads").then(setData).catch((e) => setError(e.message));
   }
-  useEffect(load, []);
+  // 権限のない人には読み込みもしない
+  useEffect(() => {
+    if (isAdmin) load();
+  }, [isAdmin]);
 
   if (user && user.role !== "admin") {
-    return <div className="page-error">運営アカウントのみ利用できます。</div>;
+    return <PageError title="このページは運営アカウント専用です" message="部活・勉強会の告知や見込み客の管理は、運営スタッフだけが使えます。" retry={false} />;
   }
-  if (error) return <div className="page-error">{error}</div>;
+  if (error) return <PageError message={error} />;
   if (!data) return <div className="page"><div className="skeleton" style={{ height: 300 }} /></div>;
 
   const leads = data.leads.filter((l) =>
@@ -159,7 +173,7 @@ export default function AdminPage() {
           <div className="stack" style={{ gap: 4, marginTop: 6 }}>
             {sources.map(([k, n]) => (
               <div key={k} className="small" style={{ display: "grid", gridTemplateColumns: "1fr 60px 20px", gap: 6, alignItems: "center" }}>
-                <span>{SOURCE_LABEL(k)}</span>
+                <span>{SOURCE_LABEL(k, data.clubs)}</span>
                 <span className="bar" style={{ height: 6 }}>
                   <span style={{ width: `${(n / maxSource) * 100}%`, background: "var(--primary)" }} />
                 </span>
@@ -216,7 +230,7 @@ export default function AdminPage() {
                     )}
                     <div className="small muted">{l.email}</div>
                   </td>
-                  <td className="small">{WORK_STYLE_LABEL[l.workStyle]}</td>
+                  <td className="small" style={{ whiteSpace: "nowrap" }}>{WORK_STYLE_LABEL[l.workStyle]}</td>
                   <td>
                     <div className="reasons">
                       {l.reasons.map((r) => (
@@ -240,7 +254,7 @@ export default function AdminPage() {
                     )}
                   </td>
                   <td className="small">
-                    {SOURCE_LABEL(l.signupSource ?? "direct")}
+                    {SOURCE_LABEL(l.signupSource ?? "direct", data.clubs)}
                     <div className="muted">{fmtDate(l.createdAt)}</div>
                   </td>
                 </tr>
@@ -250,6 +264,8 @@ export default function AdminPage() {
         </div>
         <p className="disclaimer">※ 連絡は本人がアプリ内で希望した場合のみ。営業電話はしない方針をLP・FAQで約束しています。</p>
       </section>
+
+      <AdminInbox />
 
       <div className="grid-main-side">
         <form className="panel" onSubmit={createEvent}>

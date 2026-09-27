@@ -12,6 +12,7 @@ interface ChatMessage {
   id: string;
   from: "user" | "staff";
   text: string;
+  auto?: boolean;
   createdAt: string;
 }
 
@@ -106,7 +107,7 @@ export default function ChatPage() {
                   </div>
                 )}
                 <div style={{ alignSelf: m.from === "user" ? "flex-end" : "flex-start", maxWidth: "82%", display: "grid", gap: 4 }}>
-                  {m.from === "staff" && <span className="small muted" style={{ fontSize: 11.5 }}>ソトバ担当</span>}
+                  {m.from === "staff" && <span className="small muted" style={{ fontSize: 11.5 }}>{m.auto ? "ソトバ受付（自動応答）" : "ソトバ担当"}</span>}
                   <div className={"chat-bubble " + (m.from === "user" ? "chat-bubble-user" : "chat-bubble-staff")} style={{ maxWidth: "none" }}>
                     {m.text}
                   </div>

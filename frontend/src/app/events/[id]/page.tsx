@@ -131,6 +131,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
               title={event.title}
               text={`「${event.title}」いっしょに参加しない？ ${fmtDateTime(event.date)}〜・参加無料`}
               className="btn-ghost btn-sm"
+              style={{ justifySelf: "start" }}
             />
           </Reveal>
           <Reveal delay={120} style={{ position: "sticky", top: 96 }}>

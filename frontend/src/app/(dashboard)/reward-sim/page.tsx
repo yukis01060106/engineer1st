@@ -45,6 +45,24 @@ export default function RewardSimPage() {
   const [result, setResult] = useState<SimResult | null>(null);
   const [salaryResult, setSalaryResult] = useState<SalaryResult | null>(null);
 
+  const [prefilled, setPrefilled] = useState<string | null>(null);
+
+  // 稼働中の単価・備えのページで入れた年収があれば、そこから始める
+  useEffect(() => {
+    apiFetch<{ snapshot: { current: { monthlyRate: number } | null; plan: { annualSalary: number | null } | null } }>("/wealth")
+      .then(({ snapshot }) => {
+        if (snapshot.current) {
+          setMonthlyRate(Math.round(snapshot.current.monthlyRate / 10_000) * 10_000);
+          setPrefilled("稼働中の月単価");
+        }
+        if (snapshot.plan?.annualSalary) {
+          setSalary(snapshot.plan.annualSalary);
+          setPrefilled((p) => (p ? p + "と、登録した年収" : "登録した年収"));
+        }
+      })
+      .catch(() => undefined);
+  }, []);
+
   // 入力のたびに自動で再計算
   useEffect(() => {
     if (!monthlyRate) return;
@@ -73,7 +91,7 @@ export default function RewardSimPage() {
       <PageHeader
         eyebrow="Simulator"
         title={isEmployee ? "独立したら、手取りはいくら？" : "手取りシミュレーション"}
-        description="月単価から、税金・社会保険料を差し引いた手取りを概算します。会社員の年収と並べて比べることもできます。"
+        description={<>月単価から、税金・社会保険料を差し引いた手取りを概算します。会社員の年収と並べて比べることもできます。{prefilled && <>（{prefilled}から計算しています）</>}</>}
       />
 
       <div className="grid-main-side">

@@ -39,6 +39,7 @@ interface NavItem {
 }
 
 const isFreelance = (u: User) => u.workStyle === "freelance";
+const FREELANCE_ONLY = ["/money", "/expenses", "/contracts"];
 
 const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
   {
@@ -183,7 +184,21 @@ export function DashboardShell({ children }: { children: ReactNode }) {
         </div>
       </aside>
 
-      <main className="content">{children}</main>
+      <main className="content">
+        {!isFreelance(user) && FREELANCE_ONLY.some((p) => isActive(p)) && (
+          <div className="callout-inline callout-info" style={{ margin: "0 auto 20px", maxWidth: 1080 }}>
+            <Receipt size={16} />
+            <div>
+              ここはフリーランス向けの機能です（いまの働き方：{WORK_STYLE_LABEL[user.workStyle] ?? user.workStyle}）。独立したら{" "}
+              <Link href="/settings" className="btn-link">
+                設定
+              </Link>
+              で働き方を「フリーランス」にすると、メニューに表示されます。
+            </div>
+          </div>
+        )}
+        {children}
+      </main>
 
       <nav className="tabbar" aria-label="タブ">
         {tabs.map((t) => (

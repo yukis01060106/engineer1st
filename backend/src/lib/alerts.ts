@@ -14,7 +14,8 @@ export interface Alert {
     | "skill_sheet_missing"
     | "checkup_due"
     | "tax_season"
-    | "invoice_due";
+    | "invoice_due"
+    | "chat_reply";
   tone: "urgent" | "normal" | "info";
   message: string;
   actionLabel: string;
@@ -35,11 +36,23 @@ export interface AlertInput {
   unsignedContractCount: number;
   // 14日以内に開催され、まだ申し込んでいないイベント
   soonUnappliedEvent: { id: string; title: string } | null;
+  // 担当者チャットの最新メッセージが担当者の返信（会員がまだ返していない）
+  staffReplied?: boolean;
 }
 
 export function buildAlerts(input: AlertInput): Alert[] {
   const { now, currentEngagement } = input;
   const alerts: Alert[] = [];
+
+  if (input.staffReplied) {
+    alerts.push({
+      type: "chat_reply",
+      tone: "normal",
+      message: "担当者から返信が届いています。",
+      actionLabel: "チャットを開く",
+      actionPath: "/chat",
+    });
+  }
 
   // 稼働終了が近づいている → 案件を先回りでレコメンド
   if (currentEngagement?.endDate) {

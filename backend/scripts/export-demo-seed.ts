@@ -7,7 +7,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  const [users, projects, engagements, invoices, contracts, skillSheets, events, eventApplications, clubs, clubMemberships, healthLogs, wealthPlans, rateDiagnoses, expenses, mentorRequests, tasks] =
+  const [users, projects, engagements, invoices, contracts, skillSheets, events, eventApplications, clubs, clubMemberships, healthLogs, wealthPlans, rateDiagnoses, expenses, mentorRequests, tasks, chatMessages] =
     await Promise.all([
       prisma.user.findMany({ where: { email: { endsWith: "@example.com" } } }),
       prisma.project.findMany(),
@@ -25,6 +25,7 @@ async function main() {
       prisma.expense.findMany(),
       prisma.mentorRequest.findMany(),
       prisma.task.findMany(),
+      prisma.chatMessage.findMany({ orderBy: { createdAt: "asc" } }),
     ]);
 
   const userIds = new Set(users.map((u) => u.id));
@@ -48,6 +49,8 @@ async function main() {
     expenses: own(expenses),
     mentorRequests: own(mentorRequests),
     tasks: own(tasks),
+    // デモ版は role / content の形で持つ
+    chatMessages: own(chatMessages).map((m) => ({ id: m.id, userId: m.userId, role: m.from, content: m.text, auto: m.auto, createdAt: m.createdAt })),
   };
 
   const out = path.join(__dirname, "../../frontend/src/demo/seed.json");

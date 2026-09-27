@@ -4,6 +4,8 @@ import { z } from "zod";
 import { prisma } from "../lib/prisma";
 import { signToken } from "../lib/jwt";
 import { publicUser, WORK_STYLES } from "../lib/publicUser";
+import { requireAuth, AuthedRequest } from "../middleware/auth";
+import { deleteUserData } from "../lib/deleteUser";
 
 export const authRouter = Router();
 
@@ -79,4 +81,34 @@ authRouter.post("/login", async (req, res) => {
 
   const token = signToken({ userId: user.id });
   res.json({ token, user: publicUser(user) });
+});
+
+const passwordSchema = z.object({ currentPassword: z.string().min(1), newPassword: z.string().min(8).max(100) });
+
+// パスワードの変更（いまのパスワードで本人確認する）
+authRouter.post("/password", requireAuth, async (req: AuthedRequest, res) => {
+  const parsed = passwordSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: "新しいパスワードは8文字以上にしてください" });
+  const user = await prisma.user.findUnique({ where: { id: req.userId } });
+  if (!user) return res.status(404).json({ error: "ユーザーが見つかりません" });
+  if (!(await bcrypt.compare(parsed.data.currentPassword, user.passwordHash))) {
+    return res.status(401).json({ error: "いまのパスワードが違います" });
+  }
+  await prisma.user.update({ where: { id: user.id }, data: { passwordHash: await bcrypt.hash(parsed.data.newPassword, 10) } });
+  res.json({ ok: true });
+});
+
+// 退会: 本人のデータをすべて消す（単価診断の申告は、個人と結びつかない形で比較データに残す）
+authRouter.delete("/me", requireAuth, async (req: AuthedRequest, res) => {
+  const parsed = z.object({ password: z.string().min(1) }).safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: "パスワードを入力してください" });
+  const user = await prisma.user.findUnique({ where: { id: req.userId } });
+  if (!user) return res.status(404).json({ error: "ユーザーが見つかりません" });
+  if (user.role === "admin") return res.status(400).json({ error: "運営アカウントは画面から退会できません" });
+  if (!(await bcrypt.compare(parsed.data.password, user.passwordHash))) {
+    return res.status(401).json({ error: "パスワードが違います" });
+  }
+
+  await deleteUserData(user.id);
+  res.status(204).end();
 });

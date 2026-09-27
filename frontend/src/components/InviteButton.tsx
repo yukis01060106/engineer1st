@@ -12,12 +12,14 @@ export function InviteButton({
   text,
   label = "友だちを誘う",
   className = "btn-secondary btn-sm",
+  style,
 }: {
   path: string;
   title: string;
   text: string;
   label?: string;
   className?: string;
+  style?: React.CSSProperties;
 }) {
   const { user } = useAuth();
   const [copied, setCopied] = useState(false);
@@ -40,7 +42,7 @@ export function InviteButton({
   }
 
   return (
-    <button type="button" className={className} onClick={share}>
+    <button type="button" className={className} style={style} onClick={share}>
       {copied ? <Check size={16} /> : <Share2 size={16} />} {copied ? "誘う文面とリンクをコピーしました" : label}
     </button>
   );

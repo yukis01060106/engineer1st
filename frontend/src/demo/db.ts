@@ -187,6 +187,7 @@ export interface DemoMessage {
   userId: string;
   role: string;
   content: string;
+  auto?: boolean; // 担当者チャットの受付自動応答
   createdAt: string;
 }
 
@@ -235,7 +236,7 @@ function ymd(d: Date) {
 
 // 書き出した日から今日までの日数だけ、すべての日付を後ろにずらす（いつ見ても「今日基準」のデモになる）
 function shiftSeed(now: Date): DemoDB {
-  const seed = seedJson as unknown as Omit<DemoDB, "passwords" | "fpMessages" | "chatMessages"> & { exportedAt: string };
+  const seed = seedJson as unknown as Omit<DemoDB, "passwords" | "fpMessages"> & { exportedAt: string };
   const days = Math.max(0, Math.floor((now.getTime() - new Date(seed.exportedAt).getTime()) / DAY));
   const months = Math.round(days / 30.44);
 
@@ -257,11 +258,8 @@ function shiftSeed(now: Date): DemoDB {
     rows.map((r) => Object.fromEntries(Object.entries(r as Record<string, unknown>).map(([k, v]) => [k, shiftValue(k, v)])) as T);
 
   const tables = Object.entries(seed).filter(([k]) => k !== "exportedAt");
-  const shifted = Object.fromEntries(tables.map(([k, rows]) => [k, shiftRows(rows as unknown[])])) as Omit<
-    DemoDB,
-    "passwords" | "fpMessages" | "chatMessages"
-  >;
-  return { ...shifted, passwords: {}, fpMessages: [], chatMessages: [] };
+  const shifted = Object.fromEntries(tables.map(([k, rows]) => [k, shiftRows(rows as unknown[])])) as Omit<DemoDB, "passwords" | "fpMessages">;
+  return { ...shifted, passwords: {}, fpMessages: [] };
 }
 
 let memory: DemoDB | null = null;

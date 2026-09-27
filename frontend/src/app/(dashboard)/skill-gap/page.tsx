@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Briefcase, CalendarDays, FileText, TrendingUp } from "lucide-react";
 import { apiFetch, ApiError } from "../../../api/client";
 import { PageHeader } from "../../../components/PageHeader";
+import { PageError } from "../../../components/PageError";
 import { EventDate } from "../../../components/EventDate";
 
 interface Gap {
@@ -47,7 +48,7 @@ export default function SkillGapPage() {
     apiFetch<{ events: EventItem[] }>("/events").then((r) => setEvents(r.events)).catch(() => undefined);
   }, []);
 
-  if (error) return <div className="page-error">{error}</div>;
+  if (error) return <PageError message={error} />;
 
   const focus = (gaps ?? []).filter((g) => g.gap > 0).slice(0, 3);
   const strong = (gaps ?? []).filter((g) => g.gap <= 0);

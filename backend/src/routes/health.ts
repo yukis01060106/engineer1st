@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { jstDate } from "../lib/planner";
 import { z } from "zod";
 import { prisma } from "../lib/prisma";
 import { requireAuth, AuthedRequest } from "../middleware/auth";
@@ -7,14 +8,12 @@ export const healthRouter = Router();
 
 const CHECKUP_INTERVAL_DAYS = 365;
 
-function isoDate(d: Date) {
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-}
+// サーバーのタイムゾーンに関係なく、日本時間の日付で記録する
+const isoDate = jstDate;
 
 // 直近14日のコンディションと、健康診断・部活の状況
 healthRouter.get("/", requireAuth, async (req: AuthedRequest, res) => {
-  const since = new Date();
-  since.setDate(since.getDate() - 13);
+  const since = new Date(Date.now() - 13 * 86_400_000);
   const [logs, user, clubs] = await Promise.all([
     prisma.healthLog.findMany({ where: { userId: req.userId!, date: { gte: isoDate(since) } }, orderBy: { date: "asc" } }),
     prisma.user.findUnique({ where: { id: req.userId! } }),
@@ -23,9 +22,7 @@ healthRouter.get("/", requireAuth, async (req: AuthedRequest, res) => {
 
   const days: string[] = [];
   for (let i = 0; i < 14; i++) {
-    const d = new Date(since);
-    d.setDate(since.getDate() + i);
-    days.push(isoDate(d));
+    days.push(isoDate(new Date(since.getTime() + i * 86_400_000)));
   }
   const byDate = new Map(logs.map((l) => [l.date, l]));
   const series = days.map((date) => {

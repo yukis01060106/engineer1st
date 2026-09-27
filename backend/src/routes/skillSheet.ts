@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { jstDate } from "../lib/planner";
 import { z } from "zod";
 import { prisma } from "../lib/prisma";
 import { requireAuth, AuthedRequest } from "../middleware/auth";
@@ -65,7 +66,7 @@ skillSheetRouter.get("/defaults", requireAuth, async (req: AuthedRequest, res) =
 
   const desiredRate = currentEngagement?.monthlyRate ?? null;
   const availability = currentEngagement?.endDate
-    ? `${currentEngagement.endDate.toISOString().slice(0, 10)}以降（応相談）`
+    ? `${jstDate(currentEngagement.endDate)}以降（応相談）`
     : "即日";
 
   let totalExperienceYears: number | null = null;

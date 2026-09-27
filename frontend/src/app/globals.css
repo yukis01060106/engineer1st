@@ -549,6 +549,10 @@ label {
   display: flex;
   flex-direction: column;
 }
+/* 写真の飾り（網点・色丸）が画面の端からはみ出して横揺れしないように */
+.site main {
+  overflow-x: clip;
+}
 .site-header {
   position: sticky;
   top: 0;
@@ -1087,6 +1091,12 @@ a.event-row:hover {
 }
 .callout-mint {
   background: var(--mint-soft);
+}
+.callout .badge {
+  justify-self: start;
+}
+.callout-mint .badge-mint {
+  background: #fff;
 }
 @media (max-width: 760px) {
   .split-callout {
@@ -3076,4 +3086,37 @@ a.event-row:hover {
   padding-left: 1.4em;
   display: grid;
   gap: 6px;
+}
+
+/* ---------- スキルシート ---------- */
+.skill-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.6fr) 96px 30px;
+  gap: 8px;
+  align-items: center;
+}
+.skill-years {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.skill-aside {
+  position: sticky;
+  top: 20px;
+}
+@media (max-width: 900px) {
+  .skill-aside {
+    position: static;
+  }
+}
+@media (max-width: 640px) {
+  .skill-row {
+    grid-template-columns: 1fr 88px 30px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .skill-row > label:nth-child(2) {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
 }

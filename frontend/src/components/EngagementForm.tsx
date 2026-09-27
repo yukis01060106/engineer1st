@@ -3,10 +3,11 @@
 import { FormEvent, useState } from "react";
 import { Building2 } from "lucide-react";
 import { apiFetch, ApiError } from "../api/client";
+import { todayJst } from "./TaskRow";
 
 // いま働いている取引先を登録する。ソトバ以外で見つけた案件でも、請求書・入金チェック・契約終了のお知らせが使える
 export function EngagementForm({ onCreated, onCancel }: { onCreated: (id: string) => void; onCancel?: () => void }) {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayJst();
   const [form, setForm] = useState({
     client: "",
     title: "",

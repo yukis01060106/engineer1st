@@ -131,6 +131,7 @@ async function collectAlerts(
     }),
   ]);
 
+  const lastChat = await prisma.chatMessage.findFirst({ where: { userId }, orderBy: { createdAt: "desc" } });
   return buildAlerts({
     now,
     workStyle: user.workStyle,
@@ -142,5 +143,6 @@ async function collectAlerts(
     currentMonthInvoiceIssued: !!issued,
     unsignedContractCount,
     soonUnappliedEvent: soonEvents[0] ?? null,
+    staffReplied: lastChat?.from === "staff" && !lastChat.auto,
   });
 }

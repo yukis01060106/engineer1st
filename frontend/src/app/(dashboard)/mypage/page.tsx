@@ -27,7 +27,9 @@ import {
   Sparkles,
   Share2,
   ListTodo,
+  MessagesSquare,
 } from "lucide-react";
+import { PageError } from "../../../components/PageError";
 import { apiFetch } from "../../../api/client";
 import { MembershipCard } from "../../../components/MembershipCard";
 import { InviteButton } from "../../../components/InviteButton";
@@ -80,6 +82,7 @@ const ALERT_ICON: Record<string, typeof AlertTriangle> = {
   contract_unsigned: FileSignature,
   event_upcoming: BellRing,
   skill_sheet_missing: FileText,
+  chat_reply: MessagesSquare,
 };
 
 function greeting() {
@@ -124,7 +127,7 @@ export default function MyPage() {
       .catch((e) => setError(e.message));
   }, []);
 
-  if (error) return <div className="page-error">{error}</div>;
+  if (error) return <PageError message={error} />;
   if (!data) {
     return (
       <div className="page">

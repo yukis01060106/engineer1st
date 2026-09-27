@@ -202,6 +202,42 @@ on("POST", "/auth/login", (c) => {
 });
 
 // ---------- マイページ ----------
+on("POST", "/auth/password", (c) => {
+  const user = requireUser(c);
+  const b = c.body as { currentPassword: string; newPassword: string };
+  if (!b.newPassword || b.newPassword.length < 8) throw new HttpError(400, "新しいパスワードは8文字以上にしてください");
+  if (b.currentPassword !== (c.db.passwords[user.email] ?? DEMO_PASSWORD)) throw new HttpError(401, "いまのパスワードが違います");
+  c.db.passwords[user.email] = b.newPassword;
+  return { ok: true };
+});
+on("DELETE", "/auth/me", (c) => {
+  const user = requireUser(c);
+  const b = c.body as { password: string };
+  if (user.role === "admin") throw new HttpError(400, "運営アカウントは画面から退会できません");
+  if (b.password !== (c.db.passwords[user.email] ?? DEMO_PASSWORD)) throw new HttpError(401, "パスワードが違います");
+  const id = user.id;
+  const engIds = new Set(c.db.engagements.filter((e) => e.userId === id).map((e) => e.id));
+  const db = c.db;
+  db.invoices = db.invoices.filter((x) => !engIds.has(x.engagementId));
+  db.contracts = db.contracts.filter((x) => !engIds.has(x.engagementId));
+  db.engagements = db.engagements.filter((x) => x.userId !== id);
+  db.projects = db.projects.filter((p) => p.isListed !== false || db.engagements.some((e) => e.projectId === p.id));
+  db.skillSheets = db.skillSheets.filter((x) => x.userId !== id);
+  db.eventApplications = db.eventApplications.filter((x) => x.userId !== id);
+  db.mentorRequests = db.mentorRequests.filter((x) => x.userId !== id);
+  db.rateDiagnoses.forEach((x) => { if (x.userId === id) x.userId = null; });
+  db.expenses = db.expenses.filter((x) => x.userId !== id);
+  db.clubMemberships = db.clubMemberships.filter((x) => x.userId !== id);
+  db.healthLogs = db.healthLogs.filter((x) => x.userId !== id);
+  db.wealthPlans = db.wealthPlans.filter((x) => x.userId !== id);
+  db.fpMessages = db.fpMessages.filter((x) => x.userId !== id);
+  db.chatMessages = db.chatMessages.filter((x) => x.userId !== id);
+  db.tasks = db.tasks.filter((x) => x.userId !== id);
+  db.users.forEach((u) => { if (u.referredById === id) u.referredById = null; });
+  db.users = db.users.filter((u) => u.id !== id);
+  delete db.passwords[user.email];
+  return { status: 204, data: {} };
+});
 on("GET", "/mypage", (c) => {
   const user = requireUser(c);
   const { db } = c;
@@ -232,6 +268,10 @@ on("GET", "/mypage", (c) => {
     currentMonthInvoiceIssued: !!current && db.invoices.some((i) => i.engagementId === current.id && i.targetMonth === ym),
     unsignedContractCount: db.contracts.filter((ct) => ct.status === "未締結" && engagements.some((e) => e.id === ct.engagementId)).length,
     soonUnappliedEvent: soon ?? null,
+    staffReplied: (() => {
+      const last = db.chatMessages.filter((m) => m.userId === user.id).sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
+      return !!last && last.role === "staff" && !last.auto;
+    })(),
   });
 
   const upcoming = db.eventApplications
@@ -796,15 +836,19 @@ on("POST", "/mentor", (c) => {
 });
 function chatThread(c: Ctx, userId: string) {
   const list = c.db.chatMessages.filter((m) => m.userId === userId);
-  return [{ id: "m0", from: "staff", text: CHAT_WELCOME, createdAt: list[0]?.createdAt ?? nowIso() }, ...list.map((m) => ({ id: m.id, from: m.role === "user" ? "user" : "staff", text: m.content, createdAt: m.createdAt }))];
+  return [
+    { id: "welcome", from: "staff", text: CHAT_WELCOME, auto: true, createdAt: list[0]?.createdAt ?? nowIso() },
+    ...list.map((m) => ({ id: m.id, from: m.role === "user" ? "user" : "staff", text: m.content, auto: !!m.auto, createdAt: m.createdAt })),
+  ];
 }
 on("GET", "/chat", (c) => ({ messages: chatThread(c, requireUser(c).id) }));
 on("POST", "/chat", (c) => {
   const user = requireUser(c);
   const text = String((c.body as { text: string }).text ?? "").trim();
   if (!text) throw new HttpError(400, "メッセージを入力してください");
-  c.db.chatMessages.push({ id: newId("chat"), userId: user.id, role: "user", content: text, createdAt: nowIso() });
-  c.db.chatMessages.push({ id: newId("chat"), userId: user.id, role: "staff", content: autoReply(text), createdAt: nowIso() });
+  const now = Date.now();
+  c.db.chatMessages.push({ id: newId("chat"), userId: user.id, role: "user", content: text, createdAt: new Date(now).toISOString() });
+  c.db.chatMessages.push({ id: newId("chat"), userId: user.id, role: "staff", content: autoReply(text), auto: true, createdAt: new Date(now + 1).toISOString() });
   return { status: 201, data: { messages: chatThread(c, user.id) } };
 });
 
@@ -862,6 +906,51 @@ on("DELETE", "/planner/tasks/:id", (c) => {
 });
 
 // ---------- 運営 ----------
+on("GET", "/admin/inbox", (c) => {
+  requireAdmin(c);
+  const { db } = c;
+  const userOf = (id: string) => db.users.find((u) => u.id === id);
+  const threads = new Map<string, { userId: string; name: string; email: string; lastText: string; lastAt: string; waiting: boolean; count: number }>();
+  for (const m of [...db.chatMessages].sort((a, b) => a.createdAt.localeCompare(b.createdAt))) {
+    const u = userOf(m.userId);
+    if (!u) continue;
+    const t = threads.get(m.userId) ?? { userId: m.userId, name: u.name, email: u.email, lastText: "", lastAt: m.createdAt, waiting: false, count: 0 };
+    if (m.role === "user") {
+      t.lastText = m.content;
+      t.waiting = true;
+      t.count += 1;
+    } else if (!m.auto) t.waiting = false;
+    t.lastAt = m.createdAt;
+    threads.set(m.userId, t);
+  }
+  return {
+    mentor: [...db.mentorRequests]
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+      .map((r) => ({ ...r, user: { name: userOf(r.userId)?.name ?? "退会した会員", email: userOf(r.userId)?.email ?? "" } })),
+    chats: [...threads.values()].sort((a, b) => Number(b.waiting) - Number(a.waiting) || b.lastAt.localeCompare(a.lastAt)),
+  };
+});
+on("PATCH", "/admin/mentor/:id", (c) => {
+  requireAdmin(c);
+  const r = c.db.mentorRequests.find((x) => x.id === c.params[0]);
+  if (!r) throw new HttpError(404, "相談が見つかりません");
+  const status = (c.body as { status: string }).status;
+  if (!["受付中", "対応中", "完了"].includes(status)) throw new HttpError(400, "状態を選んでください");
+  r.status = status;
+  return { request: r };
+});
+on("GET", "/admin/chat/:userId", (c) => {
+  requireAdmin(c);
+  return { messages: chatThread(c, c.params[0]) };
+});
+on("POST", "/admin/chat/:userId", (c) => {
+  requireAdmin(c);
+  const text = String((c.body as { text: string }).text ?? "").trim();
+  if (!text) throw new HttpError(400, "メッセージを入力してください");
+  if (!c.db.users.some((u) => u.id === c.params[0])) throw new HttpError(404, "会員が見つかりません");
+  c.db.chatMessages.push({ id: newId("chat"), userId: c.params[0], role: "staff", content: text, createdAt: nowIso() });
+  return { status: 201, data: { messages: chatThread(c, c.params[0]) } };
+});
 on("GET", "/admin/leads", (c) => {
   requireAdmin(c);
   const { db } = c;

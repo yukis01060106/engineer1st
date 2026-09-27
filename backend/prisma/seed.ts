@@ -1,6 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { calcTax, calcSettlement, calcDueDate } from "../src/lib/invoice";
+import { autoReply } from "../src/lib/chatReply";
+import { deleteUserData } from "../src/lib/deleteUser";
 
 const prisma = new PrismaClient();
 
@@ -17,6 +19,8 @@ async function main() {
       workStyle: "freelance",
       birthYear: new Date().getFullYear() - 32,
       interests: JSON.stringify(["money", "health", "study"]),
+      invoiceRegistrationNumber: "T9876543210987",
+      signupSource: null,
     },
     create: {
       email: "tanaka@example.com",
@@ -29,6 +33,13 @@ async function main() {
       joinedAt,
     },
   });
+
+  // 何度実行しても同じ状態に戻るよう、デモ会員が画面で追加・変更したデータを消しておく
+  await prisma.rateDiagnosis.deleteMany({ where: { userId: user.id } });
+  await prisma.mentorRequest.deleteMany({ where: { userId: user.id } });
+  await prisma.fpMessage.deleteMany({ where: { userId: user.id } });
+  await prisma.chatMessage.deleteMany({ where: { userId: user.id } });
+  await prisma.healthLog.deleteMany({ where: { userId: user.id } });
 
   // 案件データ
   const projectsData = [
@@ -89,6 +100,9 @@ async function main() {
       monthlyRate: 750000,
       endDate: new Date(new Date().setDate(new Date().getDate() + 25)),
       status: "稼働中",
+      settlementMin: 140,
+      settlementMax: 180,
+      paymentTermDays: 30,
     },
     create: {
       id: "seed-engagement-current",
@@ -129,6 +143,11 @@ async function main() {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
   };
   await prisma.invoice.deleteMany({ where: { engagement: { userId: user.id } } });
+  // 画面から追加した取引先（稼働）を消して、シードの2件だけに戻す
+  const seedEngagementIds = [currentEngagement.id, pastEngagement.id];
+  await prisma.contract.deleteMany({ where: { engagement: { userId: user.id, id: { notIn: seedEngagementIds } } } });
+  await prisma.engagement.deleteMany({ where: { userId: user.id, id: { notIn: seedEngagementIds } } });
+  await prisma.project.deleteMany({ where: { isListed: false, engagements: { none: {} } } });
 
   const invoiceSeeds = [
     { engagementId: pastEngagement.id, month: ym(6), rate: 700000, hours: 162, paid: true, term: 30 },
@@ -167,7 +186,7 @@ async function main() {
   const pastContractBody = "本契約は、ソトバを通じて青木耶雲氏がコマースフロンティア株式会社の業務に従事した業務委託の条件を定めるものです。";
   await prisma.contract.upsert({
     where: { id: "seed-contract-current" },
-    update: { body: currentContractBody },
+    update: { body: currentContractBody, status: "未締結", signedAt: null, signedName: null },
     create: {
       id: "seed-contract-current",
       engagementId: currentEngagement.id,
@@ -311,9 +330,10 @@ async function main() {
   // 経費サンプル
   const expenseSeeds = [
     { id: "seed-expense-0", date: new Date(new Date().setDate(new Date().getDate() - 3)), vendor: "JR東日本", amount: 1200, category: "旅費交通費", memo: "客先訪問の交通費" },
-    { id: "seed-expense-1", date: new Date(new Date().setDate(new Date().getDate() - 10)), vendor: "コワーキングスペース渋谷", amount: 3300, category: "会議費", memo: null },
+    { id: "seed-expense-1", date: new Date(new Date().setDate(new Date().getDate() - 10)), vendor: "コワーキングスペース渋谷", amount: 3300, category: "地代家賃", memo: null },
     { id: "seed-expense-2", date: new Date(new Date().setDate(new Date().getDate() - 15)), vendor: "Amazon", amount: 8980, category: "消耗品費", memo: "外付けキーボード" },
   ];
+  await prisma.expense.deleteMany({ where: { userId: user.id, id: { notIn: expenseSeeds.map((e) => e.id) } } });
   for (const e of expenseSeeds) {
     await prisma.expense.upsert({
       where: { id: e.id },
@@ -646,6 +666,28 @@ async function main() {
   await prisma.rateDiagnosis.create({
     data: { userId: kimura.id, primarySkill: "Java", role: "バックエンドエンジニア", yearsOfExperience: 6, monthlyRate: 550000, chainDepth: 3 },
   });
+
+  // 運営画面の「相談・問い合わせ」の例: 独立を考えている木村さんからのメンター相談と、返信待ちのチャット
+  await prisma.mentorRequest.deleteMany({ where: { userId: kimura.id } });
+  await prisma.mentorRequest.create({
+    data: {
+      userId: kimura.id,
+      topic: "独立・フリーランスの始め方",
+      message: "SES6年目のJavaエンジニアです。来年の春に独立したいのですが、何か月前から何を準備すればいいか相談したいです。",
+      createdAt: new Date(Date.now() - 2 * 86_400_000),
+    },
+  });
+  await prisma.chatMessage.deleteMany({ where: { userId: kimura.id } });
+  const askedAt = Date.now() - 5 * 3600_000;
+  const question = "独立について相談したい";
+  await prisma.chatMessage.create({ data: { userId: kimura.id, from: "user", text: question, createdAt: new Date(askedAt) } });
+  await prisma.chatMessage.create({ data: { userId: kimura.id, from: "staff", text: autoReply(question), auto: true, createdAt: new Date(askedAt + 1) } });
+
+  // 画面から新規登録した会員（動作確認用など）は消して、サンプルの会員だけに戻す
+  const sampleEmails = ["tanaka@example.com", "admin@example.com", ...leadSeeds.map((l) => l.email)];
+  for (const extra of await prisma.user.findMany({ where: { email: { notIn: sampleEmails } } })) {
+    await deleteUserData(extra.id);
+  }
 
   console.log("シードデータ投入が完了しました。");
   console.log("デモログイン: tanaka@example.com / password123");

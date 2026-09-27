@@ -104,6 +104,7 @@ export default async function ClubDetailPage({ params }: { params: Promise<{ slu
               title={`ソトバ ${club.name}`}
               text={`${club.name}、いっしょにどう？ ${club.schedule}・${club.place}。参加は無料です。`}
               className="btn-ghost btn-sm"
+              style={{ justifySelf: "start" }}
             />
             )}
           </Reveal>

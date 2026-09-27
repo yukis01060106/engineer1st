@@ -1,7 +1,9 @@
 import { Router } from "express";
 import { prisma } from "../lib/prisma";
 import { requireAuth, requireAdmin, AuthedRequest } from "../middleware/auth";
+import { z } from "zod";
 import { scoreLead } from "../lib/leadScore";
+import { chatThread } from "./chat";
 
 export const adminRouter = Router();
 adminRouter.use(requireAuth, requireAdmin);
@@ -101,4 +103,52 @@ adminRouter.get("/leads", async (_req: AuthedRequest, res) => {
       hasJoinUrl: !!e.joinUrl,
     })),
   });
+});
+
+// 相談・問い合わせ: メンター相談と、担当者の返信を待っているチャット
+adminRouter.get("/inbox", async (_req: AuthedRequest, res) => {
+  const [mentor, messages] = await Promise.all([
+    prisma.mentorRequest.findMany({ include: { user: { select: { name: true, email: true } } }, orderBy: { createdAt: "desc" }, take: 50 }),
+    prisma.chatMessage.findMany({ include: { user: { select: { name: true, email: true } } }, orderBy: { createdAt: "asc" } }),
+  ]);
+
+  const threads = new Map<string, { userId: string; name: string; email: string; lastText: string; lastAt: Date; waiting: boolean; count: number }>();
+  for (const m of messages) {
+    const t = threads.get(m.userId) ?? { userId: m.userId, name: m.user.name, email: m.user.email, lastText: "", lastAt: m.createdAt, waiting: false, count: 0 };
+    if (m.from === "user") {
+      t.lastText = m.text;
+      t.waiting = true;
+      t.count += 1;
+    } else if (!m.auto) {
+      t.waiting = false; // 担当者が返信済み
+    }
+    t.lastAt = m.createdAt;
+    threads.set(m.userId, t);
+  }
+
+  res.json({
+    mentor: mentor.map((r) => ({ id: r.id, topic: r.topic, message: r.message, status: r.status, createdAt: r.createdAt, user: r.user })),
+    chats: [...threads.values()].sort((a, b) => Number(b.waiting) - Number(a.waiting) || b.lastAt.getTime() - a.lastAt.getTime()),
+  });
+});
+
+adminRouter.patch("/mentor/:id", async (req: AuthedRequest, res) => {
+  const parsed = z.object({ status: z.enum(["受付中", "対応中", "完了"]) }).safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: "状態を選んでください" });
+  const request = await prisma.mentorRequest.update({ where: { id: req.params.id }, data: { status: parsed.data.status } }).catch(() => null);
+  if (!request) return res.status(404).json({ error: "相談が見つかりません" });
+  res.json({ request });
+});
+
+adminRouter.get("/chat/:userId", async (req: AuthedRequest, res) => {
+  res.json({ messages: await chatThread(req.params.userId) });
+});
+
+adminRouter.post("/chat/:userId", async (req: AuthedRequest, res) => {
+  const parsed = z.object({ text: z.string().trim().min(1).max(2000) }).safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: "メッセージを入力してください" });
+  const member = await prisma.user.findUnique({ where: { id: req.params.userId } });
+  if (!member) return res.status(404).json({ error: "会員が見つかりません" });
+  await prisma.chatMessage.create({ data: { userId: member.id, from: "staff", text: parsed.data.text } });
+  res.status(201).json({ messages: await chatThread(member.id) });
 });
