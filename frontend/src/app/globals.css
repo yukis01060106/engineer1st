@@ -2838,3 +2838,24 @@ a.event-row:hover {
 .wealth-step.is-skip .wealth-step-num {
   border-style: dashed;
 }
+
+/* ---------- 準備中の部活 ---------- */
+.club-card.is-preparing .club-card-photo img {
+  filter: grayscale(0.85) brightness(1.08);
+  opacity: 0.6;
+}
+.club-card.is-preparing h3,
+.club-card.is-preparing p {
+  color: var(--muted);
+}
+.club-card-preparing {
+  background: var(--ink);
+  color: #fff;
+}
+.club-group-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 16px;
+  font-size: 15px;
+}

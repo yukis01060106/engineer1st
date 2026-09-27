@@ -2,14 +2,13 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { ArrowRight, Check, Clock, ExternalLink, MapPin, Users, Video } from "lucide-react";
 import { apiFetch } from "../../../api/client";
 import { PageHeader } from "../../../components/PageHeader";
 import { EventDate } from "../../../components/EventDate";
+import { ClubCard } from "../../../components/ClubCard";
 import { dateParts } from "../../../lib/format";
 import type { ClubSummary, EventItem } from "../../../lib/types";
-import { asset } from "../../../lib/demo";
 
 interface MyApplication {
   id: string;
@@ -33,7 +32,7 @@ export default function CommunityPage() {
   }, []);
 
   const joined = clubs.filter((c) => c.joined);
-  const others = clubs.filter((c) => !c.joined);
+  const others = clubs.filter((c) => !c.joined).sort((a, b) => Number(a.status !== "open") - Number(b.status !== "open"));
   const filtered = events.filter((e) => tab === "すべて" || e.type === tab);
 
   return (
@@ -98,22 +97,7 @@ export default function CommunityPage() {
         </div>
         <div className="club-grid" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 16 }}>
           {[...joined, ...others].map((c) => (
-            <Link href={`/clubs/${c.slug}`} className="club-card" key={c.slug}>
-              <div className="club-card-photo" style={{ borderRadius: 16 }}>
-                <Image src={asset(`/photos/${c.photo}`)} alt={c.name} fill sizes="240px" />
-                {c.joined && (
-                  <span className="badge badge-success club-card-tag">
-                    <Check size={12} /> 入部中
-                  </span>
-                )}
-              </div>
-              <h3 style={{ fontSize: 15 }}>{c.name}</h3>
-              <div className="club-meta">
-                <span>
-                  <Clock size={13} /> {c.schedule}
-                </span>
-              </div>
-            </Link>
+            <ClubCard club={c} compact key={c.slug} />
           ))}
         </div>
       </section>

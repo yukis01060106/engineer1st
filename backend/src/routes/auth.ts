@@ -32,9 +32,11 @@ authRouter.post("/register", async (req, res) => {
     return res.status(409).json({ error: "このメールアドレスは既に登録されています" });
   }
 
-  const club = clubSlug ? await prisma.club.findUnique({ where: { slug: clubSlug } }) : null;
+  // 準備中の部活には入部させない（流入元としては記録する）
+  const sourceClub = clubSlug ? await prisma.club.findUnique({ where: { slug: clubSlug } }) : null;
+  const club = sourceClub?.status === "open" ? sourceClub : null;
   const referrer = referrerId ? await prisma.user.findUnique({ where: { id: referrerId } }) : null;
-  const signupSource = referrer ? "referral" : club ? `club:${club.slug}` : eventId ? "event" : null;
+  const signupSource = referrer ? "referral" : sourceClub ? `club:${sourceClub.slug}` : eventId ? "event" : null;
 
   const passwordHash = await bcrypt.hash(password, 10);
   const user = await prisma.user.create({

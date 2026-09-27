@@ -121,6 +121,7 @@ export interface DemoClub {
   level: string;
   photo: string;
   color: string;
+  status?: string;
   sortOrder: number;
 }
 export interface DemoMembership {

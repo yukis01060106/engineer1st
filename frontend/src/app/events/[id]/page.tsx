@@ -41,6 +41,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 const PHOTO_BY_TYPE: Record<string, string> = { 勉強会: "study.webp", 交流会: "community.webp" };
 const CLUB_PHOTO: Record<string, string> = {
+  pickleball: "club-pickleball.webp",
+  training: "club-training.webp",
   running: "club-running.webp",
   futsal: "club-futsal.webp",
   bouldering: "club-bouldering.webp",

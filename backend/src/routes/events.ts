@@ -69,9 +69,10 @@ eventsRouter.post("/:id/apply", requireAuth, async (req: AuthedRequest, res) => 
 
   const event = await prisma.event.findUnique({
     where: { id: req.params.id },
-    include: { _count: { select: { applications: true } } },
+    include: { _count: { select: { applications: true } }, club: { select: { status: true } } },
   });
   if (!event) return res.status(404).json({ error: "イベントが見つかりません" });
+  if (event.club && event.club.status !== "open") return res.status(409).json({ error: "この部活は準備中です" });
   if (event._count.applications >= event.capacity) return res.status(409).json({ error: "定員に達しました" });
 
   const existing = await prisma.eventApplication.findUnique({

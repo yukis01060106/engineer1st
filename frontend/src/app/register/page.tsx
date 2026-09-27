@@ -51,8 +51,9 @@ function RegisterForm() {
 
   useEffect(() => {
     if (!clubSlug) return;
-    apiFetch<{ club: { name: string } }>(`/clubs/${clubSlug}`)
-      .then((r) => setClubName(r.club.name))
+    // 準備中の部活は入部できないので、案内を出さない
+    apiFetch<{ club: { name: string; status: string } }>(`/clubs/${clubSlug}`)
+      .then((r) => setClubName(r.club.status === "open" ? r.club.name : null))
       .catch(() => setClubName(null));
   }, [clubSlug]);
 

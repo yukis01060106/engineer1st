@@ -167,7 +167,8 @@ on("POST", "/auth/register", (c) => {
   const b = c.body as { email: string; password: string; name: string; workStyle?: string; interests?: string[]; clubSlug?: string; eventId?: string; referrerId?: string };
   if (!b.email || !b.password || b.password.length < 8 || !b.name) throw new HttpError(400, "入力内容を確認してください");
   if (c.db.users.some((u) => u.email === b.email)) throw new HttpError(409, "このメールアドレスは既に登録されています");
-  const club = b.clubSlug ? c.db.clubs.find((x) => x.slug === b.clubSlug) : undefined;
+  const sourceClub = b.clubSlug ? c.db.clubs.find((x) => x.slug === b.clubSlug) : undefined;
+  const club = sourceClub && (sourceClub.status ?? "open") === "open" ? sourceClub : undefined; // 準備中の部には入部させない
   const referrer = b.referrerId ? c.db.users.find((u) => u.id === b.referrerId) : undefined;
   const user: DemoUser = {
     id: newId("user"),
@@ -177,7 +178,7 @@ on("POST", "/auth/register", (c) => {
     workStyle: b.workStyle ?? "freelance",
     role: "member",
     interests: JSON.stringify(b.interests ?? []),
-    signupSource: referrer ? "referral" : club ? `club:${club.slug}` : b.eventId ? "event" : null,
+    signupSource: referrer ? "referral" : sourceClub ? `club:${sourceClub.slug}` : b.eventId ? "event" : null,
     referredById: referrer?.id ?? null,
     birthYear: null,
     lastCheckupDate: null,
@@ -553,6 +554,7 @@ on("POST", "/clubs/:slug/join", (c) => {
   const user = requireUser(c);
   const club = c.db.clubs.find((x) => x.slug === c.params[0]);
   if (!club) throw new HttpError(404, "部活が見つかりません");
+  if ((club.status ?? "open") !== "open") throw new HttpError(409, "この部活は準備中です。始まるまでお待ちください");
   if (!c.db.clubMemberships.some((m) => m.clubId === club.id && m.userId === user.id)) {
     c.db.clubMemberships.push({ id: newId("m"), userId: user.id, clubId: club.id, joinedAt: nowIso() });
   }
@@ -600,6 +602,8 @@ on("POST", "/events/:id/apply", (c) => {
   const user = requireUser(c);
   const e = c.db.events.find((x) => x.id === c.params[0]);
   if (!e) throw new HttpError(404, "イベントが見つかりません");
+  const evClub = e.clubId ? c.db.clubs.find((x) => x.id === e.clubId) : undefined;
+  if (evClub && (evClub.status ?? "open") !== "open") throw new HttpError(409, "この部活は準備中です");
   const apps = c.db.eventApplications.filter((a) => a.eventId === e.id);
   if (apps.length >= e.capacity) throw new HttpError(409, "定員に達しました");
   if (apps.some((a) => a.userId === user.id)) throw new HttpError(409, "既に申込済みです");

@@ -80,7 +80,7 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <div className="auth-page">
-      <AuthVisual title="今週の部活、もう申し込んだ？" body="ランニング部は土曜の朝7:30、皇居の桜田門に集合です。" />
+      <AuthVisual title="今週の部活、もう申し込んだ？" body="ピックルボール部は第2・第4土曜の10時から。未経験でもすぐラリーが続きます。" />
       <main className="auth-main">
         <Suspense fallback={<div className="loading-screen">読み込み中…</div>}>
           <LoginForm />

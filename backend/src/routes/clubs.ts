@@ -44,6 +44,7 @@ clubsRouter.get("/:slug", optionalAuth, async (req: AuthedRequest, res) => {
 clubsRouter.post("/:slug/join", requireAuth, async (req: AuthedRequest, res) => {
   const club = await prisma.club.findUnique({ where: { slug: req.params.slug } });
   if (!club) return res.status(404).json({ error: "部活が見つかりません" });
+  if (club.status !== "open") return res.status(409).json({ error: "この部活は準備中です。始まるまでお待ちください" });
   await prisma.clubMembership.upsert({
     where: { userId_clubId: { userId: req.userId!, clubId: club.id } },
     update: {},

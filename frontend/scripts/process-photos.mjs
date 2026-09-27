@@ -20,6 +20,8 @@ const PHOTOS = [
   { out: "club-stretch", id: "1571019613454-1cb2f99b2d8b", w: 1200, h: 900 },
   { out: "study", id: "1556761175-5973dc0f32e7", w: 1400, h: 1000 },
   { out: "money", id: "1517694712202-14dd9538aa97", w: 1400, h: 1000 },
+  { out: "club-pickleball", id: "1737476997205-b3336182f215", w: 1200, h: 900, page: "FVhXFRkLcpA" },
+  { out: "club-training", id: "1540497077202-7c8a3999166f", w: 1200, h: 900 },
 ];
 
 const credits = [];
@@ -41,7 +43,7 @@ for (const p of PHOTOS) {
     .webp({ quality: 78 })
     .toFile(`public/photos/${p.out}.webp`);
 
-  credits.push({ file: `${p.out}.webp`, source: `https://unsplash.com/photos/${p.id}`, license: "Unsplash License" });
+  credits.push({ file: `${p.out}.webp`, source: `https://unsplash.com/photos/${p.page ?? p.id}`, license: "Unsplash License" });
   console.log("✓", p.out);
 }
 await writeFile("public/photos/credits.json", JSON.stringify(credits, null, 2) + "\n");

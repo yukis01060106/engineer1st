@@ -46,6 +46,7 @@ export default async function ClubDetailPage({ params }: { params: Promise<{ slu
   const { slug } = await params;
   const club = await getClub(slug);
   if (!club) notFound();
+  const preparing = club.status !== "open";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -64,42 +65,63 @@ export default async function ClubDetailPage({ params }: { params: Promise<{ slu
         </nav>
         <section className="detail-hero">
           <Reveal className="detail-body">
-            <span className="eyebrow">Club</span>
+            <span className="eyebrow">{preparing ? "Coming soon" : "Club"}</span>
             <h1>{club.name}</h1>
             <p className="detail-catch">{club.catchphrase}</p>
             <p className="muted">{club.description}</p>
+            {preparing && (
+              <div className="callout-inline callout-warning">
+                <Clock size={16} />
+                <span>
+                  この部活はいま準備中です。始まったらホームと勉強会・イベントのページでお知らせします。いまは
+                  <Link href="/clubs" className="btn-link">
+                    ピックルボール部・筋トレ部
+                  </Link>
+                  が活動中です。
+                </span>
+              </div>
+            )}
             <dl className="info-table">
               <dt>活動日</dt>
-              <dd>{club.schedule}</dd>
+              <dd>{preparing ? "近日スタート予定（予定：" + club.schedule + "）" : club.schedule}</dd>
               <dt>場所</dt>
               <dd>{club.place}</dd>
               <dt>レベル</dt>
               <dd>{club.level}</dd>
-              <dt>部員</dt>
-              <dd>{club.memberCount}人</dd>
+              {!preparing && (
+                <>
+                  <dt>部員</dt>
+                  <dd>{club.memberCount}人</dd>
+                </>
+              )}
               <dt>費用</dt>
               <dd>参加無料（施設利用料のみ実費を割り勘）</dd>
             </dl>
-            <ClubJoinButton slug={club.slug} name={club.name} />
+            {!preparing && <ClubJoinButton slug={club.slug} name={club.name} />}
+            {!preparing && (
             <InviteButton
               path={`/clubs/${club.slug}/`}
               title={`ソトバ ${club.name}`}
               text={`${club.name}、いっしょにどう？ ${club.schedule}・${club.place}。参加は無料です。`}
               className="btn-ghost btn-sm"
             />
+            )}
           </Reveal>
           <Reveal delay={120}>
             <Photo src={`/photos/${club.photo}`} alt={club.name} blob={club.color} priority />
           </Reveal>
         </section>
 
+        {!preparing && (
         <section style={{ padding: "24px 0 96px" }}>
           <div className="section-title">
             <span className="eyebrow">Next</span>
             <h2 style={{ fontSize: 24 }}>次の活動</h2>
           </div>
           <div className="event-list">
-            {club.events.length === 0 && <div className="empty-state">次の活動は準備中です</div>}
+            {club.events.length === 0 && (
+              <div className="empty-state">{preparing ? "部活の開始に向けて準備中です" : "次の活動は準備中です"}</div>
+            )}
             {club.events.map((e) => (
               <Link href={`/events/${e.id}`} className="event-row" key={e.id}>
                 <EventDate date={e.date} />
@@ -121,6 +143,8 @@ export default async function ClubDetailPage({ params }: { params: Promise<{ slu
             ))}
           </div>
         </section>
+        )}
+        {preparing && <div style={{ height: 72 }} />}
       </div>
     </SiteLayout>
   );

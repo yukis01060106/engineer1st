@@ -9,6 +9,7 @@ export interface ClubSummary {
   level: string;
   photo: string;
   color: "yellow" | "pink" | "mint" | "violet";
+  status: "open" | "preparing";
   memberCount: number;
   joined: boolean;
   nextActivity: { id: string; title: string; date: string; location: string } | null;

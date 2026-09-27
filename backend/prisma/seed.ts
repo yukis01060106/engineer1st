@@ -323,6 +323,34 @@ async function main() {
   // 部活（健康推進 × 集客）
   const clubsData = [
     {
+      slug: "pickleball",
+      name: "ピックルボール部",
+      catchphrase: "テニスより小さなコートで、初めてでもすぐラリーが続く。",
+      description:
+        "アメリカで大人気のパドルスポーツ。ルールは10分で覚えられ、運動が久しぶりの人でもすぐにラリーを楽しめます。パドルとボールは貸し出しあり。終わったあとのごはん会で、案件や技術の話も気軽にどうぞ。",
+      schedule: "毎月第2・第4土曜 10:00〜12:00",
+      place: "都内の屋内コート（渋谷・品川エリア）",
+      level: "未経験者歓迎",
+      photo: "club-pickleball.webp",
+      color: "yellow",
+      status: "open",
+      sortOrder: 1,
+    },
+    {
+      slug: "training",
+      name: "筋トレ部",
+      catchphrase: "座りっぱなしの体に、週1回の筋トレを。",
+      description:
+        "トレーナー経験のある部員がフォームを見ながら、全身をバランスよく鍛えます。肩こり・腰痛の予防にも。ジムで集まる回と、自宅でできるオンラインの回があります。",
+      schedule: "毎週水曜 19:30〜20:30（オンライン回は隔週月曜 21:00〜）",
+      place: "都内のパーソナルジム／オンライン（Zoom）",
+      level: "初心者歓迎",
+      photo: "club-training.webp",
+      color: "pink",
+      status: "open",
+      sortOrder: 2,
+    },
+    {
       slug: "running",
       name: "ランニング部",
       catchphrase: "座りっぱなしの1週間を、土曜の朝にリセット。",
@@ -332,8 +360,9 @@ async function main() {
       place: "皇居外周（桜田門集合）",
       level: "初心者・ウォーキング歓迎",
       photo: "club-running.webp",
-      color: "yellow",
-      sortOrder: 1,
+      color: "mint",
+      status: "preparing",
+      sortOrder: 3,
     },
     {
       slug: "futsal",
@@ -346,7 +375,8 @@ async function main() {
       level: "未経験者歓迎",
       photo: "club-futsal.webp",
       color: "mint",
-      sortOrder: 2,
+      status: "preparing",
+      sortOrder: 4,
     },
     {
       slug: "bouldering",
@@ -358,8 +388,9 @@ async function main() {
       place: "秋葉原のボルダリングジム",
       level: "はじめての人が半分",
       photo: "club-bouldering.webp",
-      color: "pink",
-      sortOrder: 3,
+      color: "violet",
+      status: "preparing",
+      sortOrder: 5,
     },
     {
       slug: "stretch",
@@ -372,7 +403,8 @@ async function main() {
       level: "どなたでも",
       photo: "club-stretch.webp",
       color: "violet",
-      sortOrder: 4,
+      status: "preparing",
+      sortOrder: 6,
     },
   ];
   const clubs: Record<string, { id: string }> = {};
@@ -380,11 +412,8 @@ async function main() {
     clubs[c.slug] = await prisma.club.upsert({ where: { slug: c.slug }, update: c, create: c });
   }
 
-  await prisma.clubMembership.upsert({
-    where: { userId_clubId: { userId: user.id, clubId: clubs.running.id } },
-    update: {},
-    create: { userId: user.id, clubId: clubs.running.id },
-  });
+  await prisma.clubMembership.deleteMany({});
+  await prisma.clubMembership.create({ data: { userId: user.id, clubId: clubs.pickleball.id } });
 
   // 勉強会・部活の活動・交流会（日付は実行日から相対で作る）
   const at = (daysLater: number, hour: number, minute = 0) => {
@@ -438,60 +467,60 @@ async function main() {
       capacity: 60,
     },
     {
-      title: "ランニング部：皇居1周＋モーニング",
+      title: "ピックルボール部：はじめての人向けラリー練習",
       type: "部活",
-      date: at(7, 7, 30),
-      durationMin: 90,
-      isOnline: false,
-      location: "桜田門 集合",
-      joinUrl: null,
-      speaker: null,
-      tags: "ランニング,朝活",
-      description: "ゆっくりペースで1周（約5km）。走り終わったら近くのカフェでモーニングです。",
-      capacity: 20,
-      clubId: clubs.running.id,
-    },
-    {
-      title: "フットサル部：ミニゲーム＆ごはん会",
-      type: "部活",
-      date: at(10, 19, 30),
+      date: at(7, 10),
       durationMin: 120,
       isOnline: false,
-      location: "渋谷のフットサルコート",
+      location: "渋谷エリアの屋内コート",
       joinUrl: null,
       speaker: null,
-      tags: "フットサル",
-      description: "ミニゲームを中心に2時間。シューズのレンタルあり。",
+      tags: "ピックルボール,初心者歓迎",
+      description: "持ち方・打ち方の基本から、2対2のゲームまで。パドルは貸し出しあり。動きやすい服装と室内シューズでどうぞ。終わったらランチ会です。",
       capacity: 16,
-      clubId: clubs.futsal.id,
+      clubId: clubs.pickleball.id,
     },
     {
-      title: "ボルダリング部：はじめての人向けの回",
+      title: "ピックルボール部：ダブルス練習会",
       type: "部活",
-      date: at(9, 19),
+      date: at(21, 10),
       durationMin: 120,
       isOnline: false,
-      location: "秋葉原のボルダリングジム",
+      location: "品川エリアの屋内コート",
       joinUrl: null,
       speaker: null,
-      tags: "ボルダリング",
-      description: "登り方の基本から。初回はジムの講習（15分）を受けてから始めます。",
-      capacity: 12,
-      clubId: clubs.bouldering.id,
+      tags: "ピックルボール",
+      description: "ダブルスのゲームを中心に。経験者と未経験者でペアを組むので、初参加でも大丈夫です。",
+      capacity: 16,
+      clubId: clubs.pickleball.id,
     },
     {
-      title: "朝ストレッチ部：肩こり・首こりリセット",
+      title: "筋トレ部：肩こり・腰痛予防の全身トレーニング",
       type: "部活",
-      date: at(1, 8, 30),
-      durationMin: 15,
-      isOnline: true,
-      location: "オンライン（Google Meet）",
-      joinUrl: "https://meet.google.com/xyz-stretch-am",
+      date: at(3, 19, 30),
+      durationMin: 60,
+      isOnline: false,
+      location: "渋谷のパーソナルジム",
+      joinUrl: null,
       speaker: null,
-      tags: "ストレッチ,朝活",
-      description: "座りっぱなしで固まった首・肩・腰を15分でほぐします。",
-      capacity: 200,
-      clubId: clubs.stretch.id,
+      tags: "筋トレ,初心者歓迎",
+      description: "スクワット・ヒップリフト・ローイングなど、デスクワークで弱りやすい筋肉を中心に。フォームは部員のトレーナーがチェックします。",
+      capacity: 10,
+      clubId: clubs.training.id,
+    },
+    {
+      title: "筋トレ部：自宅でできる30分トレーニング（オンライン）",
+      type: "部活",
+      date: at(1, 21),
+      durationMin: 30,
+      isOnline: true,
+      location: "オンライン（Zoom）",
+      joinUrl: "https://zoom.us/j/0000000003",
+      speaker: null,
+      tags: "筋トレ,オンライン",
+      description: "道具なし・マット1枚でできるメニューを30分。カメラオフでもOKです。",
+      capacity: 50,
+      clubId: clubs.training.id,
     },
     {
       title: "フリーランス・SESエンジニア交流会（渋谷）",
@@ -559,11 +588,11 @@ async function main() {
 
   // 見込み客のサンプル（部活・勉強会から登録した人たち）
   const leadSeeds: { email: string; name: string; workStyle: string; source: string | null; clubs: string[]; days: number; referredBy?: string }[] = [
-    { email: "sato@example.com", name: "佐藤 陸", workStyle: "ses_employee", source: "club:running", clubs: ["running"], days: 12 },
-    { email: "kimura@example.com", name: "木村 葵", workStyle: "considering", source: "club:bouldering", clubs: ["bouldering", "stretch"], days: 4 },
+    { email: "sato@example.com", name: "佐藤 陸", workStyle: "ses_employee", source: "club:pickleball", clubs: ["pickleball"], days: 12 },
+    { email: "kimura@example.com", name: "木村 葵", workStyle: "considering", source: "club:training", clubs: ["training", "pickleball"], days: 4 },
     { email: "ito@example.com", name: "伊藤 湊", workStyle: "freelance", source: "event", clubs: [], days: 20 },
-    { email: "yamada@example.com", name: "山田 結衣", workStyle: "ses_employee", source: "club:futsal", clubs: ["futsal"], days: 35 },
-    { email: "nakamura@example.com", name: "中村 蒼", workStyle: "considering", source: "referral", clubs: ["stretch"], days: 2, referredBy: user.id },
+    { email: "yamada@example.com", name: "山田 結衣", workStyle: "ses_employee", source: "club:training", clubs: ["training"], days: 35 },
+    { email: "nakamura@example.com", name: "中村 蒼", workStyle: "considering", source: "referral", clubs: ["training"], days: 2, referredBy: user.id },
   ];
   for (const l of leadSeeds) {
     const createdAt = new Date(Date.now() - l.days * 86_400_000);

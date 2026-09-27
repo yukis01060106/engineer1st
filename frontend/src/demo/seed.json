@@ -1,5 +1,5 @@
 {
- "exportedAt": "2026-09-27T07:48:17.288Z",
+ "exportedAt": "2026-09-27T07:56:27.841Z",
  "users": [
   {
    "id": "cmr9izvx90000jh6wwtov5p12",
@@ -12,7 +12,7 @@
    "signupSource": null,
    "referredById": null,
    "birthYear": 1994,
-   "lastCheckupDate": "2025-07-27T07:48:16.968Z",
+   "lastCheckupDate": "2025-07-27T07:56:27.498Z",
    "joinedAt": "2024-07-06T18:00:36.185Z",
    "createdAt": "2026-07-06T18:00:36.190Z"
   },
@@ -39,7 +39,7 @@
    "workStyle": "ses_employee",
    "role": "member",
    "interests": "[]",
-   "signupSource": "club:running",
+   "signupSource": "club:pickleball",
    "referredById": null,
    "birthYear": null,
    "lastCheckupDate": null,
@@ -54,7 +54,7 @@
    "workStyle": "considering",
    "role": "member",
    "interests": "[]",
-   "signupSource": "club:bouldering",
+   "signupSource": "club:training",
    "referredById": null,
    "birthYear": null,
    "lastCheckupDate": null,
@@ -84,7 +84,7 @@
    "workStyle": "ses_employee",
    "role": "member",
    "interests": "[]",
-   "signupSource": "club:futsal",
+   "signupSource": "club:training",
    "referredById": null,
    "birthYear": null,
    "lastCheckupDate": null,
@@ -171,7 +171,7 @@
    "projectId": "cmr9izvxk0004jh6w6jokrjd2",
    "monthlyRate": 750000,
    "startDate": "2026-05-06T18:00:36.202Z",
-   "endDate": "2026-10-22T07:48:16.933Z",
+   "endDate": "2026-10-22T07:56:27.459Z",
    "status": "稼働中",
    "settlementMin": 140,
    "settlementMax": 180,
@@ -183,7 +183,7 @@
    "projectId": "cmr9izvxf0001jh6w09jkfqce",
    "monthlyRate": 700000,
    "startDate": "2025-07-06T18:00:36.203Z",
-   "endDate": "2026-05-27T07:48:16.934Z",
+   "endDate": "2026-05-27T07:56:27.459Z",
    "status": "終了",
    "settlementMin": 140,
    "settlementMax": 180,
@@ -208,7 +208,7 @@
    "registrationNumber": "T9876543210987",
    "invoiceNumber": "INV-202603-SEED0",
    "status": "入金済み",
-   "issuedAt": "2026-09-27T07:48:16.936Z"
+   "issuedAt": "2026-09-27T07:56:27.462Z"
   },
   {
    "id": "seed-invoice-1",
@@ -227,7 +227,7 @@
    "registrationNumber": "T9876543210987",
    "invoiceNumber": "INV-202604-SEED1",
    "status": "入金済み",
-   "issuedAt": "2026-09-27T07:48:16.949Z"
+   "issuedAt": "2026-09-27T07:56:27.474Z"
   },
   {
    "id": "seed-invoice-2",
@@ -246,7 +246,7 @@
    "registrationNumber": "T9876543210987",
    "invoiceNumber": "INV-202607-SEED2",
    "status": "発行済み",
-   "issuedAt": "2026-09-27T07:48:16.949Z"
+   "issuedAt": "2026-09-27T07:56:27.474Z"
   },
   {
    "id": "seed-invoice-3",
@@ -265,7 +265,7 @@
    "registrationNumber": "T9876543210987",
    "invoiceNumber": "INV-202608-SEED3",
    "status": "発行済み",
-   "issuedAt": "2026-09-27T07:48:16.950Z"
+   "issuedAt": "2026-09-27T07:56:27.475Z"
   }
  ],
  "contracts": [
@@ -305,12 +305,12 @@
    "workProcesses": "[\"設計\",\"開発（フロントエンド）\",\"開発（バックエンド）\",\"テスト\"]",
    "appealPoints": "[\"TypeScript / React / Node.js を軸としたモダン開発スキルで、画面構築からAPI開発まで独力かつハイレベルに遂行可能。\",\"生成AIを活用したチャットボット開発プロジェクトに参画し、AI技術の実務応用への知見を保有。\"]",
    "remarks": "フルリモート環境でも自走力高く安定した成果を出せる自信があります。生成AIを活用した開発にも意欲的に取り組んでいます。",
-   "updatedAt": "2026-09-27T07:48:16.952Z"
+   "updatedAt": "2026-09-27T07:56:27.477Z"
   }
  ],
  "events": [
   {
-   "id": "cmujio5350009wvaxkmoznxfy",
+   "id": "cmujiynky000b11x7u9vi06d1",
    "title": "Claude Code 実践：レビューとテストをAIに任せる開発フロー",
    "type": "勉強会",
    "date": "2026-10-02T11:00:00.000Z",
@@ -323,10 +323,10 @@
    "description": "AIエージェントに実装・テスト・レビューを任せるときの、現場で使える手順を紹介します。SESの現場でAIツールが使えない場合の、個人での練習方法もお話しします。",
    "capacity": 100,
    "clubId": null,
-   "createdAt": "2026-09-27T07:48:16.961Z"
+   "createdAt": "2026-09-27T07:56:27.491Z"
   },
   {
-   "id": "cmujio535000awvax54pa4v8t",
+   "id": "cmujiynkz000c11x7sk0j1xs9",
    "title": "Next.js 16 と React 19 の変更点をまとめて押さえる",
    "type": "勉強会",
    "date": "2026-10-09T11:00:00.000Z",
@@ -339,10 +339,10 @@
    "description": "Server Components、Actions、キャッシュまわりの変更を、実務で困るポイントに絞って解説します。",
    "capacity": 80,
    "clubId": null,
-   "createdAt": "2026-09-27T07:48:16.962Z"
+   "createdAt": "2026-09-27T07:56:27.491Z"
   },
   {
-   "id": "cmujio536000bwvaxx0rv92n4",
+   "id": "cmujiynkz000d11x7ambhjc03",
    "title": "40代からの単価の上げ方：要件定義・調整役の経験を積む",
    "type": "勉強会",
    "date": "2026-10-16T11:00:00.000Z",
@@ -355,74 +355,74 @@
    "description": "開発工程に閉じがちなSESの現場で、調整役・要件定義の経験をどう積むか。実例をもとに話します。",
    "capacity": 60,
    "clubId": null,
-   "createdAt": "2026-09-27T07:48:16.962Z"
+   "createdAt": "2026-09-27T07:56:27.492Z"
   },
   {
-   "id": "cmujio536000dwvaxd92mli62",
-   "title": "ランニング部：皇居1周＋モーニング",
+   "id": "cmujiynl0000f11x762zjp6xo",
+   "title": "ピックルボール部：はじめての人向けラリー練習",
    "type": "部活",
-   "date": "2026-10-03T22:30:00.000Z",
-   "durationMin": 90,
-   "location": "桜田門 集合",
-   "isOnline": false,
-   "joinUrl": null,
-   "speaker": null,
-   "tags": "ランニング,朝活",
-   "description": "ゆっくりペースで1周（約5km）。走り終わったら近くのカフェでモーニングです。",
-   "capacity": 20,
-   "clubId": "cmujeh8te0003134b6e3eyax7",
-   "createdAt": "2026-09-27T07:48:16.963Z"
-  },
-  {
-   "id": "cmujio537000fwvax6udh1qu2",
-   "title": "フットサル部：ミニゲーム＆ごはん会",
-   "type": "部活",
-   "date": "2026-10-07T10:30:00.000Z",
+   "date": "2026-10-04T01:00:00.000Z",
    "durationMin": 120,
-   "location": "渋谷のフットサルコート",
+   "location": "渋谷エリアの屋内コート",
    "isOnline": false,
    "joinUrl": null,
    "speaker": null,
-   "tags": "フットサル",
-   "description": "ミニゲームを中心に2時間。シューズのレンタルあり。",
+   "tags": "ピックルボール,初心者歓迎",
+   "description": "持ち方・打ち方の基本から、2対2のゲームまで。パドルは貸し出しあり。動きやすい服装と室内シューズでどうぞ。終わったらランチ会です。",
    "capacity": 16,
-   "clubId": "cmujeh8tf0004134badl5cm21",
-   "createdAt": "2026-09-27T07:48:16.963Z"
+   "clubId": "cmujiynkq000311x7oj5x10xn",
+   "createdAt": "2026-09-27T07:56:27.492Z"
   },
   {
-   "id": "cmujio537000hwvaxfmhhiolh",
-   "title": "ボルダリング部：はじめての人向けの回",
+   "id": "cmujiynl0000h11x7zwfzowri",
+   "title": "ピックルボール部：ダブルス練習会",
    "type": "部活",
-   "date": "2026-10-06T10:00:00.000Z",
+   "date": "2026-10-18T01:00:00.000Z",
    "durationMin": 120,
-   "location": "秋葉原のボルダリングジム",
+   "location": "品川エリアの屋内コート",
    "isOnline": false,
    "joinUrl": null,
    "speaker": null,
-   "tags": "ボルダリング",
-   "description": "登り方の基本から。初回はジムの講習（15分）を受けてから始めます。",
-   "capacity": 12,
-   "clubId": "cmujeh8tg0005134b7s4kzjpm",
-   "createdAt": "2026-09-27T07:48:16.964Z"
+   "tags": "ピックルボール",
+   "description": "ダブルスのゲームを中心に。経験者と未経験者でペアを組むので、初参加でも大丈夫です。",
+   "capacity": 16,
+   "clubId": "cmujiynkq000311x7oj5x10xn",
+   "createdAt": "2026-09-27T07:56:27.493Z"
   },
   {
-   "id": "cmujio538000jwvaxw79ztqmm",
-   "title": "朝ストレッチ部：肩こり・首こりリセット",
+   "id": "cmujiynl1000j11x7lpwc6hj6",
+   "title": "筋トレ部：肩こり・腰痛予防の全身トレーニング",
    "type": "部活",
-   "date": "2026-09-27T23:30:00.000Z",
-   "durationMin": 15,
-   "location": "オンライン（Google Meet）",
-   "isOnline": true,
-   "joinUrl": "https://meet.google.com/xyz-stretch-am",
+   "date": "2026-09-30T10:30:00.000Z",
+   "durationMin": 60,
+   "location": "渋谷のパーソナルジム",
+   "isOnline": false,
+   "joinUrl": null,
    "speaker": null,
-   "tags": "ストレッチ,朝活",
-   "description": "座りっぱなしで固まった首・肩・腰を15分でほぐします。",
-   "capacity": 200,
-   "clubId": "cmujeh8th0006134bsxokd5jc",
-   "createdAt": "2026-09-27T07:48:16.964Z"
+   "tags": "筋トレ,初心者歓迎",
+   "description": "スクワット・ヒップリフト・ローイングなど、デスクワークで弱りやすい筋肉を中心に。フォームは部員のトレーナーがチェックします。",
+   "capacity": 10,
+   "clubId": "cmujiynks000411x7vm702l31",
+   "createdAt": "2026-09-27T07:56:27.494Z"
   },
   {
-   "id": "cmujio538000kwvaxeayse2bc",
+   "id": "cmujiynl2000l11x7ss1ynyub",
+   "title": "筋トレ部：自宅でできる30分トレーニング（オンライン）",
+   "type": "部活",
+   "date": "2026-09-28T12:00:00.000Z",
+   "durationMin": 30,
+   "location": "オンライン（Zoom）",
+   "isOnline": true,
+   "joinUrl": "https://zoom.us/j/0000000003",
+   "speaker": null,
+   "tags": "筋トレ,オンライン",
+   "description": "道具なし・マット1枚でできるメニューを30分。カメラオフでもOKです。",
+   "capacity": 50,
+   "clubId": "cmujiynks000411x7vm702l31",
+   "createdAt": "2026-09-27T07:56:27.494Z"
+  },
+  {
+   "id": "cmujiynl2000m11x7m1ueczln",
    "title": "フリーランス・SESエンジニア交流会（渋谷）",
    "type": "交流会",
    "date": "2026-10-13T10:00:00.000Z",
@@ -435,36 +435,36 @@
    "description": "独立している人も、これから考えている人も。案件の選び方やお金の話を気軽に聞ける会です。",
    "capacity": 30,
    "clubId": null,
-   "createdAt": "2026-09-27T07:48:16.965Z"
+   "createdAt": "2026-09-27T07:56:27.495Z"
   }
  ],
  "eventApplications": [
   {
-   "id": "cmujio539000mwvaxh09m99xl",
+   "id": "cmujiynl3000o11x7xoe5bssk",
    "userId": "cmr9izvx90000jh6wwtov5p12",
-   "eventId": "cmujio5350009wvaxkmoznxfy",
+   "eventId": "cmujiynky000b11x7u9vi06d1",
    "purpose": "現場でのAI活用を知りたい",
    "level": "実務で少し",
    "question": null,
-   "appliedAt": "2026-09-27T07:48:16.965Z"
+   "appliedAt": "2026-09-27T07:56:27.495Z"
   },
   {
-   "id": "cmujio539000owvaxd22b8w5n",
+   "id": "cmujiynl3000q11x77hfuur21",
    "userId": "cmr9izvx90000jh6wwtov5p12",
-   "eventId": "cmujio536000dwvaxd92mli62",
+   "eventId": "cmujiynl0000f11x762zjp6xo",
    "purpose": null,
    "level": null,
    "question": null,
-   "appliedAt": "2026-09-27T07:48:16.966Z"
+   "appliedAt": "2026-09-27T07:56:27.496Z"
   },
   {
-   "id": "cmujio53h001swvaxhvw0zq9q",
+   "id": "cmujiynld001u11x7vjfp8v0b",
    "userId": "cmujeh8ty001f134b32bax9r3",
-   "eventId": "cmujio536000bwvaxx0rv92n4",
+   "eventId": "cmujiynkz000d11x7ambhjc03",
    "purpose": "独立前に単価の相場を知りたい",
    "level": "実務でがっつり",
    "question": null,
-   "appliedAt": "2026-09-27T07:48:16.973Z"
+   "appliedAt": "2026-09-27T07:56:27.505Z"
   }
  ],
  "clubs": [
@@ -478,8 +478,9 @@
    "place": "皇居外周（桜田門集合）",
    "level": "初心者・ウォーキング歓迎",
    "photo": "club-running.webp",
-   "color": "yellow",
-   "sortOrder": 1
+   "color": "mint",
+   "status": "preparing",
+   "sortOrder": 3
   },
   {
    "id": "cmujeh8tf0004134badl5cm21",
@@ -492,7 +493,8 @@
    "level": "未経験者歓迎",
    "photo": "club-futsal.webp",
    "color": "mint",
-   "sortOrder": 2
+   "status": "preparing",
+   "sortOrder": 4
   },
   {
    "id": "cmujeh8tg0005134b7s4kzjpm",
@@ -504,8 +506,9 @@
    "place": "秋葉原のボルダリングジム",
    "level": "はじめての人が半分",
    "photo": "club-bouldering.webp",
-   "color": "pink",
-   "sortOrder": 3
+   "color": "violet",
+   "status": "preparing",
+   "sortOrder": 5
   },
   {
    "id": "cmujeh8th0006134bsxokd5jc",
@@ -518,45 +521,74 @@
    "level": "どなたでも",
    "photo": "club-stretch.webp",
    "color": "violet",
-   "sortOrder": 4
+   "status": "preparing",
+   "sortOrder": 6
+  },
+  {
+   "id": "cmujiynkq000311x7oj5x10xn",
+   "slug": "pickleball",
+   "name": "ピックルボール部",
+   "catchphrase": "テニスより小さなコートで、初めてでもすぐラリーが続く。",
+   "description": "アメリカで大人気のパドルスポーツ。ルールは10分で覚えられ、運動が久しぶりの人でもすぐにラリーを楽しめます。パドルとボールは貸し出しあり。終わったあとのごはん会で、案件や技術の話も気軽にどうぞ。",
+   "schedule": "毎月第2・第4土曜 10:00〜12:00",
+   "place": "都内の屋内コート（渋谷・品川エリア）",
+   "level": "未経験者歓迎",
+   "photo": "club-pickleball.webp",
+   "color": "yellow",
+   "status": "open",
+   "sortOrder": 1
+  },
+  {
+   "id": "cmujiynks000411x7vm702l31",
+   "slug": "training",
+   "name": "筋トレ部",
+   "catchphrase": "座りっぱなしの体に、週1回の筋トレを。",
+   "description": "トレーナー経験のある部員がフォームを見ながら、全身をバランスよく鍛えます。肩こり・腰痛の予防にも。ジムで集まる回と、自宅でできるオンラインの回があります。",
+   "schedule": "毎週水曜 19:30〜20:30（オンライン回は隔週月曜 21:00〜）",
+   "place": "都内のパーソナルジム／オンライン（Zoom）",
+   "level": "初心者歓迎",
+   "photo": "club-training.webp",
+   "color": "pink",
+   "status": "open",
+   "sortOrder": 2
   }
  ],
  "clubMemberships": [
   {
-   "id": "cmujeh8ti0008134bnhhvq8x4",
+   "id": "cmujiynkx000a11x7ua57au2c",
    "userId": "cmr9izvx90000jh6wwtov5p12",
-   "clubId": "cmujeh8te0003134b6e3eyax7",
-   "joinedAt": "2026-09-27T05:50:56.742Z"
+   "clubId": "cmujiynkq000311x7oj5x10xn",
+   "joinedAt": "2026-09-27T07:56:27.489Z"
   },
   {
-   "id": "cmujeh8ty001e134b4r5umn3t",
+   "id": "cmujiynl8001g11x7aq59uzsw",
    "userId": "cmujeh8tx001c134br3v6lkbw",
-   "clubId": "cmujeh8te0003134b6e3eyax7",
-   "joinedAt": "2026-09-27T05:50:56.758Z"
+   "clubId": "cmujiynkq000311x7oj5x10xn",
+   "joinedAt": "2026-09-27T07:56:27.501Z"
   },
   {
-   "id": "cmujeh8tz001h134bi9byg7pn",
+   "id": "cmujiynl9001j11x75im9m31e",
    "userId": "cmujeh8ty001f134b32bax9r3",
-   "clubId": "cmujeh8tg0005134b7s4kzjpm",
-   "joinedAt": "2026-09-27T05:50:56.759Z"
+   "clubId": "cmujiynks000411x7vm702l31",
+   "joinedAt": "2026-09-27T07:56:27.502Z"
   },
   {
-   "id": "cmujeh8tz001j134blffuq1ym",
+   "id": "cmujiynla001l11x70sh5vy35",
    "userId": "cmujeh8ty001f134b32bax9r3",
-   "clubId": "cmujeh8th0006134bsxokd5jc",
-   "joinedAt": "2026-09-27T05:50:56.760Z"
+   "clubId": "cmujiynkq000311x7oj5x10xn",
+   "joinedAt": "2026-09-27T07:56:27.502Z"
   },
   {
-   "id": "cmujeh8u1001n134bmptzvm3n",
+   "id": "cmujiynlb001p11x7behzednu",
    "userId": "cmujeh8u0001l134b4dkbtdiq",
-   "clubId": "cmujeh8tf0004134badl5cm21",
-   "joinedAt": "2026-09-27T05:50:56.762Z"
+   "clubId": "cmujiynks000411x7vm702l31",
+   "joinedAt": "2026-09-27T07:56:27.504Z"
   },
   {
-   "id": "cmujeh8u4001q134bipdpvz2a",
+   "id": "cmujiynlc001s11x74fnaub4z",
    "userId": "cmujeh8u2001o134bxh5jpeia",
-   "clubId": "cmujeh8th0006134bsxokd5jc",
-   "joinedAt": "2026-09-27T05:50:56.764Z"
+   "clubId": "cmujiynks000411x7vm702l31",
+   "joinedAt": "2026-09-27T07:56:27.504Z"
   }
  ],
  "healthLogs": [
@@ -674,7 +706,7 @@
    "nisaMonthly": 30000,
    "expectedReturn": 0.03,
    "retireAge": 65,
-   "updatedAt": "2026-09-27T07:48:16.969Z"
+   "updatedAt": "2026-09-27T07:56:27.499Z"
   }
  ],
  "rateDiagnoses": [
@@ -789,21 +821,21 @@
    "createdAt": "2026-09-27T06:24:22.287Z"
   },
   {
-   "id": "cmujio53i001uwvaxdvce62uo",
+   "id": "cmujiynle001w11x745cwhpff",
    "userId": "cmujeh8ty001f134b32bax9r3",
    "primarySkill": "Java",
    "role": "バックエンドエンジニア",
    "yearsOfExperience": 6,
    "monthlyRate": 550000,
    "chainDepth": 3,
-   "createdAt": "2026-09-27T07:48:16.974Z"
+   "createdAt": "2026-09-27T07:56:27.506Z"
   }
  ],
  "expenses": [
   {
    "id": "seed-expense-0",
    "userId": "cmr9izvx90000jh6wwtov5p12",
-   "date": "2026-09-24T07:48:16.955Z",
+   "date": "2026-09-24T07:56:27.480Z",
    "vendor": "JR東日本",
    "amount": 1200,
    "category": "旅費交通費",
@@ -814,7 +846,7 @@
   {
    "id": "seed-expense-1",
    "userId": "cmr9izvx90000jh6wwtov5p12",
-   "date": "2026-09-17T07:48:16.955Z",
+   "date": "2026-09-17T07:56:27.480Z",
    "vendor": "コワーキングスペース渋谷",
    "amount": 3300,
    "category": "会議費",
@@ -825,7 +857,7 @@
   {
    "id": "seed-expense-2",
    "userId": "cmr9izvx90000jh6wwtov5p12",
-   "date": "2026-09-12T07:48:16.955Z",
+   "date": "2026-09-12T07:56:27.480Z",
    "vendor": "Amazon",
    "amount": 8980,
    "category": "消耗品費",

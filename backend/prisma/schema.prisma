@@ -220,6 +220,7 @@ model Club {
   level       String   // 例: "初心者歓迎"
   photo       String   // /photos 配下のファイル名
   color       String   // アクセントカラー（ブランドパレットのキー）
+  status      String   @default("open") // open: 公開中 / preparing: 準備中（入部・申込はできない）
   sortOrder   Int      @default(0)
 
   memberships ClubMembership[]

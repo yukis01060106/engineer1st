@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import {
   ArrowRight,
   Check,
@@ -21,17 +20,17 @@ import { SiteLayout } from "../components/SiteLayout";
 import { Photo } from "../components/Photo";
 import { Reveal } from "../components/Reveal";
 import { EventDate } from "../components/EventDate";
+import { ClubCard } from "../components/ClubCard";
 import { serverFetchOr } from "../lib/serverApi";
 import { dateParts } from "../lib/format";
 import type { ClubSummary, EventItem } from "../lib/types";
-import { asset } from "../lib/demo";
 
 export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: { absolute: "ソトバ | エンジニアの、からだと、くらしと、仲間。" },
   description:
-    "フリーランス・SESエンジニアのための無料プラットフォーム。ランニング・フットサルなどの部活、最新技術のオンライン勉強会、請求書・入金管理・税金の取り分け・AI FPによる資産形成までまとめてサポート。",
+    "フリーランス・SESエンジニアのための無料プラットフォーム。ピックルボール部・筋トレ部などの部活、最新技術のオンライン勉強会、請求書・入金管理・税金の取り分け・AI FPによる資産形成までまとめてサポート。",
   alternates: { canonical: "/" },
 };
 
@@ -163,7 +162,7 @@ export default async function LandingPage() {
               <div className="hero-badge">
                 <Users size={28} />
                 <div>
-                  <strong>{clubs.length || 4}</strong>つの部活
+                  <strong>{clubs.filter((c) => c.status === "open").length || 2}</strong>つの部活が活動中
                   <div className="small muted">毎月の勉強会はオンライン</div>
                 </div>
               </div>
@@ -175,7 +174,7 @@ export default async function LandingPage() {
       <div className="marquee" aria-hidden>
         <div className="marquee-track">
           {Array.from({ length: 2 }).flatMap((_, k) =>
-            ["RUNNING", "FUTSAL", "BOULDERING", "STRETCH", "STUDY", "INVOICE", "TAX", "WEALTH"].map((w) => (
+            ["PICKLEBALL", "TRAINING", "STUDY", "INVOICE", "TAX", "WEALTH", "COMMUNITY", "CAREER"].map((w) => (
               <span key={`${k}-${w}`}>{w}</span>
             ))
           )}
@@ -227,7 +226,7 @@ export default async function LandingPage() {
                 <span className="pillar-num">01 — BODY &amp; FRIENDS</span>
                 <h3>部活で、からだと仲間を。</h3>
                 <p className="muted">
-                  ランニング、フットサル、ボルダリング、朝ストレッチ。現場も会社もバラバラなエンジニアが、体を動かしながら自然に知り合えます。
+                  いまはピックルボール部と筋トレ部が活動中。ランニングやボルダリングなども準備しています。現場も会社もバラバラなエンジニアが、体を動かしながら自然に知り合えます。
                 </p>
                 <ul className="pillar-list">
                   <li><Check size={18} /> 参加は無料登録だけ。道具はレンタルできる部がほとんど</li>
@@ -298,22 +297,7 @@ export default async function LandingPage() {
           <div className="club-grid">
             {clubs.map((c, i) => (
               <Reveal key={c.slug} delay={i * 80}>
-                <Link href={`/clubs/${c.slug}`} className="club-card">
-                  <div className="club-card-photo">
-                    <Image src={asset(`/photos/${c.photo}`)} alt={c.name} fill sizes="(max-width: 640px) 100vw, 300px" />
-                    <span className={`badge badge-${c.color === "violet" ? "violet" : c.color} club-card-tag`}>{c.level}</span>
-                  </div>
-                  <h3>{c.name}</h3>
-                  <p>{c.catchphrase}</p>
-                  <div className="club-meta">
-                    <span>
-                      <Clock size={14} /> {c.schedule}
-                    </span>
-                    <span>
-                      <Users size={14} /> 部員 {c.memberCount}人
-                    </span>
-                  </div>
-                </Link>
+                <ClubCard club={c} />
               </Reveal>
             ))}
           </div>
@@ -465,7 +449,7 @@ export default async function LandingPage() {
             <h2>
               今週末、
               <br />
-              いっしょに走りませんか。
+              いっしょに体を動かしませんか。
             </h2>
             <p>登録は無料、30秒で終わります。部活も勉強会も、気が向いたときに参加すればOKです。</p>
             <Link href="/register" className="btn-primary btn-lg">
