@@ -4,7 +4,7 @@ import { FormEvent, useState } from "react";
 import { Building2 } from "lucide-react";
 import { apiFetch, ApiError } from "../api/client";
 
-// いま働いている取引先を登録する。エンジニア1st以外で見つけた案件でも、請求書・入金チェック・契約終了のお知らせが使える
+// いま働いている取引先を登録する。ソトバ以外で見つけた案件でも、請求書・入金チェック・契約終了のお知らせが使える
 export function EngagementForm({ onCreated, onCancel }: { onCreated: (id: string) => void; onCancel?: () => void }) {
   const today = new Date().toISOString().slice(0, 10);
   const [form, setForm] = useState({
@@ -46,7 +46,7 @@ export function EngagementForm({ onCreated, onCancel }: { onCreated: (id: string
       <div className="callout-inline callout-info">
         <Building2 size={16} />
         <span>
-          いま働いている取引先を登録すると、請求書づくり・入金チェック・契約終了前のお知らせが使えます。エンジニア1st以外で見つけた案件でもOKです（案件一覧には公開されません）。
+          いま働いている取引先を登録すると、請求書づくり・入金チェック・契約終了前のお知らせが使えます。ソトバ以外で見つけた案件でもOKです（案件一覧には公開されません）。
         </span>
       </div>
       <div className="form-grid">

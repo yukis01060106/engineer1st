@@ -50,7 +50,7 @@ export default async function ClubDetailPage({ params }: { params: Promise<{ slu
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "SportsOrganization",
-    name: `エンジニア1st ${club.name}`,
+    name: `ソトバ ${club.name}`,
     description: club.description,
     location: club.place,
   };
@@ -83,7 +83,7 @@ export default async function ClubDetailPage({ params }: { params: Promise<{ slu
             <ClubJoinButton slug={club.slug} name={club.name} />
             <InviteButton
               path={`/clubs/${club.slug}/`}
-              title={`エンジニア1st ${club.name}`}
+              title={`ソトバ ${club.name}`}
               text={`${club.name}、いっしょにどう？ ${club.schedule}・${club.place}。参加は無料です。`}
               className="btn-ghost btn-sm"
             />

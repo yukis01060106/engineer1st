@@ -14,7 +14,7 @@ export function SiteFooter() {
           <Link href="/login">ログイン</Link>
           <a href={asset("/photos/credits.json")}>写真クレジット</a>
         </nav>
-        <p>© エンジニア1st</p>
+        <p>© ソトバ</p>
       </div>
     </footer>
   );

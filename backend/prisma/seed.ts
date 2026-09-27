@@ -170,7 +170,7 @@ async function main() {
       engagementId: currentEngagement.id,
       title: "業務委託契約書（AIチャットボット開発）",
       body:
-        "本契約は、株式会社エンジニア1stを通じて青木耶雲氏がテックパートナーズ合同会社の業務に従事するにあたっての条件を定めるものです。稼働期間、報酬、秘密保持等の一般条項を含みます。",
+        "本契約は、ソトバを通じて青木耶雲氏がテックパートナーズ合同会社の業務に従事するにあたっての条件を定めるものです。稼働期間、報酬、秘密保持等の一般条項を含みます。",
       status: "未締結",
     },
   });
@@ -185,7 +185,7 @@ async function main() {
       engagementId: pastEngagement.id,
       title: "業務委託契約書（大手ECサイト リプレイス案件）",
       body:
-        "本契約は、株式会社エンジニア1stを通じて青木耶雲氏がコマースフロンティア株式会社の業務に従事した業務委託の条件を定めるものです。",
+        "本契約は、ソトバを通じて青木耶雲氏がコマースフロンティア株式会社の業務に従事した業務委託の条件を定めるものです。",
       status: "締結済み",
       signedAt: new Date(new Date().setMonth(new Date().getMonth() - 4)),
       signedName: "青木 耶雲",
@@ -405,7 +405,7 @@ async function main() {
       isOnline: true,
       location: "オンライン（Zoom）",
       joinUrl: "https://zoom.us/j/0000000001",
-      speaker: "エンジニア1st 技術顧問",
+      speaker: "ソトバ 技術顧問",
       tags: "生成AI,Claude Code,開発効率化",
       description:
         "AIエージェントに実装・テスト・レビューを任せるときの、現場で使える手順を紹介します。SESの現場でAIツールが使えない場合の、個人での練習方法もお話しします。",

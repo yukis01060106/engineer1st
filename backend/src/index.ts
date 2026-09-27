@@ -49,5 +49,5 @@ app.use("/api/admin", adminRouter);
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4000;
 app.listen(PORT, () => {
-  console.log(`engineer1st backend listening on http://localhost:${PORT}`);
+  console.log(`sotoba backend listening on http://localhost:${PORT}`);
 });

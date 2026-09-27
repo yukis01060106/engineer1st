@@ -783,7 +783,7 @@ on("POST", "/mentor", (c) => {
   c.db.mentorRequests.push(request);
   return { status: 201, data: { request } };
 });
-const CHAT_WELCOME = "担当のエンジニア1stサポートです。案件やキャリアのご相談、何でもお聞かせください。";
+const CHAT_WELCOME = "担当のソトバサポートです。案件やキャリアのご相談、何でもお聞かせください。";
 function chatThread(c: Ctx, userId: string) {
   const list = c.db.chatMessages.filter((m) => m.userId === userId);
   return [{ id: "m0", from: "staff", text: CHAT_WELCOME, createdAt: nowIso() }, ...list.map((m) => ({ id: m.id, from: m.role === "user" ? "user" : "staff", text: m.content, createdAt: m.createdAt }))];
@@ -922,9 +922,9 @@ export function demoDownload(path: string, token: string | null): { content: str
       const content = [
         "BEGIN:VCALENDAR",
         "VERSION:2.0",
-        "PRODID:-//Engineer1st Demo//JA",
+        "PRODID:-//SOTOBA Demo//JA",
         "BEGIN:VEVENT",
-        `UID:${e.id}@engineer1st`,
+        `UID:${e.id}@sotoba`,
         `DTSTAMP:${fmt(new Date())}`,
         `DTSTART:${fmt(start)}`,
         `DTEND:${fmt(end)}`,

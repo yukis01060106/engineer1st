@@ -1,5 +1,5 @@
 // 招待リンク（?ref=会員ID）で来た人を、登録するまで覚えておく
-const KEY = "engineer1st_ref";
+const KEY = "sotoba_ref";
 
 export function captureReferral() {
   try {

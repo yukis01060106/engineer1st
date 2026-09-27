@@ -19,7 +19,7 @@ function seedThread(userId: string): ChatMessage[] {
     {
       id: "m0",
       from: "staff",
-      text: "担当のエンジニア1stサポートです。案件やキャリアのご相談、何でもお聞かせください。",
+      text: "担当のソトバサポートです。案件やキャリアのご相談、何でもお聞かせください。",
       createdAt: new Date().toISOString(),
     },
   ];

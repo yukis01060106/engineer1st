@@ -1,6 +1,6 @@
 import { IS_DEMO } from "../lib/demo";
 
-const TOKEN_KEY = "engineer1st_token";
+const TOKEN_KEY = "sotoba_token";
 
 export function getToken(): string | null {
   try {

@@ -87,7 +87,7 @@ export function streamBillingPdf(res: Response, data: BillingDocumentData) {
   doc.text(`登録番号（適格請求書発行事業者）　${data.registrationNumber}`);
 
   doc.moveDown(2);
-  doc.fontSize(8).fillColor("#888888").text("本書はエンジニア1stにより自動生成された書類です。");
+  doc.fontSize(8).fillColor("#888888").text("本書はソトバにより自動生成された書類です。");
 
   doc.end();
 }

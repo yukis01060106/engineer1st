@@ -34,7 +34,7 @@ function sectionHeader(sheet: ExcelJS.Worksheet, row: number, title: string, spa
 
 export async function streamSkillSheetExcel(res: Response, data: SkillSheetExcelData) {
   const workbook = new ExcelJS.Workbook();
-  workbook.creator = "エンジニア1st";
+  workbook.creator = "ソトバ";
   const sheet = workbook.addWorksheet("スキルシート");
   sheet.columns = [{ width: 16 }, { width: 22 }, { width: 16 }, { width: 22 }, { width: 40 }];
 

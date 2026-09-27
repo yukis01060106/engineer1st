@@ -1,5 +1,5 @@
 /* =========================================================
-   エンジニア1st Design System
+   ソトバ（SOTOBA）Design System
    - 白地 × 墨色の文字 × ポップな差し色（黄・ピンク・ミント・バイオレット）
    - 見出し: Zen Kaku Gothic New（太いゴシック）／欧文・数字: Heebo／本文: Noto Sans JP
    - 写真: 明るいハイキー調に一括加工し、角丸＋網点＋色丸で飾る
@@ -622,8 +622,8 @@ label {
   color: var(--yellow);
   display: grid;
   place-items: center;
-  font-family: var(--font-en);
-  font-weight: 800;
+  font-family: var(--font-head);
+  font-weight: 900;
   font-size: 15px;
   letter-spacing: 0;
 }

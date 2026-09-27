@@ -67,7 +67,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
     location: event.isOnline ? { "@type": "VirtualLocation", url: `${SITE_URL}/events/${event.id}` } : { "@type": "Place", name: event.location },
     description: event.description,
     isAccessibleForFree: true,
-    organizer: { "@type": "Organization", name: "エンジニア1st" },
+    organizer: { "@type": "Organization", name: "ソトバ" },
   };
 
   return (

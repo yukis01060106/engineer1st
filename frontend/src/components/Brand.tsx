@@ -2,11 +2,11 @@ import Link from "next/link";
 
 export function Brand({ href = "/" }: { href?: string }) {
   return (
-    <Link href={href} className="brand" aria-label="エンジニア1st トップへ">
+    <Link href={href} className="brand" aria-label="ソトバ トップへ">
       <span className="brand-mark" aria-hidden>
-        1
+        ソ
       </span>
-      エンジニア1st
+      ソトバ
     </Link>
   );
 }
