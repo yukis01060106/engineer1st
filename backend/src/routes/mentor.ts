@@ -13,7 +13,7 @@ mentorRouter.get("/", requireAuth, async (req: AuthedRequest, res) => {
   res.json({ requests });
 });
 
-const schema = z.object({ topic: z.string().min(1), message: z.string().min(1) });
+const schema = z.object({ topic: z.string().trim().min(1).max(100), message: z.string().trim().min(1).max(2000) });
 
 mentorRouter.post("/", requireAuth, async (req: AuthedRequest, res) => {
   const parsed = schema.safeParse(req.body);

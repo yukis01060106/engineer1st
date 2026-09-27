@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Home,
+  CalendarCheck,
   Briefcase,
   FileText,
   Gauge,
@@ -40,7 +41,13 @@ interface NavItem {
 const isFreelance = (u: User) => u.workStyle === "freelance";
 
 const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
-  { label: "Home", items: [{ to: "/mypage", label: "ホーム", icon: Home }] },
+  {
+    label: "Home",
+    items: [
+      { to: "/mypage", label: "ホーム", icon: Home },
+      { to: "/calendar", label: "カレンダー・ToDo", icon: CalendarCheck },
+    ],
+  },
   {
     label: "Body & Friends",
     items: [

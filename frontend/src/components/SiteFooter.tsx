@@ -12,6 +12,8 @@ export function SiteFooter() {
           <Link href="/events">勉強会・イベント</Link>
           <Link href="/register">無料登録</Link>
           <Link href="/login">ログイン</Link>
+          <Link href="/terms">利用規約</Link>
+          <Link href="/privacy">プライバシーポリシー</Link>
           <a href={asset("/photos/credits.json")}>写真クレジット</a>
         </nav>
         <p>© ソトバ</p>

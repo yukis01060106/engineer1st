@@ -9,5 +9,5 @@ export const skillGapRouter = Router();
 skillGapRouter.get("/", requireAuth, async (req: AuthedRequest, res) => {
   const sheet = await prisma.skillSheet.findUnique({ where: { userId: req.userId! } });
   const mySkills: { name: string; level: number }[] = sheet ? JSON.parse(sheet.skills) : [];
-  res.json({ gaps: computeSkillGaps(mySkills) });
+  res.json({ gaps: computeSkillGaps(mySkills), hasSkillSheet: !!sheet });
 });

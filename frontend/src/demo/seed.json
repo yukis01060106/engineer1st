@@ -1,5 +1,5 @@
 {
- "exportedAt": "2026-09-27T07:56:27.841Z",
+ "exportedAt": "2026-09-27T15:52:54.284Z",
  "users": [
   {
    "id": "cmr9izvx90000jh6wwtov5p12",
@@ -12,7 +12,7 @@
    "signupSource": null,
    "referredById": null,
    "birthYear": 1994,
-   "lastCheckupDate": "2025-07-27T07:56:27.498Z",
+   "lastCheckupDate": "2025-07-27T15:52:53.955Z",
    "joinedAt": "2024-07-06T18:00:36.185Z",
    "createdAt": "2026-07-06T18:00:36.190Z"
   },
@@ -171,7 +171,7 @@
    "projectId": "cmr9izvxk0004jh6w6jokrjd2",
    "monthlyRate": 750000,
    "startDate": "2026-05-06T18:00:36.202Z",
-   "endDate": "2026-10-22T07:56:27.459Z",
+   "endDate": "2026-10-22T15:52:53.913Z",
    "status": "稼働中",
    "settlementMin": 140,
    "settlementMax": 180,
@@ -183,7 +183,7 @@
    "projectId": "cmr9izvxf0001jh6w09jkfqce",
    "monthlyRate": 700000,
    "startDate": "2025-07-06T18:00:36.203Z",
-   "endDate": "2026-05-27T07:56:27.459Z",
+   "endDate": "2026-05-27T15:52:53.915Z",
    "status": "終了",
    "settlementMin": 140,
    "settlementMax": 180,
@@ -208,7 +208,7 @@
    "registrationNumber": "T9876543210987",
    "invoiceNumber": "INV-202603-SEED0",
    "status": "入金済み",
-   "issuedAt": "2026-09-27T07:56:27.462Z"
+   "issuedAt": "2026-09-27T15:52:53.917Z"
   },
   {
    "id": "seed-invoice-1",
@@ -227,7 +227,7 @@
    "registrationNumber": "T9876543210987",
    "invoiceNumber": "INV-202604-SEED1",
    "status": "入金済み",
-   "issuedAt": "2026-09-27T07:56:27.474Z"
+   "issuedAt": "2026-09-27T15:52:53.929Z"
   },
   {
    "id": "seed-invoice-2",
@@ -246,7 +246,7 @@
    "registrationNumber": "T9876543210987",
    "invoiceNumber": "INV-202607-SEED2",
    "status": "発行済み",
-   "issuedAt": "2026-09-27T07:56:27.474Z"
+   "issuedAt": "2026-09-27T15:52:53.930Z"
   },
   {
    "id": "seed-invoice-3",
@@ -265,7 +265,7 @@
    "registrationNumber": "T9876543210987",
    "invoiceNumber": "INV-202608-SEED3",
    "status": "発行済み",
-   "issuedAt": "2026-09-27T07:56:27.475Z"
+   "issuedAt": "2026-09-27T15:52:53.931Z"
   }
  ],
  "contracts": [
@@ -273,17 +273,17 @@
    "id": "seed-contract-current",
    "engagementId": "seed-engagement-current",
    "title": "業務委託契約書（AIチャットボット開発）",
-   "body": "本契約は、株式会社エンジニア1stを通じて青木耶雲氏がテックパートナーズ合同会社の業務に従事するにあたっての条件を定めるものです。稼働期間、報酬、秘密保持等の一般条項を含みます。",
-   "status": "未締結",
-   "signedAt": null,
-   "signedName": null,
+   "body": "本契約は、ソトバを通じて青木耶雲氏がテックパートナーズ合同会社の業務に従事するにあたっての条件を定めるものです。稼働期間、報酬、秘密保持等の一般条項を含みます。",
+   "status": "締結済み",
+   "signedAt": "2026-09-27T15:51:14.120Z",
+   "signedName": "青木耶雲",
    "createdAt": "2026-07-06T18:00:36.207Z"
   },
   {
    "id": "seed-contract-past",
    "engagementId": "seed-engagement-past",
    "title": "業務委託契約書（大手ECサイト リプレイス案件）",
-   "body": "本契約は、株式会社エンジニア1stを通じて青木耶雲氏がコマースフロンティア株式会社の業務に従事した業務委託の条件を定めるものです。",
+   "body": "本契約は、ソトバを通じて青木耶雲氏がコマースフロンティア株式会社の業務に従事した業務委託の条件を定めるものです。",
    "status": "締結済み",
    "signedAt": "2026-03-06T18:00:36.208Z",
    "signedName": "青木 耶雲",
@@ -305,15 +305,15 @@
    "workProcesses": "[\"設計\",\"開発（フロントエンド）\",\"開発（バックエンド）\",\"テスト\"]",
    "appealPoints": "[\"TypeScript / React / Node.js を軸としたモダン開発スキルで、画面構築からAPI開発まで独力かつハイレベルに遂行可能。\",\"生成AIを活用したチャットボット開発プロジェクトに参画し、AI技術の実務応用への知見を保有。\"]",
    "remarks": "フルリモート環境でも自走力高く安定した成果を出せる自信があります。生成AIを活用した開発にも意欲的に取り組んでいます。",
-   "updatedAt": "2026-09-27T07:56:27.477Z"
+   "updatedAt": "2026-09-27T15:52:53.933Z"
   }
  ],
  "events": [
   {
-   "id": "cmujiynky000b11x7u9vi06d1",
+   "id": "cmujzzd16000bmv9n45qd9uk3",
    "title": "Claude Code 実践：レビューとテストをAIに任せる開発フロー",
    "type": "勉強会",
-   "date": "2026-10-02T11:00:00.000Z",
+   "date": "2026-10-03T11:00:00.000Z",
    "durationMin": 90,
    "location": "オンライン（Zoom）",
    "isOnline": true,
@@ -323,13 +323,13 @@
    "description": "AIエージェントに実装・テスト・レビューを任せるときの、現場で使える手順を紹介します。SESの現場でAIツールが使えない場合の、個人での練習方法もお話しします。",
    "capacity": 100,
    "clubId": null,
-   "createdAt": "2026-09-27T07:56:27.491Z"
+   "createdAt": "2026-09-27T15:52:53.947Z"
   },
   {
-   "id": "cmujiynkz000c11x7sk0j1xs9",
+   "id": "cmujzzd17000cmv9ncwourike",
    "title": "Next.js 16 と React 19 の変更点をまとめて押さえる",
    "type": "勉強会",
-   "date": "2026-10-09T11:00:00.000Z",
+   "date": "2026-10-10T11:00:00.000Z",
    "durationMin": 60,
    "location": "オンライン（Google Meet）",
    "isOnline": true,
@@ -339,13 +339,13 @@
    "description": "Server Components、Actions、キャッシュまわりの変更を、実務で困るポイントに絞って解説します。",
    "capacity": 80,
    "clubId": null,
-   "createdAt": "2026-09-27T07:56:27.491Z"
+   "createdAt": "2026-09-27T15:52:53.948Z"
   },
   {
-   "id": "cmujiynkz000d11x7ambhjc03",
+   "id": "cmujzzd18000dmv9n74n0x8a6",
    "title": "40代からの単価の上げ方：要件定義・調整役の経験を積む",
    "type": "勉強会",
-   "date": "2026-10-16T11:00:00.000Z",
+   "date": "2026-10-17T11:00:00.000Z",
    "durationMin": 60,
    "location": "オンライン（Zoom）",
    "isOnline": true,
@@ -355,13 +355,13 @@
    "description": "開発工程に閉じがちなSESの現場で、調整役・要件定義の経験をどう積むか。実例をもとに話します。",
    "capacity": 60,
    "clubId": null,
-   "createdAt": "2026-09-27T07:56:27.492Z"
+   "createdAt": "2026-09-27T15:52:53.948Z"
   },
   {
-   "id": "cmujiynl0000f11x762zjp6xo",
+   "id": "cmujzzd18000fmv9n7n3hiktj",
    "title": "ピックルボール部：はじめての人向けラリー練習",
    "type": "部活",
-   "date": "2026-10-04T01:00:00.000Z",
+   "date": "2026-10-05T01:00:00.000Z",
    "durationMin": 120,
    "location": "渋谷エリアの屋内コート",
    "isOnline": false,
@@ -371,13 +371,13 @@
    "description": "持ち方・打ち方の基本から、2対2のゲームまで。パドルは貸し出しあり。動きやすい服装と室内シューズでどうぞ。終わったらランチ会です。",
    "capacity": 16,
    "clubId": "cmujiynkq000311x7oj5x10xn",
-   "createdAt": "2026-09-27T07:56:27.492Z"
+   "createdAt": "2026-09-27T15:52:53.949Z"
   },
   {
-   "id": "cmujiynl0000h11x7zwfzowri",
+   "id": "cmujzzd19000hmv9n2ytulob6",
    "title": "ピックルボール部：ダブルス練習会",
    "type": "部活",
-   "date": "2026-10-18T01:00:00.000Z",
+   "date": "2026-10-19T01:00:00.000Z",
    "durationMin": 120,
    "location": "品川エリアの屋内コート",
    "isOnline": false,
@@ -387,13 +387,13 @@
    "description": "ダブルスのゲームを中心に。経験者と未経験者でペアを組むので、初参加でも大丈夫です。",
    "capacity": 16,
    "clubId": "cmujiynkq000311x7oj5x10xn",
-   "createdAt": "2026-09-27T07:56:27.493Z"
+   "createdAt": "2026-09-27T15:52:53.950Z"
   },
   {
-   "id": "cmujiynl1000j11x7lpwc6hj6",
+   "id": "cmujzzd1a000jmv9n994jolcd",
    "title": "筋トレ部：肩こり・腰痛予防の全身トレーニング",
    "type": "部活",
-   "date": "2026-09-30T10:30:00.000Z",
+   "date": "2026-10-01T10:30:00.000Z",
    "durationMin": 60,
    "location": "渋谷のパーソナルジム",
    "isOnline": false,
@@ -403,13 +403,13 @@
    "description": "スクワット・ヒップリフト・ローイングなど、デスクワークで弱りやすい筋肉を中心に。フォームは部員のトレーナーがチェックします。",
    "capacity": 10,
    "clubId": "cmujiynks000411x7vm702l31",
-   "createdAt": "2026-09-27T07:56:27.494Z"
+   "createdAt": "2026-09-27T15:52:53.950Z"
   },
   {
-   "id": "cmujiynl2000l11x7ss1ynyub",
+   "id": "cmujzzd1a000lmv9n4yf40z5v",
    "title": "筋トレ部：自宅でできる30分トレーニング（オンライン）",
    "type": "部活",
-   "date": "2026-09-28T12:00:00.000Z",
+   "date": "2026-09-29T12:00:00.000Z",
    "durationMin": 30,
    "location": "オンライン（Zoom）",
    "isOnline": true,
@@ -419,13 +419,13 @@
    "description": "道具なし・マット1枚でできるメニューを30分。カメラオフでもOKです。",
    "capacity": 50,
    "clubId": "cmujiynks000411x7vm702l31",
-   "createdAt": "2026-09-27T07:56:27.494Z"
+   "createdAt": "2026-09-27T15:52:53.951Z"
   },
   {
-   "id": "cmujiynl2000m11x7m1ueczln",
+   "id": "cmujzzd1b000mmv9nmr8w9fh9",
    "title": "フリーランス・SESエンジニア交流会（渋谷）",
    "type": "交流会",
-   "date": "2026-10-13T10:00:00.000Z",
+   "date": "2026-10-14T10:00:00.000Z",
    "durationMin": 120,
    "location": "東京・渋谷",
    "isOnline": false,
@@ -435,36 +435,36 @@
    "description": "独立している人も、これから考えている人も。案件の選び方やお金の話を気軽に聞ける会です。",
    "capacity": 30,
    "clubId": null,
-   "createdAt": "2026-09-27T07:56:27.495Z"
+   "createdAt": "2026-09-27T15:52:53.951Z"
   }
  ],
  "eventApplications": [
   {
-   "id": "cmujiynl3000o11x7xoe5bssk",
+   "id": "cmujzzd1c000omv9naak51bmf",
    "userId": "cmr9izvx90000jh6wwtov5p12",
-   "eventId": "cmujiynky000b11x7u9vi06d1",
+   "eventId": "cmujzzd16000bmv9n45qd9uk3",
    "purpose": "現場でのAI活用を知りたい",
    "level": "実務で少し",
    "question": null,
-   "appliedAt": "2026-09-27T07:56:27.495Z"
+   "appliedAt": "2026-09-27T15:52:53.952Z"
   },
   {
-   "id": "cmujiynl3000q11x77hfuur21",
+   "id": "cmujzzd1c000qmv9negeyikf3",
    "userId": "cmr9izvx90000jh6wwtov5p12",
-   "eventId": "cmujiynl0000f11x762zjp6xo",
+   "eventId": "cmujzzd18000fmv9n7n3hiktj",
    "purpose": null,
    "level": null,
    "question": null,
-   "appliedAt": "2026-09-27T07:56:27.496Z"
+   "appliedAt": "2026-09-27T15:52:53.953Z"
   },
   {
-   "id": "cmujiynld001u11x7vjfp8v0b",
+   "id": "cmujzzd1o0020mv9nserudq1v",
    "userId": "cmujeh8ty001f134b32bax9r3",
-   "eventId": "cmujiynkz000d11x7ambhjc03",
+   "eventId": "cmujzzd18000dmv9n74n0x8a6",
    "purpose": "独立前に単価の相場を知りたい",
    "level": "実務でがっつり",
    "question": null,
-   "appliedAt": "2026-09-27T07:56:27.505Z"
+   "appliedAt": "2026-09-27T15:52:53.964Z"
   }
  ],
  "clubs": [
@@ -555,40 +555,40 @@
  ],
  "clubMemberships": [
   {
-   "id": "cmujiynkx000a11x7ua57au2c",
+   "id": "cmujzzd15000amv9ndjiwzlnd",
    "userId": "cmr9izvx90000jh6wwtov5p12",
    "clubId": "cmujiynkq000311x7oj5x10xn",
-   "joinedAt": "2026-09-27T07:56:27.489Z"
+   "joinedAt": "2026-09-27T15:52:53.945Z"
   },
   {
-   "id": "cmujiynl8001g11x7aq59uzsw",
+   "id": "cmujzzd1j001mmv9nndqurv6m",
    "userId": "cmujeh8tx001c134br3v6lkbw",
    "clubId": "cmujiynkq000311x7oj5x10xn",
-   "joinedAt": "2026-09-27T07:56:27.501Z"
+   "joinedAt": "2026-09-27T15:52:53.959Z"
   },
   {
-   "id": "cmujiynl9001j11x75im9m31e",
+   "id": "cmujzzd1k001pmv9ncjsfvxju",
    "userId": "cmujeh8ty001f134b32bax9r3",
    "clubId": "cmujiynks000411x7vm702l31",
-   "joinedAt": "2026-09-27T07:56:27.502Z"
+   "joinedAt": "2026-09-27T15:52:53.960Z"
   },
   {
-   "id": "cmujiynla001l11x70sh5vy35",
+   "id": "cmujzzd1l001rmv9nx9jco2fn",
    "userId": "cmujeh8ty001f134b32bax9r3",
    "clubId": "cmujiynkq000311x7oj5x10xn",
-   "joinedAt": "2026-09-27T07:56:27.502Z"
+   "joinedAt": "2026-09-27T15:52:53.961Z"
   },
   {
-   "id": "cmujiynlb001p11x7behzednu",
+   "id": "cmujzzd1m001vmv9nqs21klvt",
    "userId": "cmujeh8u0001l134b4dkbtdiq",
    "clubId": "cmujiynks000411x7vm702l31",
-   "joinedAt": "2026-09-27T07:56:27.504Z"
+   "joinedAt": "2026-09-27T15:52:53.962Z"
   },
   {
-   "id": "cmujiynlc001s11x74fnaub4z",
+   "id": "cmujzzd1n001ymv9na5nbbhnd",
    "userId": "cmujeh8u2001o134bxh5jpeia",
    "clubId": "cmujiynks000411x7vm702l31",
-   "joinedAt": "2026-09-27T07:56:27.504Z"
+   "joinedAt": "2026-09-27T15:52:53.963Z"
   }
  ],
  "healthLogs": [
@@ -596,26 +596,16 @@
    "id": "cmujeh8to000q134bznbip28d",
    "userId": "cmr9izvx90000jh6wwtov5p12",
    "date": "2026-09-26",
-   "steps": 3200,
-   "sleepHours": 6,
-   "exerciseMin": 0,
-   "mood": 3,
+   "steps": 8400,
+   "sleepHours": 7,
+   "exerciseMin": 30,
+   "mood": 4,
    "createdAt": "2026-09-27T05:50:56.749Z"
   },
   {
    "id": "cmujeh8tp000s134bayjw4bud",
    "userId": "cmr9izvx90000jh6wwtov5p12",
    "date": "2026-09-25",
-   "steps": 8400,
-   "sleepHours": 7,
-   "exerciseMin": 30,
-   "mood": 4,
-   "createdAt": "2026-09-27T05:50:56.750Z"
-  },
-  {
-   "id": "cmujeh8tq000u134b9jpc9glj",
-   "userId": "cmr9izvx90000jh6wwtov5p12",
-   "date": "2026-09-24",
    "steps": 2900,
    "sleepHours": 5.5,
    "exerciseMin": 0,
@@ -623,19 +613,19 @@
    "createdAt": "2026-09-27T05:50:56.750Z"
   },
   {
-   "id": "cmujeh8tr000w134b320wqgmy",
+   "id": "cmujeh8tq000u134b9jpc9glj",
    "userId": "cmr9izvx90000jh6wwtov5p12",
-   "date": "2026-09-23",
+   "date": "2026-09-24",
    "steps": 4100,
    "sleepHours": 6.5,
    "exerciseMin": 10,
    "mood": 3,
-   "createdAt": "2026-09-27T05:50:56.751Z"
+   "createdAt": "2026-09-27T05:50:56.750Z"
   },
   {
-   "id": "cmujeh8tr000y134blqgk72b7",
+   "id": "cmujeh8tr000w134b320wqgmy",
    "userId": "cmr9izvx90000jh6wwtov5p12",
-   "date": "2026-09-22",
+   "date": "2026-09-23",
    "steps": 11200,
    "sleepHours": 7.5,
    "exerciseMin": 60,
@@ -643,42 +633,52 @@
    "createdAt": "2026-09-27T05:50:56.751Z"
   },
   {
-   "id": "cmujeh8ts0010134b7pd1uv79",
+   "id": "cmujeh8tr000y134blqgk72b7",
    "userId": "cmr9izvx90000jh6wwtov5p12",
-   "date": "2026-09-21",
+   "date": "2026-09-22",
    "steps": 3600,
    "sleepHours": 6,
    "exerciseMin": 0,
    "mood": 3,
+   "createdAt": "2026-09-27T05:50:56.751Z"
+  },
+  {
+   "id": "cmujeh8ts0010134b7pd1uv79",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "date": "2026-09-21",
+   "steps": 2500,
+   "sleepHours": 5,
+   "exerciseMin": 0,
+   "mood": 2,
    "createdAt": "2026-09-27T05:50:56.752Z"
   },
   {
    "id": "cmujeh8tt0012134b7r1eykrd",
    "userId": "cmr9izvx90000jh6wwtov5p12",
    "date": "2026-09-20",
-   "steps": 2500,
-   "sleepHours": 5,
-   "exerciseMin": 0,
-   "mood": 2,
+   "steps": 7800,
+   "sleepHours": 7,
+   "exerciseMin": 25,
+   "mood": 4,
    "createdAt": "2026-09-27T05:50:56.753Z"
   },
   {
    "id": "cmujeh8tt0014134bxbugoflv",
    "userId": "cmr9izvx90000jh6wwtov5p12",
    "date": "2026-09-19",
-   "steps": 7800,
-   "sleepHours": 7,
-   "exerciseMin": 25,
-   "mood": 4,
+   "steps": 3900,
+   "sleepHours": 6.5,
+   "exerciseMin": 0,
+   "mood": 3,
    "createdAt": "2026-09-27T05:50:56.754Z"
   },
   {
    "id": "cmujeh8tu0016134be2kz4iij",
    "userId": "cmr9izvx90000jh6wwtov5p12",
    "date": "2026-09-18",
-   "steps": 3900,
-   "sleepHours": 6.5,
-   "exerciseMin": 0,
+   "steps": 5200,
+   "sleepHours": 6,
+   "exerciseMin": 15,
    "mood": 3,
    "createdAt": "2026-09-27T05:50:56.754Z"
   },
@@ -691,6 +691,16 @@
    "exerciseMin": 15,
    "mood": 3,
    "createdAt": "2026-09-27T05:50:56.755Z"
+  },
+  {
+   "id": "cmujznkpm000sk3qgygfkqcwu",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "date": "2026-09-27",
+   "steps": 3200,
+   "sleepHours": 6,
+   "exerciseMin": 0,
+   "mood": 3,
+   "createdAt": "2026-09-27T15:43:44.027Z"
   }
  ],
  "wealthPlans": [
@@ -706,7 +716,7 @@
    "nisaMonthly": 30000,
    "expectedReturn": 0.03,
    "retireAge": 65,
-   "updatedAt": "2026-09-27T07:56:27.499Z"
+   "updatedAt": "2026-09-27T15:52:53.958Z"
   }
  ],
  "rateDiagnoses": [
@@ -821,21 +831,31 @@
    "createdAt": "2026-09-27T06:24:22.287Z"
   },
   {
-   "id": "cmujiynle001w11x745cwhpff",
+   "id": "cmujzx4tj0003vooljv6rabuy",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "primarySkill": "TypeScript",
+   "role": "フロントエンドエンジニア",
+   "yearsOfExperience": 3,
+   "monthlyRate": 750000,
+   "chainDepth": null,
+   "createdAt": "2026-09-27T15:51:09.991Z"
+  },
+  {
+   "id": "cmujzzd1p0022mv9n7xrujuvx",
    "userId": "cmujeh8ty001f134b32bax9r3",
    "primarySkill": "Java",
    "role": "バックエンドエンジニア",
    "yearsOfExperience": 6,
    "monthlyRate": 550000,
    "chainDepth": 3,
-   "createdAt": "2026-09-27T07:56:27.506Z"
+   "createdAt": "2026-09-27T15:52:53.965Z"
   }
  ],
  "expenses": [
   {
    "id": "seed-expense-0",
    "userId": "cmr9izvx90000jh6wwtov5p12",
-   "date": "2026-09-24T07:56:27.480Z",
+   "date": "2026-09-24T15:52:53.936Z",
    "vendor": "JR東日本",
    "amount": 1200,
    "category": "旅費交通費",
@@ -846,7 +866,7 @@
   {
    "id": "seed-expense-1",
    "userId": "cmr9izvx90000jh6wwtov5p12",
-   "date": "2026-09-17T07:56:27.480Z",
+   "date": "2026-09-17T15:52:53.936Z",
    "vendor": "コワーキングスペース渋谷",
    "amount": 3300,
    "category": "会議費",
@@ -857,7 +877,7 @@
   {
    "id": "seed-expense-2",
    "userId": "cmr9izvx90000jh6wwtov5p12",
-   "date": "2026-09-12T07:56:27.480Z",
+   "date": "2026-09-12T15:52:53.936Z",
    "vendor": "Amazon",
    "amount": 8980,
    "category": "消耗品費",
@@ -877,5 +897,73 @@
    "createdAt": "2026-07-10T06:57:49.342Z"
   }
  ],
- "mentorRequests": []
+ "mentorRequests": [],
+ "tasks": [
+  {
+   "id": "cmujzzd1h001bmv9nixs7p0y2",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "title": "今月の稼働時間を先方に送る",
+   "kind": "todo",
+   "date": "2026-09-28",
+   "time": null,
+   "memo": null,
+   "doneAt": null,
+   "createdAt": "2026-09-27T15:52:53.957Z"
+  },
+  {
+   "id": "cmujzzd1h001cmv9nrlsgc8rf",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "title": "健康診断を予約する",
+   "kind": "todo",
+   "date": "2026-10-01",
+   "time": null,
+   "memo": null,
+   "doneAt": null,
+   "createdAt": "2026-09-27T15:52:53.957Z"
+  },
+  {
+   "id": "cmujzzd1h001dmv9npu5gw13z",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "title": "次の案件の希望条件をまとめる",
+   "kind": "todo",
+   "date": null,
+   "time": null,
+   "memo": null,
+   "doneAt": null,
+   "createdAt": "2026-09-27T15:52:53.957Z"
+  },
+  {
+   "id": "cmujzzd1h001emv9nzdefkeuo",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "title": "経費のレシートを登録する",
+   "kind": "todo",
+   "date": "2026-09-26",
+   "time": null,
+   "memo": null,
+   "doneAt": "2026-09-27T15:52:53.956Z",
+   "createdAt": "2026-09-27T15:52:53.957Z"
+  },
+  {
+   "id": "cmujzzd1h001fmv9n471j5h3m",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "title": "定例ミーティング",
+   "kind": "event",
+   "date": "2026-09-29",
+   "time": "10:00",
+   "memo": null,
+   "doneAt": null,
+   "createdAt": "2026-09-27T15:52:53.957Z"
+  },
+  {
+   "id": "cmujzzd1h001gmv9njv9szoad",
+   "userId": "cmr9izvx90000jh6wwtov5p12",
+   "title": "次の案件の面談",
+   "kind": "event",
+   "date": "2026-10-06",
+   "time": "15:00",
+   "memo": "オンライン（担当者から届いたURL）",
+   "doneAt": null,
+   "createdAt": "2026-09-27T15:52:53.957Z"
+  }
+ ]
 }

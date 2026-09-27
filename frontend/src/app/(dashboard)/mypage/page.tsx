@@ -26,6 +26,7 @@ import {
   Circle,
   Sparkles,
   Share2,
+  ListTodo,
 } from "lucide-react";
 import { apiFetch } from "../../../api/client";
 import { MembershipCard } from "../../../components/MembershipCard";
@@ -33,6 +34,7 @@ import { InviteButton } from "../../../components/InviteButton";
 import { EventDate } from "../../../components/EventDate";
 import { yen, man, pct, dateParts } from "../../../lib/format";
 import { asset } from "../../../lib/demo";
+import { Task, TaskRow, todayJst } from "../../../components/TaskRow";
 
 interface Alert {
   type: string;
@@ -105,8 +107,12 @@ export default function MyPage() {
   const [money, setMoney] = useState<MoneySummary | null>(null);
   const [reserveRate, setReserveRate] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [plan, setPlan] = useState<{ tasks: Task[]; auto: { id: string; date: string; time: string | null; title: string; path: string }[] } | null>(null);
 
   useEffect(() => {
+    apiFetch<{ tasks: Task[]; auto: { id: string; date: string; time: string | null; title: string; path: string }[] }>("/planner")
+      .then(setPlan)
+      .catch(() => setPlan(null));
     apiFetch<MyPageData>("/mypage")
       .then((d) => {
         setData(d);
@@ -129,6 +135,17 @@ export default function MyPage() {
   }
 
   const { user, rank, currentEngagement, alerts } = data;
+  const today = todayJst();
+  const todayTodos = (plan?.tasks ?? []).filter((t) => t.kind === "todo" && !!t.date && t.date <= today && (!t.doneAt || t.date === today));
+  const todayEvents = [
+    ...(plan?.auto ?? []).filter((a) => a.date === today).map((a) => ({ id: a.id, time: a.time, title: a.title, path: a.path })),
+    ...(plan?.tasks ?? []).filter((t) => t.kind === "event" && t.date === today).map((t) => ({ id: t.id, time: t.time, title: t.title, path: "/calendar" })),
+  ].sort((a, b) => (a.time ?? "").localeCompare(b.time ?? ""));
+
+  async function toggleTask(t: Task) {
+    setPlan((p) => p && { ...p, tasks: p.tasks.map((x) => (x.id === t.id ? { ...x, doneAt: t.doneAt ? null : new Date().toISOString() } : x)) });
+    await apiFetch(`/planner/tasks/${t.id}`, { method: "PATCH", body: JSON.stringify({ done: !t.doneAt }) }).catch(() => undefined);
+  }
   const isFreelance = user.workStyle === "freelance";
 
   const quick = [
@@ -241,6 +258,42 @@ export default function MyPage() {
         </section>
 
         <div className="stack">
+          {plan && (
+            <section className="panel">
+              <div className="panel-head">
+                <h2>
+                  <ListTodo size={18} /> 今日の予定・ToDo
+                </h2>
+                <Link href="/calendar" className="btn-link small">
+                  カレンダー
+                </Link>
+              </div>
+              {todayEvents.length === 0 && todayTodos.length === 0 ? (
+                <p className="small muted">今日の予定とやることはありません。</p>
+              ) : (
+                <ul className="plan-list" style={{ marginTop: 0 }}>
+                  {todayEvents.map((e) => (
+                    <li key={e.id}>
+                      <span className="legend-swatch cal-dot-mine" />
+                      <span className="num small muted plan-time">{e.time ?? "終日"}</span>
+                      <Link href={e.path} className="plan-title">
+                        {e.title}
+                      </Link>
+                    </li>
+                  ))}
+                  {todayTodos.slice(0, 5).map((t) => (
+                    <TaskRow key={t.id} task={t} onToggle={toggleTask} showDate={!!t.date && t.date < today} />
+                  ))}
+                </ul>
+              )}
+              {todayTodos.length > 5 && (
+                <Link href="/calendar" className="btn-link small">
+                  ほか{todayTodos.length - 5}件
+                </Link>
+              )}
+            </section>
+          )}
+
           <section className="panel">
             <div className="panel-head">
               <h2>

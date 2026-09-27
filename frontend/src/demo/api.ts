@@ -22,8 +22,10 @@ import { buildAlerts, EVENT_REMINDER_DAYS, CHECKUP_INTERVAL_DAYS } from "@shared
 import { scoreLead } from "@shared/leadScore";
 import { buildOnboarding } from "@shared/onboarding";
 import { computeSkillGaps } from "@shared/skillGap";
+import { autoReply, CHAT_WELCOME } from "@shared/chatReply";
+import { buildAutoItems } from "@shared/planner";
 import { buildExpenseCsv } from "@shared/expenseCsv";
-import { getDB, freshDB, saveDB, newId, DemoDB, DemoUser, DemoEvent, DemoInvoice } from "./db";
+import { getDB, freshDB, saveDB, newId, DemoDB, DemoUser, DemoEvent, DemoInvoice, DemoTask } from "./db";
 
 export const DEMO_PASSWORD = "password123";
 const DAY = 86_400_000;
@@ -382,10 +384,14 @@ on("POST", "/rate-diagnosis", (c) => {
   c.db.rateDiagnoses.push({ id: newId("rate"), userId: c.user?.id ?? null, ...b, chainDepth: b.chainDepth ?? null, createdAt: nowIso() });
   return { status: 201, data: { result } };
 });
+on("GET", "/rate-diagnosis/mine", (c) => {
+  const user = requireUser(c);
+  return { diagnoses: c.db.rateDiagnoses.filter((r) => r.userId === user.id).sort((a, b) => b.createdAt.localeCompare(a.createdAt)) };
+});
 on("GET", "/skill-gap", (c) => {
   const user = requireUser(c);
   const sheet = c.db.skillSheets.find((s) => s.userId === user.id);
-  return { gaps: computeSkillGaps(sheet ? JSON.parse(sheet.skills) : []) };
+  return { gaps: computeSkillGaps(sheet ? JSON.parse(sheet.skills) : []), hasSkillSheet: !!sheet };
 });
 
 // ---------- 請求・入金・税金 ----------
@@ -783,22 +789,76 @@ on("GET", "/mentor", (c) => {
 on("POST", "/mentor", (c) => {
   const user = requireUser(c);
   const b = c.body as { topic: string; message: string };
+  if (!b.topic?.trim() || !b.message?.trim()) throw new HttpError(400, "入力内容を確認してください");
   const request = { id: newId("mentor"), userId: user.id, topic: b.topic, message: b.message, status: "受付中", createdAt: nowIso() };
   c.db.mentorRequests.push(request);
   return { status: 201, data: { request } };
 });
-const CHAT_WELCOME = "担当のソトバサポートです。案件やキャリアのご相談、何でもお聞かせください。";
 function chatThread(c: Ctx, userId: string) {
   const list = c.db.chatMessages.filter((m) => m.userId === userId);
-  return [{ id: "m0", from: "staff", text: CHAT_WELCOME, createdAt: nowIso() }, ...list.map((m) => ({ id: m.id, from: m.role === "user" ? "user" : "staff", text: m.content, createdAt: m.createdAt }))];
+  return [{ id: "m0", from: "staff", text: CHAT_WELCOME, createdAt: list[0]?.createdAt ?? nowIso() }, ...list.map((m) => ({ id: m.id, from: m.role === "user" ? "user" : "staff", text: m.content, createdAt: m.createdAt }))];
 }
 on("GET", "/chat", (c) => ({ messages: chatThread(c, requireUser(c).id) }));
 on("POST", "/chat", (c) => {
   const user = requireUser(c);
-  const text = String((c.body as { text: string }).text ?? "");
+  const text = String((c.body as { text: string }).text ?? "").trim();
+  if (!text) throw new HttpError(400, "メッセージを入力してください");
   c.db.chatMessages.push({ id: newId("chat"), userId: user.id, role: "user", content: text, createdAt: nowIso() });
-  c.db.chatMessages.push({ id: newId("chat"), userId: user.id, role: "staff", content: "ご連絡ありがとうございます。内容を確認し、担当より折り返しご連絡します（デモ版の自動応答です）。", createdAt: nowIso() });
+  c.db.chatMessages.push({ id: newId("chat"), userId: user.id, role: "staff", content: autoReply(text), createdAt: nowIso() });
   return { status: 201, data: { messages: chatThread(c, user.id) } };
+});
+
+// ---------- カレンダー・ToDo ----------
+const sortTasks = (a: DemoTask, b: DemoTask) =>
+  (a.date ?? "9999").localeCompare(b.date ?? "9999") || (a.time ?? "").localeCompare(b.time ?? "") || a.createdAt.localeCompare(b.createdAt);
+on("GET", "/planner", (c) => {
+  const user = requireUser(c);
+  const eventIds = new Set(c.db.eventApplications.filter((a) => a.userId === user.id).map((a) => a.eventId));
+  const current = engagementsOf(c.db, user.id).find((e) => e.status === "稼働中") ?? null;
+  const auto = buildAutoItems({
+    now: new Date(),
+    appliedEvents: c.db.events.filter((e) => eventIds.has(e.id)).map((e) => ({ id: e.id, title: e.title, date: new Date(e.date) })),
+    unpaidInvoices: invoicesOf(c.db, user.id)
+      .filter((i) => !i.paidAt)
+      .map((inv) => withEngagement(c.db, inv))
+      .map((i) => ({ id: i.id, targetMonth: i.targetMonth, dueDate: d(i.dueDate), paidAt: null, client: i.engagement.project.client })),
+    currentEngagement: current ? { endDate: d(current.endDate), project: current.project } : null,
+  });
+  return { tasks: c.db.tasks.filter((t) => t.userId === user.id).sort(sortTasks), auto };
+});
+function taskFields(b: Body) {
+  const out: Partial<DemoTask> = {};
+  if (typeof b.title === "string") {
+    if (!b.title.trim()) throw new HttpError(400, "入力内容を確認してください");
+    out.title = b.title.trim().slice(0, 100);
+  }
+  if (b.kind === "todo" || b.kind === "event") out.kind = b.kind;
+  if ("date" in b) out.date = (b.date as string | null) || null;
+  if ("time" in b) out.time = (b.time as string | null) || null;
+  if ("memo" in b) out.memo = (b.memo as string | null) || null;
+  return out;
+}
+on("POST", "/planner/tasks", (c) => {
+  const user = requireUser(c);
+  const f = taskFields(c.body);
+  if (!f.title) throw new HttpError(400, "入力内容を確認してください");
+  if (f.kind === "event" && !f.date) throw new HttpError(400, "予定には日付を入れてください");
+  const task: DemoTask = { id: newId("task"), userId: user.id, title: f.title, kind: f.kind ?? "todo", date: f.date ?? null, time: f.time ?? null, memo: f.memo ?? null, doneAt: null, createdAt: nowIso() };
+  c.db.tasks.push(task);
+  return { status: 201, data: { task } };
+});
+on("PATCH", "/planner/tasks/:id", (c) => {
+  const user = requireUser(c);
+  const task = c.db.tasks.find((t) => t.id === c.params[0] && t.userId === user.id);
+  if (!task) throw new HttpError(404, "見つかりません");
+  Object.assign(task, taskFields(c.body));
+  if (typeof c.body.done === "boolean") task.doneAt = c.body.done ? nowIso() : null;
+  return { task };
+});
+on("DELETE", "/planner/tasks/:id", (c) => {
+  const user = requireUser(c);
+  c.db.tasks = c.db.tasks.filter((t) => !(t.id === c.params[0] && t.userId === user.id));
+  return { status: 204, data: {} };
 });
 
 // ---------- 運営 ----------

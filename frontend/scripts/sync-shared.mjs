@@ -10,12 +10,14 @@ const to = path.join(here, "../src/shared");
 
 const FILES = [
   "alerts.ts",
+  "chatReply.ts",
   "expenseCsv.ts",
   "fpRules.ts",
   "fpSnapshot.ts",
   "invoice.ts",
   "leadScore.ts",
   "onboarding.ts",
+  "planner.ts",
   "rank.ts",
   "rateDiagnosis.ts",
   "recommend.ts",

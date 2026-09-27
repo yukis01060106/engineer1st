@@ -190,6 +190,18 @@ export interface DemoMessage {
   createdAt: string;
 }
 
+export interface DemoTask {
+  id: string;
+  userId: string;
+  title: string;
+  kind: string;
+  date: string | null;
+  time: string | null;
+  memo: string | null;
+  doneAt: string | null;
+  createdAt: string;
+}
+
 export interface DemoDB {
   users: DemoUser[];
   passwords: Record<string, string>; // デモで新規登録した人のパスワード（このブラウザ内だけ）
@@ -209,6 +221,7 @@ export interface DemoDB {
   mentorRequests: DemoMentorRequest[];
   fpMessages: DemoMessage[];
   chatMessages: DemoMessage[];
+  tasks: DemoTask[];
 }
 
 const STORAGE_KEY = "sotoba_demo_db_v1";
@@ -268,6 +281,7 @@ export function getDB(): DemoDB {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         memory = JSON.parse(saved) as DemoDB;
+        memory.tasks ??= []; // カレンダー・ToDo 追加前に保存されたデータ
         return memory;
       }
     } catch {

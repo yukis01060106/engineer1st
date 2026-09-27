@@ -1728,6 +1728,9 @@ a.event-row:hover {
   line-height: 1.7;
 }
 .empty-state {
+  display: grid;
+  gap: 10px;
+  justify-items: center;
   text-align: center;
   padding: 36px 16px;
   color: var(--muted);
@@ -2858,4 +2861,219 @@ a.event-row:hover {
   gap: 10px;
   margin: 0 0 16px;
   font-size: 15px;
+}
+
+/* ---------- カレンダー・ToDo ---------- */
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+.cal-weekday {
+  text-align: center;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--muted);
+  padding: 4px 0;
+}
+.cal-weekday.is-sun {
+  color: var(--danger);
+}
+.cal-weekday.is-sat {
+  color: var(--primary);
+}
+.cal-cell {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 2px;
+  min-height: 86px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  min-width: 0;
+  transition: border-color 0.2s;
+}
+.cal-cell:hover {
+  border-color: var(--ink);
+}
+.cal-cell.is-blank {
+  background: transparent;
+  border-color: transparent;
+  cursor: default;
+}
+.cal-cell.is-selected {
+  border-color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--ink);
+}
+.cal-day {
+  font-family: var(--font-en);
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1;
+  justify-self: start;
+  padding: 3px 5px;
+  border-radius: 99px;
+}
+.cal-cell.is-today .cal-day {
+  background: var(--ink);
+  color: #fff;
+}
+.cal-items {
+  display: grid;
+  gap: 2px;
+  align-content: start;
+  min-width: 0;
+}
+.cal-item {
+  font-size: 10.5px;
+  line-height: 1.5;
+  padding: 0 4px;
+  border-radius: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cal-item.is-done {
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+.cal-more {
+  font-size: 10.5px;
+  color: var(--muted);
+  padding-left: 4px;
+}
+.cal-dot-mine {
+  background: var(--violet-soft);
+}
+.cal-dot-todo {
+  background: var(--paper-2);
+}
+.cal-dot-event {
+  background: var(--mint-soft);
+}
+.cal-dot-invoice {
+  background: var(--pink);
+}
+.cal-dot-engagement {
+  background: var(--yellow);
+}
+.legend-swatch.cal-dot-mine {
+  background: var(--violet);
+}
+.legend-swatch.cal-dot-todo {
+  background: var(--line-strong);
+}
+.legend-swatch.cal-dot-event {
+  background: var(--mint);
+}
+@media (max-width: 640px) {
+  .cal-cell {
+    min-height: 56px;
+    padding: 4px;
+  }
+  /* 狭い画面では件数の目印だけ出す */
+  .cal-item {
+    font-size: 0;
+    height: 5px;
+    padding: 0;
+  }
+  .cal-more {
+    display: none;
+  }
+}
+.plan-list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+}
+.plan-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+.plan-list li:last-child {
+  border-bottom: none;
+}
+.plan-list li.is-done .plan-title {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+.plan-time {
+  flex: none;
+  width: 3.2em;
+}
+.plan-title {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.plan-check,
+.plan-delete {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--ink-2);
+}
+.plan-check[aria-pressed="true"] {
+  color: var(--success);
+}
+.plan-delete {
+  color: var(--muted);
+  opacity: 0.6;
+}
+.plan-delete:hover,
+.plan-check:hover {
+  background: var(--paper);
+  opacity: 1;
+}
+.plan-add {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--line-strong);
+}
+.plan-add > input:not([type="time"]) {
+  flex: 1 1 200px;
+  width: auto;
+}
+
+/* ---------- 利用規約・プライバシーポリシー ---------- */
+.legal {
+  max-width: 820px;
+  display: grid;
+  gap: 28px;
+}
+.legal h3 {
+  font-size: 17px;
+  margin-bottom: 8px;
+}
+.legal p,
+.legal li {
+  color: var(--ink-2);
+  font-size: 14.5px;
+}
+.legal ol,
+.legal ul {
+  margin: 0;
+  padding-left: 1.4em;
+  display: grid;
+  gap: 6px;
 }

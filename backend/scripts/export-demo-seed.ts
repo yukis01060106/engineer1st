@@ -7,7 +7,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  const [users, projects, engagements, invoices, contracts, skillSheets, events, eventApplications, clubs, clubMemberships, healthLogs, wealthPlans, rateDiagnoses, expenses, mentorRequests] =
+  const [users, projects, engagements, invoices, contracts, skillSheets, events, eventApplications, clubs, clubMemberships, healthLogs, wealthPlans, rateDiagnoses, expenses, mentorRequests, tasks] =
     await Promise.all([
       prisma.user.findMany({ where: { email: { endsWith: "@example.com" } } }),
       prisma.project.findMany(),
@@ -24,6 +24,7 @@ async function main() {
       prisma.rateDiagnosis.findMany(),
       prisma.expense.findMany(),
       prisma.mentorRequest.findMany(),
+      prisma.task.findMany(),
     ]);
 
   const userIds = new Set(users.map((u) => u.id));
@@ -46,6 +47,7 @@ async function main() {
     rateDiagnoses: own(rateDiagnoses),
     expenses: own(expenses),
     mentorRequests: own(mentorRequests),
+    tasks: own(tasks),
   };
 
   const out = path.join(__dirname, "../../frontend/src/demo/seed.json");

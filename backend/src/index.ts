@@ -18,6 +18,7 @@ import { clubsRouter } from "./routes/clubs";
 import { healthRouter } from "./routes/health";
 import { wealthRouter } from "./routes/wealth";
 import { adminRouter } from "./routes/admin";
+import { plannerRouter } from "./routes/planner";
 
 // 開発用プロトタイプにつき、個別ルートの例外でサーバー全体が落ちないようにする保険
 process.on("unhandledRejection", (err) => console.error("Unhandled rejection:", err));
@@ -46,6 +47,7 @@ app.use("/api/clubs", clubsRouter);
 app.use("/api/health", healthRouter);
 app.use("/api/wealth", wealthRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/planner", plannerRouter);
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4000;
 app.listen(PORT, () => {

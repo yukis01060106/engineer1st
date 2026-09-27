@@ -34,6 +34,7 @@ model User {
   healthLogs     HealthLog[]
   wealthPlan     WealthPlan?
   fpMessages     FpMessage[]
+  tasks          Task[]
 }
 
 // 案件
@@ -282,4 +283,21 @@ model FpMessage {
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
+}
+
+// カレンダー・ToDo（本人が自分で登録する予定とやること）
+model Task {
+  id        String    @id @default(cuid())
+  userId    String
+  title     String
+  kind      String    @default("todo") // todo: やること / event: 予定
+  date      String?   // "2026-09-28"（日付なしのToDoもOK）
+  time      String?   // "10:00"（任意）
+  memo      String?
+  doneAt    DateTime? // ToDoを完了した日時
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, date])
 }

@@ -162,15 +162,17 @@ async function main() {
   }
 
   // 契約書（現在の稼働先は未締結のままデモ用に残す。過去の稼働先分は締結済み）
+  const currentContractBody =
+    "本契約は、ソトバを通じて青木耶雲氏がテックパートナーズ合同会社の業務に従事するにあたっての条件を定めるものです。稼働期間、報酬、秘密保持等の一般条項を含みます。";
+  const pastContractBody = "本契約は、ソトバを通じて青木耶雲氏がコマースフロンティア株式会社の業務に従事した業務委託の条件を定めるものです。";
   await prisma.contract.upsert({
     where: { id: "seed-contract-current" },
-    update: {},
+    update: { body: currentContractBody },
     create: {
       id: "seed-contract-current",
       engagementId: currentEngagement.id,
       title: "業務委託契約書（AIチャットボット開発）",
-      body:
-        "本契約は、ソトバを通じて青木耶雲氏がテックパートナーズ合同会社の業務に従事するにあたっての条件を定めるものです。稼働期間、報酬、秘密保持等の一般条項を含みます。",
+      body: currentContractBody,
       status: "未締結",
     },
   });
@@ -178,14 +180,14 @@ async function main() {
   await prisma.contract.upsert({
     where: { id: "seed-contract-past" },
     update: {
+      body: pastContractBody,
       signedName: "青木 耶雲",
     },
     create: {
       id: "seed-contract-past",
       engagementId: pastEngagement.id,
       title: "業務委託契約書（大手ECサイト リプレイス案件）",
-      body:
-        "本契約は、ソトバを通じて青木耶雲氏がコマースフロンティア株式会社の業務に従事した業務委託の条件を定めるものです。",
+      body: pastContractBody,
       status: "締結済み",
       signedAt: new Date(new Date().setMonth(new Date().getMonth() - 4)),
       signedName: "青木 耶雲",
@@ -565,6 +567,24 @@ async function main() {
   const checkup = new Date();
   checkup.setMonth(checkup.getMonth() - 14);
   await prisma.user.update({ where: { id: user.id }, data: { lastCheckupDate: checkup } });
+
+  // カレンダー・ToDo（自分で登録した予定とやること）
+  const dayStr = (offset: number) => {
+    const d = new Date();
+    d.setDate(d.getDate() + offset);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  };
+  await prisma.task.deleteMany({ where: { userId: user.id } });
+  await prisma.task.createMany({
+    data: [
+      { userId: user.id, kind: "todo", title: "今月の稼働時間を先方に送る", date: dayStr(0) },
+      { userId: user.id, kind: "todo", title: "健康診断を予約する", date: dayStr(3) },
+      { userId: user.id, kind: "todo", title: "次の案件の希望条件をまとめる", date: null },
+      { userId: user.id, kind: "todo", title: "経費のレシートを登録する", date: dayStr(-2), doneAt: new Date() },
+      { userId: user.id, kind: "event", title: "定例ミーティング", date: dayStr(1), time: "10:00" },
+      { userId: user.id, kind: "event", title: "次の案件の面談", date: dayStr(8), time: "15:00", memo: "オンライン（担当者から届いたURL）" },
+    ],
+  });
 
   // 資産形成プラン
   const plan = {

@@ -179,7 +179,11 @@ function RegisterForm() {
           </label>
           <label className="checkbox-label" style={{ fontWeight: 400, fontSize: 13 }}>
             <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} required />
-            入力したデータは、自分の画面をつくるためだけに使われることに同意します
+            <span>
+              <Link href="/terms" target="_blank" className="btn-link">利用規約</Link>と
+              <Link href="/privacy" target="_blank" className="btn-link">プライバシーポリシー</Link>
+              に同意します（入力したデータは、自分の画面をつくるために使われます）
+            </span>
           </label>
           {error && <div className="form-error" role="alert">{error}</div>}
           <div className="spread">
