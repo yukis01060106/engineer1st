@@ -126,7 +126,9 @@ export default async function LandingPage() {
             <Reveal as="h1" className="hero-title" delay={80}>
               エンジニアの、
               <br />
-              からだと、くらしと、
+              からだと、
+              <br />
+              くらしと、
               <br />
               <span className="marker">仲間</span>。
             </Reveal>
