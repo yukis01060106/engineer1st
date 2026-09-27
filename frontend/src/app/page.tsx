@@ -29,7 +29,7 @@ import { asset } from "../lib/demo";
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: { absolute: "エンジニア1st | エンジニアの、からだと、お金と、仲間。" },
+  title: { absolute: "エンジニア1st | エンジニアの、からだと、くらしと、仲間。" },
   description:
     "フリーランス・SESエンジニアのための無料プラットフォーム。ランニング・フットサルなどの部活、最新技術のオンライン勉強会、請求書・入金管理・税金の取り分け・AI FPによる資産形成までまとめてサポート。",
   alternates: { canonical: "/" },
@@ -84,7 +84,7 @@ const FAQ = [
     a: "できます。部活・勉強会・健康メニュー・資産形成・手取りシミュレーションは会社員の方もそのまま使えます。いまの会社のまま、横のつながりと学びの場として使ってください。",
   },
   {
-    q: "入力したお金や契約のデータは、何に使われますか？",
+    q: "入力した契約や請求のデータは、何に使われますか？",
     a: "あなた自身の画面（請求・税金の目安・AI FPの回答）をつくるためにだけ使います。本人の同意なく第三者に渡したり、AIの学習に使ったりすることはありません。",
   },
   {
@@ -126,7 +126,7 @@ export default async function LandingPage() {
             <Reveal as="h1" className="hero-title" delay={80}>
               エンジニアの、
               <br />
-              からだと、お金と、
+              からだと、くらしと、
               <br />
               <span className="marker">仲間</span>。
             </Reveal>
@@ -190,7 +190,7 @@ export default async function LandingPage() {
               <br />
               コードの外側でした。
             </h2>
-            <p>調べてみると、つまずきの多くは「お金まわり」と「ひとりで抱えること」に集まっていました。</p>
+            <p>調べてみると、つまずきの多くは「請求や税金などの事務」と「ひとりで抱えること」に集まっていました。</p>
           </Reveal>
           <div className="pain-grid">
             {PAINS.map((p, i) => (
@@ -264,8 +264,8 @@ export default async function LandingPage() {
                 <Photo src="/photos/money.webp" alt="コードが表示されたノートパソコンと黄色いマグカップ" className="pillar-photo" blob="yellow" />
               </Reveal>
               <Reveal className="pillar-body" delay={100}>
-                <span className="pillar-num">03 — MONEY</span>
-                <h3>お金の不安は、アプリが先回り。</h3>
+                <span className="pillar-num">03 — PAPERWORK &amp; PLAN</span>
+                <h3>事務と将来の備えは、アプリが先回り。</h3>
                 <p className="muted">
                   請求書をつくったら、入金まで見守ります。入金があれば、税金の取り分けと、共済・iDeCo・NISAへの積立の目安までその場で。
                 </p>

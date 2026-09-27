@@ -34,7 +34,7 @@ const heebo = Heebo({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} | エンジニアの、からだと、お金と、仲間。`,
+    default: `${SITE_NAME} | エンジニアの、からだと、くらしと、仲間。`,
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,

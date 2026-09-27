@@ -42,15 +42,6 @@ const isFreelance = (u: User) => u.workStyle === "freelance";
 const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
   { label: "Home", items: [{ to: "/mypage", label: "ホーム", icon: Home }] },
   {
-    label: "Money",
-    items: [
-      { to: "/money", label: "請求・入金・税金", icon: Receipt, show: isFreelance },
-      { to: "/expenses", label: "経費", icon: Wallet, show: isFreelance },
-      { to: "/wealth", label: "資産形成・AI FP", icon: PiggyBank },
-      { to: "/reward-sim", label: "手取りシミュレーション", icon: Calculator },
-    ],
-  },
-  {
     label: "Body & Friends",
     items: [
       { to: "/community", label: "部活・勉強会", icon: Users },
@@ -60,13 +51,27 @@ const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
     ],
   },
   {
+    label: "Paperwork",
+    items: [
+      { to: "/money", label: "請求・入金・税金", icon: Receipt, show: isFreelance },
+      { to: "/expenses", label: "経費", icon: Wallet, show: isFreelance },
+      { to: "/contracts", label: "契約", icon: FileSignature, show: isFreelance },
+    ],
+  },
+  {
+    label: "Future Plan",
+    items: [
+      { to: "/wealth", label: "将来の備え・AI FP", icon: PiggyBank },
+      { to: "/reward-sim", label: "手取りシミュレーション", icon: Calculator },
+    ],
+  },
+  {
     label: "Career",
     items: [
       { to: "/projects", label: "案件をさがす", icon: Briefcase },
       { to: "/skill-sheet", label: "スキルシート", icon: FileText },
       { to: "/rate-diagnosis", label: "単価・商流診断", icon: Gauge },
       { to: "/skill-gap", label: "スキルギャップ", icon: BarChart3 },
-      { to: "/contracts", label: "契約", icon: FileSignature, show: isFreelance },
     ],
   },
   {
@@ -97,7 +102,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
 
   const tabs = [
     { to: "/mypage", label: "ホーム", icon: Home },
-    { to: moneyTab, label: "お金", icon: Receipt },
+    { to: moneyTab, label: isFreelance(user) ? "請求" : "備え", icon: Receipt },
     { to: "/community", label: "部活・勉強会", icon: Users },
     { to: "/health", label: "健康", icon: HeartPulse },
   ];

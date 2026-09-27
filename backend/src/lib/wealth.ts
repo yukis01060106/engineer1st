@@ -4,6 +4,7 @@
 
 export const KYOSAI_MAX = 70_000; // 小規模企業共済の掛金上限（月）
 export const IDECO_MAX_SELF_EMPLOYED = 68_000; // iDeCo 第1号被保険者の上限（月、国民年金基金と合算）
+export const IDECO_MAX_EMPLOYEE = 23_000; // iDeCo 企業年金のない会社員の上限（月）
 export const NISA_MAX_MONTHLY = 300_000; // つみたて投資枠 年120万円 ÷ 12
 export const EMERGENCY_MONTHS = 6; // フリーランスは案件の空白期間に備えて生活費6か月分
 
@@ -19,12 +20,13 @@ export interface WealthInput {
   expectedReturn: number; // 年率
   monthlyNetIncome: number; // 手取り月収（税・社会保険料控除後）
   marginalTaxRate: number; // 所得税＋住民税の限界税率（節税額の概算用）
+  isSelfEmployed: boolean; // 個人事業主（フリーランス）か。会社員は小規模企業共済に入れず、iDeCoの上限も低い
 }
 
 export interface WealthStep {
   key: "emergency" | "kyosai" | "ideco" | "nisa";
   title: string;
-  status: "done" | "doing" | "todo";
+  status: "done" | "doing" | "todo" | "skip";
   current: number;
   target: number;
   why: string;
@@ -59,9 +61,10 @@ export function simulateWealth(input: WealthInput): WealthResult {
   pool -= cashBuffer;
   // 余力をすべて積み立てに回さず、2割は自由に使える余白として残す
   pool = pool * 0.8;
-  const kyosai = Math.min(KYOSAI_MAX, Math.floor(pool * 0.4 / 1000) * 1000);
+  const idecoMax = input.isSelfEmployed ? IDECO_MAX_SELF_EMPLOYED : IDECO_MAX_EMPLOYEE;
+  const kyosai = input.isSelfEmployed ? Math.min(KYOSAI_MAX, Math.floor((pool * 0.4) / 1000) * 1000) : 0;
   pool -= kyosai;
-  const ideco = Math.min(IDECO_MAX_SELF_EMPLOYED, Math.floor(pool * 0.5 / 1000) * 1000);
+  const ideco = Math.min(idecoMax, Math.floor((pool * 0.5) / 1000) * 1000);
   pool -= ideco;
   const nisa = Math.min(NISA_MAX_MONTHLY, Math.floor(pool / 1000) * 1000);
 
@@ -74,21 +77,32 @@ export function simulateWealth(input: WealthInput): WealthResult {
       target: emergencyTarget,
       why: "案件が切れてから次が決まるまで、面談〜契約で最低3〜4週間かかります。まずは現金で備えます。",
     },
-    {
-      key: "kyosai",
-      title: "小規模企業共済（退職金の代わり）",
-      status: input.kyosaiMonthly >= KYOSAI_MAX ? "done" : input.kyosaiMonthly > 0 ? "doing" : "todo",
-      current: input.kyosaiMonthly,
-      target: KYOSAI_MAX,
-      why: "掛金は全額所得控除。廃業時に受け取れ、低金利の貸付制度もあります。",
-    },
+    input.isSelfEmployed
+      ? {
+          key: "kyosai",
+          title: "小規模企業共済（退職金の代わり）",
+          status: input.kyosaiMonthly >= KYOSAI_MAX ? "done" : input.kyosaiMonthly > 0 ? "doing" : "todo",
+          current: input.kyosaiMonthly,
+          target: KYOSAI_MAX,
+          why: "掛金は全額所得控除。廃業時に受け取れ、低金利の貸付制度もあります。",
+        }
+      : {
+          key: "kyosai",
+          title: "小規模企業共済（独立したら）",
+          status: "skip",
+          current: 0,
+          target: 0,
+          why: "会社員のうちは加入できません。独立したら、退職金の代わりとして最初に検討したい制度です。",
+        },
     {
       key: "ideco",
       title: "iDeCo（自分でつくる年金）",
-      status: input.idecoMonthly >= IDECO_MAX_SELF_EMPLOYED ? "done" : input.idecoMonthly > 0 ? "doing" : "todo",
+      status: input.idecoMonthly >= idecoMax ? "done" : input.idecoMonthly > 0 ? "doing" : "todo",
       current: input.idecoMonthly,
-      target: IDECO_MAX_SELF_EMPLOYED,
-      why: "掛金は全額所得控除、運用益も非課税。ただし原則60歳まで引き出せません。",
+      target: idecoMax,
+      why: input.isSelfEmployed
+        ? "掛金は全額所得控除、運用益も非課税。ただし原則60歳まで引き出せません。"
+        : "掛金は全額所得控除、運用益も非課税。企業年金のない会社員は月2.3万円まで。勤務先の制度で上限が変わるので確認を。",
     },
     {
       key: "nisa",
@@ -100,7 +114,7 @@ export function simulateWealth(input: WealthInput): WealthResult {
     },
   ];
 
-  const deductible = (input.kyosaiMonthly + input.idecoMonthly) * 12;
+  const deductible = ((input.isSelfEmployed ? input.kyosaiMonthly : 0) + input.idecoMonthly) * 12;
   const annualTaxSaving = Math.round(deductible * input.marginalTaxRate);
   const totalMonthlySaving = input.kyosaiMonthly + input.idecoMonthly + input.nisaMonthly;
 

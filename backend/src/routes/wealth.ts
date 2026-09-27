@@ -23,6 +23,7 @@ const planSchema = z.object({
   nisaMonthly: z.number().int().min(0).max(300_000),
   expectedReturn: z.number().min(0).max(0.1),
   retireAge: z.number().int().min(40).max(90),
+  annualSalary: z.number().int().min(0).max(100_000_000).nullable().optional(),
 });
 
 wealthRouter.put("/plan", requireAuth, async (req: AuthedRequest, res) => {

@@ -9,7 +9,7 @@ import { man, yen } from "../../../lib/format";
 interface WealthStep {
   key: string;
   title: string;
-  status: "done" | "doing" | "todo";
+  status: "done" | "doing" | "todo" | "skip";
   current: number;
   target: number;
   why: string;
@@ -19,6 +19,8 @@ interface Snapshot {
   age: number;
   current: { title: string; monthlyRate: number; daysLeft: number | null } | null;
   reward: { netIncomeMonthly: number } | null;
+  monthlyNetIncome: number;
+  isSelfEmployed: boolean;
   plan: Plan | null;
   wealth: {
     steps: WealthStep[];
@@ -40,6 +42,7 @@ interface Plan {
   nisaMonthly: number;
   expectedReturn: number;
   retireAge: number;
+  annualSalary: number | null;
 }
 
 interface FpMessage {
@@ -57,13 +60,19 @@ const DEFAULT_PLAN: Plan = {
   nisaMonthly: 0,
   expectedReturn: 0.03,
   retireAge: 65,
+  annualSalary: null,
 };
 
-const SUGGESTIONS = [
+const SUGGESTIONS_FREELANCE = [
   "来月で案件が終わったらどうなる？",
   "単価が5万円上がったら手取りはいくら増える？",
   "iDeCoと小規模企業共済、どっちを先にやるべき？",
   "税金はいくら取り分けておけばいい？",
+];
+const SUGGESTIONS_EMPLOYEE = [
+  "iDeCoとNISA、どっちを先にやるべき？",
+  "生活防衛資金はいくら必要？",
+  "独立したら何を準備すればいい？",
 ];
 
 function YenInput({ label, value, onChange, max, hint }: { label: string; value: number; onChange: (v: number) => void; max?: number; hint?: string }) {
@@ -166,14 +175,20 @@ export default function WealthPage() {
   }
 
   const w = snapshot?.wealth;
+  const selfEmployed = snapshot?.isSelfEmployed ?? true;
+  const suggestions = selfEmployed ? SUGGESTIONS_FREELANCE : SUGGESTIONS_EMPLOYEE;
   const maxProjection = Math.max(1, ...(w?.projection.map((p) => p.total) ?? [1]));
 
   return (
     <div className="page">
       <PageHeader
-        eyebrow="Wealth"
-        title="資産形成・AI FP"
-        description="フリーランスには退職金も厚生年金もありません。あなたの契約単価と手取りをもとに、「生活防衛資金 → 小規模企業共済 → iDeCo → NISA」の順で無理のない積立額を試算します。"
+        eyebrow="Future Plan"
+        title="将来の備え・AI FP"
+        description={
+          selfEmployed
+            ? "フリーランスには退職金も厚生年金もありません。あなたの契約単価と手取りをもとに、「生活防衛資金 → 小規模企業共済 → iDeCo → NISA」の順で無理のない積立額を試算します。"
+            : "いまの年収と生活費から、「生活防衛資金 → iDeCo → NISA」の順で無理のない積立額を試算します。独立を考えている人は、独立後に必要になる備えもあわせて確認できます。"
+        }
       />
 
       <div className="grid-main-side">
@@ -183,9 +198,9 @@ export default function WealthPage() {
               <h2>
                 <PiggyBank size={18} /> あなたの数字
               </h2>
-              {snapshot?.reward && (
+              {snapshot && snapshot.monthlyNetIncome > 0 && (
                 <span className="small muted">
-                  手取り目安 <strong className="num">{yen(snapshot.reward.netIncomeMonthly)}</strong>／月
+                  手取り目安 <strong className="num">{yen(snapshot.monthlyNetIncome)}</strong>／月
                 </span>
               )}
             </div>
@@ -197,11 +212,27 @@ export default function WealthPage() {
               <YenInput label="毎月の生活費" value={plan.monthlyLivingCost} onChange={(v) => setPlan({ ...plan, monthlyLivingCost: v })} />
               <YenInput label="いまの預金" value={plan.cashSavings} onChange={(v) => setPlan({ ...plan, cashSavings: v })} />
               <YenInput label="いまの投資資産" value={plan.investedAssets} onChange={(v) => setPlan({ ...plan, investedAssets: v })} />
+              {!snapshot?.current && (
+                <YenInput
+                  label="いまの年収（額面）"
+                  hint="手取りの計算に使います"
+                  value={plan.annualSalary ?? 0}
+                  onChange={(v) => setPlan({ ...plan, annualSalary: v || null })}
+                />
+              )}
             </div>
             <hr className="divider" />
             <div className="form-grid">
-              <YenInput label="小規模企業共済（月）" hint="上限7万円" max={70000} value={plan.kyosaiMonthly} onChange={(v) => setPlan({ ...plan, kyosaiMonthly: v })} />
-              <YenInput label="iDeCo（月）" hint="上限6.8万円" max={68000} value={plan.idecoMonthly} onChange={(v) => setPlan({ ...plan, idecoMonthly: v })} />
+              {selfEmployed && (
+                <YenInput label="小規模企業共済（月）" hint="上限7万円" max={70000} value={plan.kyosaiMonthly} onChange={(v) => setPlan({ ...plan, kyosaiMonthly: v })} />
+              )}
+              <YenInput
+                label="iDeCo（月）"
+                hint={selfEmployed ? "上限6.8万円" : "企業年金のない会社員は2.3万円まで"}
+                max={selfEmployed ? 68000 : 23000}
+                value={plan.idecoMonthly}
+                onChange={(v) => setPlan({ ...plan, idecoMonthly: v })}
+              />
               <YenInput label="NISA（月）" hint="つみたて枠は月10万円まで" max={300000} value={plan.nisaMonthly} onChange={(v) => setPlan({ ...plan, nisaMonthly: v })} />
               <label>
                 想定利回り（年）{(plan.expectedReturn * 100).toFixed(1)}%
@@ -237,12 +268,12 @@ export default function WealthPage() {
                 <div className="wealth-steps">
                   {w.steps.map((s, i) => (
                     <div key={s.key} className={`wealth-step is-${s.status}`}>
-                      <span className="wealth-step-num">{s.status === "done" ? <Check size={18} /> : i + 1}</span>
+                      <span className="wealth-step-num">{s.status === "done" ? <Check size={18} /> : s.status === "skip" ? "−" : i + 1}</span>
                       <div className="stack" style={{ gap: 6 }}>
                         <div className="spread">
                           <strong>{s.title}</strong>
                           <span className="small num">
-                            {s.key === "emergency" ? `${man(s.current)} / ${man(s.target)}` : `${yen(s.current)} / 月`}
+                            {s.status === "skip" ? "対象外" : s.key === "emergency" ? `${man(s.current)} / ${man(s.target)}` : `${yen(s.current)} / 月`}
                           </span>
                         </div>
                         {s.key === "emergency" && (
@@ -258,10 +289,10 @@ export default function WealthPage() {
                 <div className="callout-inline callout-success">
                   <Wand2 size={16} />
                   <div style={{ flex: 1 }}>
-                    いまの余力なら、共済 <strong>{yen(w.suggestion.kyosai)}</strong>・iDeCo <strong>{yen(w.suggestion.ideco)}</strong>・NISA{" "}
+                    いまの余力なら、{selfEmployed && (<>共済 <strong>{yen(w.suggestion.kyosai)}</strong>・</>)}iDeCo <strong>{yen(w.suggestion.ideco)}</strong>・NISA{" "}
                     <strong>{yen(w.suggestion.nisa)}</strong>（月）が無理のない目安です
                     {w.suggestion.cashBuffer > 0 && `。生活防衛資金が貯まるまでは、ほかに月${man(w.suggestion.cashBuffer)}を現金で残しましょう`}。
-                    余力の2割は、自由に使えるお金として残しています。
+                    余力の2割は、自由に使える分として残しています。
                   </div>
                   <button className="btn-primary btn-sm" onClick={applySuggestion}>
                     反映する
@@ -287,6 +318,12 @@ export default function WealthPage() {
                     <div className="stat-value">{man(w.annualTaxSaving).replace("万円", "")}<small>万円</small></div>
                   </div>
                 </div>
+                {w.totalMonthlySaving === 0 && plan.investedAssets === 0 && (
+                  <div className="callout-inline callout-info">
+                    <Wand2 size={16} />
+                    <span>積立額を入れるか、上の「反映する」を押すと、{plan.retireAge}歳までの見通しが表示されます。</span>
+                  </div>
+                )}
                 <div className="projection" role="img" aria-label="年齢ごとの資産の見通し">
                   {w.projection.map((p) => (
                     <div className="projection-row" key={p.age}>
@@ -340,8 +377,10 @@ export default function WealthPage() {
             <div className="chat-messages" aria-live="polite">
               {messages.length === 0 && (
                 <div className="chat-bubble chat-bubble-staff">
-                  こんにちは。AI FPです。{snapshot?.current ? `いまは「${snapshot.current.title}」で月${man(snapshot.current.monthlyRate)}ですね。` : ""}
-                  税金の取り分け、案件が途切れたときの備え、共済・iDeCo・NISAの順番など、気軽に聞いてください。
+                  こんにちは。AI FPです。
+                  {selfEmployed
+                    ? `${snapshot?.current ? `いまは「${snapshot.current.title}」で月${man(snapshot.current.monthlyRate)}ですね。` : ""}税金の取り分け、案件が途切れたときの備え、共済・iDeCo・NISAの順番など、気軽に聞いてください。`
+                    : "生活防衛資金、iDeCoとNISAの順番、独立する前に準備しておきたいことなど、気軽に聞いてください。"}
                 </div>
               )}
               {messages.map((m) => (
@@ -362,7 +401,7 @@ export default function WealthPage() {
             </div>
             <div>
               <div className="chat-suggest">
-                {SUGGESTIONS.map((s) => (
+                {suggestions.map((s) => (
                   <button key={s} className="chip" style={{ minHeight: 32, fontSize: 12 }} onClick={() => ask(s)} disabled={asking}>
                     {s}
                   </button>
@@ -375,7 +414,7 @@ export default function WealthPage() {
                   ask(question);
                 }}
               >
-                <input value={question} onChange={(e) => setQuestion(e.target.value)} placeholder="お金のことを聞いてみる" aria-label="AI FPへの質問" maxLength={1000} />
+                <input value={question} onChange={(e) => setQuestion(e.target.value)} placeholder="税金・積立・将来の備えについて聞いてみる" aria-label="AI FPへの質問" maxLength={1000} />
                 <button className="btn-primary" type="submit" disabled={asking || !question.trim()} aria-label="送信">
                   <Send size={16} />
                 </button>

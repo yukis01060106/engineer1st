@@ -43,7 +43,7 @@ function LoginForm() {
       <Brand />
       <div>
         <h1>おかえりなさい</h1>
-        <p className="auth-subtitle">ログインして、部活・勉強会・お金まわりの続きを。</p>
+        <p className="auth-subtitle">ログインして、部活・勉強会・請求や備えの続きを。</p>
       </div>
       <label>
         メールアドレス

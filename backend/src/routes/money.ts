@@ -32,10 +32,59 @@ moneyRouter.get("/engagements", requireAuth, async (req: AuthedRequest, res) => 
   });
 });
 
+const dateStr = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+
+const createEngagementSchema = z.object({
+  client: z.string().min(1).max(100),
+  title: z.string().min(1).max(100),
+  monthlyRate: z.number().int().min(10_000).max(10_000_000),
+  startDate: dateStr,
+  endDate: dateStr.nullable().optional(),
+  settlementMin: z.number().int().min(0).max(400).default(140),
+  settlementMax: z.number().int().min(0).max(400).default(180),
+  paymentTermDays: z.number().int().min(0).max(180).default(30),
+});
+
+// いま働いている取引先を本人が登録する（エンジニア1st以外で見つけた案件でも、請求・入金管理が使える）
+moneyRouter.post("/engagements", requireAuth, async (req: AuthedRequest, res) => {
+  const parsed = createEngagementSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: "入力内容を確認してください", details: parsed.error.flatten() });
+  const b = parsed.data;
+  if (b.settlementMin > b.settlementMax) return res.status(400).json({ error: "精算幅は「下限 ≦ 上限」で入力してください" });
+  const engagement = await prisma.engagement.create({
+    data: {
+      user: { connect: { id: req.userId! } },
+      project: {
+        create: {
+          title: b.title,
+          client: b.client,
+          skills: "",
+          unitPrice: b.monthlyRate,
+          workStyle: "",
+          description: "本人が登録した取引",
+          isListed: false,
+        },
+      },
+      monthlyRate: b.monthlyRate,
+      startDate: new Date(b.startDate),
+      endDate: b.endDate ? new Date(b.endDate) : null,
+      settlementMin: b.settlementMin,
+      settlementMax: b.settlementMax,
+      paymentTermDays: b.paymentTermDays,
+      status: "稼働中",
+    },
+    include: { project: true },
+  });
+  res.status(201).json({ engagement });
+});
+
 const termsSchema = z.object({
   settlementMin: z.number().int().min(0).max(400),
   settlementMax: z.number().int().min(0).max(400),
   paymentTermDays: z.number().int().min(0).max(180),
+  monthlyRate: z.number().int().min(10_000).max(10_000_000).optional(),
+  endDate: dateStr.nullable().optional(),
+  status: z.enum(["稼働中", "終了"]).optional(),
 });
 
 moneyRouter.patch("/engagements/:id", requireAuth, async (req: AuthedRequest, res) => {
@@ -45,7 +94,11 @@ moneyRouter.patch("/engagements/:id", requireAuth, async (req: AuthedRequest, re
   }
   const engagement = await prisma.engagement.findUnique({ where: { id: req.params.id } });
   if (!engagement || engagement.userId !== req.userId) return res.status(404).json({ error: "稼働情報が見つかりません" });
-  const updated = await prisma.engagement.update({ where: { id: engagement.id }, data: parsed.data });
+  const { endDate, ...rest } = parsed.data;
+  const updated = await prisma.engagement.update({
+    where: { id: engagement.id },
+    data: { ...rest, ...(endDate !== undefined ? { endDate: endDate ? new Date(endDate) : null } : {}) },
+  });
   res.json({ engagement: updated });
 });
 

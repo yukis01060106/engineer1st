@@ -22,6 +22,7 @@ export interface RegisterInput {
   interests: string[];
   clubSlug?: string;
   eventId?: string;
+  referrerId?: string;
 }
 
 interface AuthResponse {

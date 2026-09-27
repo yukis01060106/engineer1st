@@ -16,6 +16,8 @@ const registerSchema = z.object({
   // 部活ページから来た場合はそのまま入部させる（PLG: 登録＝部活への参加券）
   clubSlug: z.string().optional(),
   eventId: z.string().optional(),
+  // 招待リンク（?ref=会員ID）から来た場合
+  referrerId: z.string().optional(),
 });
 
 authRouter.post("/register", async (req, res) => {
@@ -23,7 +25,7 @@ authRouter.post("/register", async (req, res) => {
   if (!parsed.success) {
     return res.status(400).json({ error: "入力内容を確認してください", details: parsed.error.flatten() });
   }
-  const { email, password, name, workStyle, interests, clubSlug, eventId } = parsed.data;
+  const { email, password, name, workStyle, interests, clubSlug, eventId, referrerId } = parsed.data;
 
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
@@ -31,7 +33,8 @@ authRouter.post("/register", async (req, res) => {
   }
 
   const club = clubSlug ? await prisma.club.findUnique({ where: { slug: clubSlug } }) : null;
-  const signupSource = club ? `club:${club.slug}` : eventId ? "event" : null;
+  const referrer = referrerId ? await prisma.user.findUnique({ where: { id: referrerId } }) : null;
+  const signupSource = referrer ? "referral" : club ? `club:${club.slug}` : eventId ? "event" : null;
 
   const passwordHash = await bcrypt.hash(password, 10);
   const user = await prisma.user.create({
@@ -42,6 +45,7 @@ authRouter.post("/register", async (req, res) => {
       workStyle,
       interests: JSON.stringify(interests),
       signupSource,
+      referredById: referrer?.id ?? null,
       ...(club ? { clubMemberships: { create: { clubId: club.id } } } : {}),
     },
   });

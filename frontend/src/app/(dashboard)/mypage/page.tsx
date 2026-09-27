@@ -22,9 +22,14 @@ import {
   Briefcase,
   Users,
   ExternalLink,
+  CheckCircle2,
+  Circle,
+  Sparkles,
+  Share2,
 } from "lucide-react";
 import { apiFetch } from "../../../api/client";
 import { MembershipCard } from "../../../components/MembershipCard";
+import { InviteButton } from "../../../components/InviteButton";
 import { EventDate } from "../../../components/EventDate";
 import { yen, man, pct, dateParts } from "../../../lib/format";
 import { asset } from "../../../lib/demo";
@@ -38,7 +43,17 @@ interface Alert {
   recommendedProjects?: { id: string; title: string; unitPrice: number; matchScore: number }[];
 }
 
+interface OnboardingStep {
+  key: string;
+  title: string;
+  why: string;
+  path: string;
+  done: boolean;
+}
+
 interface MyPageData {
+  onboarding: { steps: OnboardingStep[]; doneCount: number; total: number; completed: boolean };
+  referralCount: number;
   user: { name: string; joinedAt: string; memberNumber: string; workStyle: string; interests: string[] };
   rank: { current: string; tenureYears: number };
   currentEngagement: { monthlyRate: number; endDate: string | null; project: { title: string; client: string } } | null;
@@ -143,11 +158,43 @@ export default function MyPage() {
           <p className="page-desc">
             {currentEngagement
               ? `「${currentEngagement.project.title}」で稼働中。${alerts.length > 0 ? `今日は${alerts.length}件のお知らせがあります。` : "今日のお知らせはありません。"}`
-              : "部活・勉強会・お金まわりのツールを、気が向いたときに使ってください。"}
+              : "部活・勉強会・事務や備えのツールを、気が向いたときに使ってください。"}
           </p>
         </div>
         <MembershipCard name={user.name} rank={rank.current} memberNumber={user.memberNumber} joinedAt={user.joinedAt} />
       </section>
+
+      {!data.onboarding.completed && (
+        <section className="panel onboarding">
+          <div className="panel-head">
+            <h2>
+              <Sparkles size={18} /> はじめの一歩
+            </h2>
+            <span className="small">
+              <strong className="num">{data.onboarding.doneCount}</strong> / {data.onboarding.total} 完了
+            </span>
+          </div>
+          <div className="bar">
+            <span style={{ width: `${(data.onboarding.doneCount / data.onboarding.total) * 100}%`, background: "var(--primary)" }} />
+          </div>
+          <ol className="onboarding-list">
+            {data.onboarding.steps.map((s) => (
+              <li key={s.key} className={s.done ? "is-done" : ""}>
+                {s.done ? <CheckCircle2 size={20} className="ok" /> : <Circle size={20} />}
+                <div>
+                  <strong>{s.title}</strong>
+                  <span>{s.why}</span>
+                </div>
+                {!s.done && (
+                  <Link href={s.path} className="btn-secondary btn-sm">
+                    やる <ArrowRight size={14} />
+                  </Link>
+                )}
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
 
       <div className="grid-main-side">
         <section className="panel">
@@ -265,14 +312,48 @@ export default function MyPage() {
               </div>
             )}
           </section>
+
+          <section className="panel" style={{ background: "var(--pink-soft)", borderColor: "transparent" }}>
+            <div className="panel-head">
+              <h2>
+                <Share2 size={18} /> 仲間を誘う
+              </h2>
+              {data.referralCount > 0 && <span className="badge badge-pink">{data.referralCount}人が参加</span>}
+            </div>
+            <p className="small">現場の同僚や、独立を考えている友だちに。あなたの招待リンクから登録すると、部活でいっしょに活動できます。</p>
+            <InviteButton
+              path="/clubs/"
+              title="エンジニア1st"
+              text="エンジニア向けの部活と勉強会、いっしょにどう？ 参加は無料だよ。"
+              label="招待リンクを送る"
+              className="btn-primary btn-sm"
+            />
+          </section>
         </div>
       </div>
 
-      {isFreelance && money && (
+      {isFreelance && !currentEngagement && (
+        <section className="panel" style={{ background: "var(--yellow-soft)", borderColor: "transparent" }}>
+          <div className="spread">
+            <div className="stack" style={{ gap: 6 }}>
+              <span className="eyebrow">Paperwork</span>
+              <h2>いまの取引先を登録して、請求と入金をラクに</h2>
+              <p className="small">
+                エンジニア1st以外で見つけた案件でもOK。稼働時間を入れるだけの請求書づくり、支払期日のチェック、契約終了45日前のお知らせが使えるようになります。
+              </p>
+            </div>
+            <Link href="/money#engagement" className="btn-primary">
+              取引先を登録する <ArrowRight size={16} />
+            </Link>
+          </div>
+        </section>
+      )}
+
+      {isFreelance && currentEngagement && money && (
         <section className="panel">
           <div className="panel-head">
             <h2>
-              <Receipt size={18} /> お金のようす
+              <Receipt size={18} /> 請求と備えのようす
             </h2>
             <Link href="/money" className="btn-link small">
               請求・入金へ <ArrowRight size={14} />

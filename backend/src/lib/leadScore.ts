@@ -9,6 +9,8 @@ export interface LeadInput {
   clubCount: number;
   eventCount: number;
   loggedHealthRecently: boolean;
+  referred: boolean; // 招待リンク経由で登録した
+  referralCount: number; // この人が招待して登録した人数
 }
 
 export function scoreLead(l: LeadInput): { score: number; reasons: string[] } {
@@ -43,6 +45,14 @@ export function scoreLead(l: LeadInput): { score: number; reasons: string[] } {
   if (engagement > 0) {
     score += Math.min(15, engagement * 5);
     reasons.push(`コミュニティ参加 ${l.clubCount}部・${l.eventCount}イベント`);
+  }
+  if (l.referred) {
+    score += 5;
+    reasons.push("紹介で登録");
+  }
+  if (l.referralCount > 0) {
+    score += Math.min(10, l.referralCount * 5);
+    reasons.push(`${l.referralCount}人を招待`);
   }
   return { score: Math.min(100, score), reasons };
 }

@@ -24,6 +24,9 @@ adminRouter.get("/leads", async (_req: AuthedRequest, res) => {
     orderBy: { createdAt: "desc" },
   });
 
+  const referralCounts = new Map<string, number>();
+  for (const u of users) if (u.referredById) referralCounts.set(u.referredById, (referralCounts.get(u.referredById) ?? 0) + 1);
+
   const leads = users.map((u) => {
     const current = u.engagements[0];
     const daysLeft = current?.endDate ? Math.ceil((current.endDate.getTime() - now) / DAY) : null;
@@ -36,6 +39,8 @@ adminRouter.get("/leads", async (_req: AuthedRequest, res) => {
       clubCount: u.clubMemberships.length,
       eventCount: u.eventApplications.length,
       loggedHealthRecently: u.healthLogs.length > 0,
+      referred: !!u.referredById,
+      referralCount: referralCounts.get(u.id) ?? 0,
     });
 
     return {
@@ -50,6 +55,7 @@ adminRouter.get("/leads", async (_req: AuthedRequest, res) => {
       desiredRate: u.skillSheet?.desiredRate ?? null,
       score,
       reasons,
+      referralCount: referralCounts.get(u.id) ?? 0,
     };
   });
   leads.sort((a, b) => b.score - a.score);

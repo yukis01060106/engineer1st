@@ -9,7 +9,7 @@ export const projectsRouter = Router();
 projectsRouter.get("/", async (req, res) => {
   const { keyword, minPrice } = req.query;
 
-  const where: any = {};
+  const where: any = { isListed: true };
   if (keyword && typeof keyword === "string") {
     where.OR = [
       { title: { contains: keyword } },
@@ -37,7 +37,7 @@ projectsRouter.get("/:id", async (req, res) => {
 // 簡易AIレコメンド（モック）: ユーザーの直近スキルシートとのマッチ度でスコアリング
 projectsRouter.get("/recommend/for-me", requireAuth, async (req: AuthedRequest, res) => {
   const skillSheet = await prisma.skillSheet.findUnique({ where: { userId: req.userId! } });
-  const projects = await prisma.project.findMany({ orderBy: { createdAt: "desc" } });
+  const projects = await prisma.project.findMany({ where: { isListed: true }, orderBy: { createdAt: "desc" } });
 
   const userSkillNames = skillSheet
     ? (JSON.parse(skillSheet.skills) as { name: string }[]).map((s) => s.name)

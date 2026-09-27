@@ -7,6 +7,7 @@ import { ArrowLeft, ArrowRight, Briefcase, Building2, Compass, HeartPulse, BookO
 import { useAuth, WorkStyle } from "../../context/AuthContext";
 import { apiFetch, ApiError } from "../../api/client";
 import { Brand } from "../../components/Brand";
+import { getReferral, clearReferral } from "../../lib/referral";
 import { AuthVisual } from "../../components/AuthVisual";
 
 const WORK_STYLES: { value: WorkStyle; title: string; body: string; icon: typeof Briefcase; bg: string }[] = [
@@ -18,7 +19,7 @@ const WORK_STYLES: { value: WorkStyle; title: string; body: string; icon: typeof
 const INTERESTS = [
   { value: "health", label: "運動・健康", icon: HeartPulse },
   { value: "study", label: "勉強会", icon: BookOpen },
-  { value: "money", label: "お金・税金", icon: Wallet },
+  { value: "money", label: "事務・税金・将来の備え", icon: Wallet },
   { value: "career", label: "単価・キャリア", icon: TrendingUp },
 ];
 
@@ -61,7 +62,8 @@ function RegisterForm() {
     setError(null);
     setSubmitting(true);
     try {
-      const res = await register({ email, password, name, workStyle, interests, clubSlug, eventId });
+      const res = await register({ email, password, name, workStyle, interests, clubSlug, eventId, referrerId: getReferral() });
+      clearReferral();
       const dest = next ?? (eventId ? `/events/${eventId}` : "/mypage");
       router.push(res.joinedClub ? `${dest}${dest.includes("?") ? "&" : "?"}welcome=${encodeURIComponent(res.joinedClub)}` : dest);
     } catch (err) {
@@ -200,7 +202,7 @@ function RegisterForm() {
 export default function RegisterPage() {
   return (
     <div className="auth-page">
-      <AuthVisual photo="community.webp" title="フリーランスも、SESで働く人も。" body="部活・勉強会・お金まわりのツールが、ぜんぶ無料で使えます。" />
+      <AuthVisual photo="community.webp" title="フリーランスも、SESで働く人も。" body="部活・勉強会・事務や将来の備えのツールが、ぜんぶ無料で使えます。" />
       <main className="auth-main">
         <Suspense fallback={<div className="loading-screen">読み込み中…</div>}>
           <RegisterForm />

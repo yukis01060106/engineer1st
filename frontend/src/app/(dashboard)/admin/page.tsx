@@ -20,6 +20,7 @@ interface Lead {
   desiredRate: number | null;
   score: number;
   reasons: string[];
+  referralCount: number;
 }
 
 interface AdminData {
@@ -44,7 +45,8 @@ interface Applicant {
   user: { name: string; email: string; workStyle: string };
 }
 
-const SOURCE_LABEL = (s: string) => (s === "direct" ? "直接" : s === "event" ? "イベントページ" : s.startsWith("club:") ? `部活（${s.slice(5)}）` : s);
+const SOURCE_LABEL = (s: string) =>
+  s === "direct" ? "直接" : s === "event" ? "イベントページ" : s === "referral" ? "会員の紹介" : s.startsWith("club:") ? `部活（${s.slice(5)}）` : s;
 
 const EMPTY_EVENT = {
   title: "",
@@ -207,6 +209,11 @@ export default function AdminPage() {
                   </td>
                   <td>
                     <strong>{l.name}</strong>
+                    {l.referralCount > 0 && (
+                      <span className="badge badge-pink" style={{ marginLeft: 6 }}>
+                        紹介 {l.referralCount}人
+                      </span>
+                    )}
                     <div className="small muted">{l.email}</div>
                   </td>
                   <td className="small">{WORK_STYLE_LABEL[l.workStyle]}</td>

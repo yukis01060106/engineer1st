@@ -20,6 +20,7 @@ import { computeSnapshot } from "@shared/fpSnapshot";
 import { ruleBasedAnswer } from "@shared/fpRules";
 import { buildAlerts, EVENT_REMINDER_DAYS, CHECKUP_INTERVAL_DAYS } from "@shared/alerts";
 import { scoreLead } from "@shared/leadScore";
+import { buildOnboarding } from "@shared/onboarding";
 import { computeSkillGaps } from "@shared/skillGap";
 import { buildExpenseCsv } from "@shared/expenseCsv";
 import { getDB, freshDB, saveDB, newId, DemoDB, DemoUser, DemoEvent, DemoInvoice } from "./db";
@@ -60,6 +61,9 @@ function requireUser(c: Ctx): DemoUser {
 function publicUser(u: DemoUser) {
   return { id: u.id, email: u.email, name: u.name, workStyle: u.workStyle, role: u.role, interests: JSON.parse(u.interests) as string[] };
 }
+
+// 案件一覧に出す案件（本人が自分で登録した取引は出さない）
+const listed = (db: DemoDB) => db.projects.filter((p) => p.isListed !== false);
 
 function projectOf(db: DemoDB, projectId: string) {
   return db.projects.find((p) => p.id === projectId)!;
@@ -160,10 +164,11 @@ const on = (method: string, pattern: string, h: Handler) =>
 
 // ---------- 認証 ----------
 on("POST", "/auth/register", (c) => {
-  const b = c.body as { email: string; password: string; name: string; workStyle?: string; interests?: string[]; clubSlug?: string; eventId?: string };
+  const b = c.body as { email: string; password: string; name: string; workStyle?: string; interests?: string[]; clubSlug?: string; eventId?: string; referrerId?: string };
   if (!b.email || !b.password || b.password.length < 8 || !b.name) throw new HttpError(400, "入力内容を確認してください");
   if (c.db.users.some((u) => u.email === b.email)) throw new HttpError(409, "このメールアドレスは既に登録されています");
   const club = b.clubSlug ? c.db.clubs.find((x) => x.slug === b.clubSlug) : undefined;
+  const referrer = b.referrerId ? c.db.users.find((u) => u.id === b.referrerId) : undefined;
   const user: DemoUser = {
     id: newId("user"),
     email: b.email,
@@ -172,7 +177,8 @@ on("POST", "/auth/register", (c) => {
     workStyle: b.workStyle ?? "freelance",
     role: "member",
     interests: JSON.stringify(b.interests ?? []),
-    signupSource: club ? `club:${club.slug}` : b.eventId ? "event" : null,
+    signupSource: referrer ? "referral" : club ? `club:${club.slug}` : b.eventId ? "event" : null,
+    referredById: referrer?.id ?? null,
     birthYear: null,
     lastCheckupDate: null,
     joinedAt: nowIso(),
@@ -216,7 +222,7 @@ on("GET", "/mypage", (c) => {
     hasSkillSheet: !!sheet,
     lastCheckupDate: d(user.lastCheckupDate),
     currentEngagement: current ? { ...current, endDate: d(current.endDate) } : null,
-    recommendedProjects: scoreProjectsBySkills(db.projects, skillNames).slice(0, 3),
+    recommendedProjects: scoreProjectsBySkills(listed(db), skillNames).slice(0, 3),
     unpaidInvoices: invoicesOf(db, user.id)
       .filter((i) => !i.paidAt)
       .map((i) => ({ targetMonth: i.targetMonth, ...invoiceDates(i), client: withEngagement(db, i).engagement.project.client })),
@@ -236,7 +242,20 @@ on("GET", "/mypage", (c) => {
       return { id: e.id, title: e.title, type: e.type, date: e.date, location: e.location, isOnline: e.isOnline, joinUrl: e.joinUrl, club: club ? { name: club.name, slug: club.slug } : null };
     });
 
+  const onboarding = buildOnboarding({
+    workStyle: user.workStyle,
+    clubCount: db.clubMemberships.filter((m) => m.userId === user.id).length,
+    eventCount: db.eventApplications.filter((a) => a.userId === user.id).length,
+    healthLogCount: db.healthLogs.filter((l) => l.userId === user.id).length,
+    hasWealthPlan: db.wealthPlans.some((p) => p.userId === user.id),
+    hasSkillSheet: !!sheet,
+    engagementCount: engagements.length,
+    hasInvoiceNumber: !!user.invoiceRegistrationNumber,
+  });
+
   return {
+    onboarding,
+    referralCount: db.users.filter((u) => u.referredById === user.id).length,
     user: { ...publicUser(user), joinedAt: user.joinedAt, invoiceRegistrationNumber: user.invoiceRegistrationNumber, memberNumber: formatMemberNumber(user.id) },
     rank: {
       current: rank,
@@ -269,7 +288,7 @@ on("PATCH", "/mypage", (c) => {
 on("GET", "/projects", (c) => {
   const keyword = c.query.get("keyword");
   const minPrice = Number(c.query.get("minPrice")) || 0;
-  const projects = c.db.projects
+  const projects = listed(c.db)
     .filter((p) => !keyword || [p.title, p.skills, p.client].some((f) => f.includes(keyword)))
     .filter((p) => p.unitPrice >= minPrice)
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
@@ -279,7 +298,7 @@ on("GET", "/projects/recommend/for-me", (c) => {
   const user = requireUser(c);
   const sheet = c.db.skillSheets.find((s) => s.userId === user.id);
   const names = sheet ? (JSON.parse(sheet.skills) as { name: string }[]).map((s) => s.name) : [];
-  return { recommendations: scoreProjectsBySkills(c.db.projects, names).slice(0, 10) };
+  return { recommendations: scoreProjectsBySkills(listed(c.db), names).slice(0, 10) };
 });
 
 // ---------- スキルシート ----------
@@ -368,16 +387,51 @@ on("GET", "/skill-gap", (c) => {
   return { gaps: computeSkillGaps(sheet ? JSON.parse(sheet.skills) : []) };
 });
 
-// ---------- お金 ----------
+// ---------- 請求・入金・税金 ----------
 on("GET", "/money/engagements", (c) => {
   const user = requireUser(c);
   return { engagements: engagementsOf(c.db, user.id).map((e) => ({ ...e, paymentTermWarning: e.paymentTermDays > FREELANCE_ACT_MAX_DAYS })) };
 });
+on("POST", "/money/engagements", (c) => {
+  const user = requireUser(c);
+  const b = c.body as {
+    client: string;
+    title: string;
+    monthlyRate: number;
+    startDate: string;
+    endDate?: string | null;
+    settlementMin?: number;
+    settlementMax?: number;
+    paymentTermDays?: number;
+  };
+  if (!b.client || !b.title || !b.monthlyRate || !b.startDate) throw new HttpError(400, "入力内容を確認してください");
+  const settlementMin = b.settlementMin ?? 140;
+  const settlementMax = b.settlementMax ?? 180;
+  if (settlementMin > settlementMax) throw new HttpError(400, "精算幅は「下限 ≦ 上限」で入力してください");
+  const project = { id: newId("proj"), title: b.title, client: b.client, skills: "", unitPrice: b.monthlyRate, workStyle: "", description: "本人が登録した取引", isListed: false, createdAt: nowIso() };
+  c.db.projects.push(project);
+  const engagement = {
+    id: newId("eng"),
+    userId: user.id,
+    projectId: project.id,
+    monthlyRate: b.monthlyRate,
+    startDate: new Date(b.startDate).toISOString(),
+    endDate: b.endDate ? new Date(b.endDate).toISOString() : null,
+    status: "稼働中",
+    settlementMin,
+    settlementMax,
+    paymentTermDays: b.paymentTermDays ?? 30,
+  };
+  c.db.engagements.push(engagement);
+  return { status: 201, data: { engagement: { ...engagement, project } } };
+});
 on("PATCH", "/money/engagements/:id", (c) => {
   const e = ownEngagement(c, c.params[0]);
-  const b = c.body as { settlementMin: number; settlementMax: number; paymentTermDays: number };
+  const b = c.body as { settlementMin: number; settlementMax: number; paymentTermDays: number; monthlyRate?: number; endDate?: string | null; status?: string };
   if (b.settlementMin > b.settlementMax) throw new HttpError(400, "精算幅は「下限 ≦ 上限」で入力してください");
-  Object.assign(e, b);
+  const { endDate, ...rest } = b;
+  Object.assign(e, rest);
+  if (endDate !== undefined) e.endDate = endDate ? new Date(endDate).toISOString() : null;
   return { engagement: e };
 });
 on("GET", "/money/invoices", (c) => {
@@ -750,6 +804,8 @@ on("GET", "/admin/leads", (c) => {
   const now = Date.now();
   const members = db.users.filter((u) => u.role === "member").sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   const since14 = ymd(new Date(now - 14 * DAY));
+  const referralCounts = new Map<string, number>();
+  for (const u of members) if (u.referredById) referralCounts.set(u.referredById, (referralCounts.get(u.referredById) ?? 0) + 1);
   const leads = members
     .map((u) => {
       const current = db.engagements.find((e) => e.userId === u.id && e.status === "稼働中");
@@ -765,6 +821,8 @@ on("GET", "/admin/leads", (c) => {
         clubCount: clubs.length,
         eventCount: db.eventApplications.filter((a) => a.userId === u.id).length,
         loggedHealthRecently: db.healthLogs.some((l) => l.userId === u.id && l.date >= since14),
+        referred: !!u.referredById,
+        referralCount: referralCounts.get(u.id) ?? 0,
       });
       return {
         id: u.id,
@@ -778,6 +836,7 @@ on("GET", "/admin/leads", (c) => {
         desiredRate: sheet?.desiredRate ?? null,
         score,
         reasons,
+        referralCount: referralCounts.get(u.id) ?? 0,
       };
     })
     .sort((a, b) => b.score - a.score);

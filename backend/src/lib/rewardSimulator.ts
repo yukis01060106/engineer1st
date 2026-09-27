@@ -100,6 +100,7 @@ export function simulateReward(input: RewardSimInput): RewardSimResult {
 // 会社員（SES正社員など）の手取り概算。独立した場合との比較に使う
 export interface SalaryResult {
   annualSalary: number;
+  taxableIncome: number;
   socialInsurance: number;
   incomeTax: number;
   residentTax: number;
@@ -128,6 +129,7 @@ export function simulateSalary(annualSalary: number): SalaryResult {
   const netIncomeAnnual = annualSalary - socialInsurance - incomeTax - residentTax;
   return {
     annualSalary,
+    taxableIncome,
     socialInsurance,
     incomeTax,
     residentTax,

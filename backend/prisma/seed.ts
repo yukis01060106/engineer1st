@@ -558,24 +558,25 @@ async function main() {
   });
 
   // 見込み客のサンプル（部活・勉強会から登録した人たち）
-  const leadSeeds = [
+  const leadSeeds: { email: string; name: string; workStyle: string; source: string | null; clubs: string[]; days: number; referredBy?: string }[] = [
     { email: "sato@example.com", name: "佐藤 陸", workStyle: "ses_employee", source: "club:running", clubs: ["running"], days: 12 },
     { email: "kimura@example.com", name: "木村 葵", workStyle: "considering", source: "club:bouldering", clubs: ["bouldering", "stretch"], days: 4 },
     { email: "ito@example.com", name: "伊藤 湊", workStyle: "freelance", source: "event", clubs: [], days: 20 },
     { email: "yamada@example.com", name: "山田 結衣", workStyle: "ses_employee", source: "club:futsal", clubs: ["futsal"], days: 35 },
-    { email: "nakamura@example.com", name: "中村 蒼", workStyle: "considering", source: null, clubs: ["stretch"], days: 2 },
+    { email: "nakamura@example.com", name: "中村 蒼", workStyle: "considering", source: "referral", clubs: ["stretch"], days: 2, referredBy: user.id },
   ];
   for (const l of leadSeeds) {
     const createdAt = new Date(Date.now() - l.days * 86_400_000);
     const lead = await prisma.user.upsert({
       where: { email: l.email },
-      update: { workStyle: l.workStyle, signupSource: l.source },
+      update: { workStyle: l.workStyle, signupSource: l.source, referredById: l.referredBy ?? null },
       create: {
         email: l.email,
         passwordHash,
         name: l.name,
         workStyle: l.workStyle,
         signupSource: l.source,
+        referredById: l.referredBy ?? null,
         createdAt,
         joinedAt: createdAt,
       },

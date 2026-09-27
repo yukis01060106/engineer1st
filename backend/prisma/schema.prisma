@@ -18,6 +18,7 @@ model User {
   role         String   @default("member") // member / admin（運営：見込み客の管理・勉強会の告知）
   interests    String   @default("[]") // JSON: 登録時に選んだ関心（"health" | "study" | "money" | "career"）
   signupSource String?  // 流入元（例: "club:running"）。部活経由の集客を計測する
+  referredById String?  // 招待リンク経由の登録なら、招待した会員のID
   birthYear    Int?     // 資産形成シミュレーション用
   lastCheckupDate DateTime? // 最後に健康診断を受けた日（フリーランスは会社の健診がないためリマインドする）
   joinedAt     DateTime @default(now()) // 継続ランク計算の起点
@@ -44,6 +45,7 @@ model Project {
   unitPrice   Int      // 月単価（円）
   workStyle   String   // フルリモート/一部常駐 等
   description String
+  isListed    Boolean  @default(true) // false: 本人が自分で登録した取引（案件一覧には出さない）
   createdAt   DateTime @default(now())
 
   engagements Engagement[]
@@ -257,6 +259,7 @@ model WealthPlan {
   id                String   @id @default(cuid())
   userId            String   @unique
   monthlyLivingCost Int      @default(250000) // 毎月の生活費
+  annualSalary      Int?     // 会社員の年収（額面）。稼働中の案件がない人の手取り計算に使う
   cashSavings       Int      @default(0)      // 現在の預金
   investedAssets    Int      @default(0)      // 現在の投資資産
   kyosaiMonthly     Int      @default(0)      // 小規模企業共済の掛金（月）

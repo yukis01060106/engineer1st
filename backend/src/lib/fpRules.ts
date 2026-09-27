@@ -5,7 +5,7 @@ const man = (n: number) => `約${Math.round(n / 10_000).toLocaleString()}万円`
 
 export function ruleBasedAnswer(s: FinancialSnapshot, q: string): string {
   const rate = s.current?.monthlyRate ?? 0;
-  const net = s.reward?.netIncomeMonthly ?? 0;
+  const net = s.monthlyNetIncome;
   const living = s.plan?.monthlyLivingCost ?? 250_000;
   const cash = s.plan?.cashSavings ?? 0;
 
@@ -36,8 +36,14 @@ export function ruleBasedAnswer(s: FinancialSnapshot, q: string): string {
     const surplus = Math.max(0, net - living);
     const w = s.wealth;
     const sug = w?.suggestion;
-    return `フリーランスには退職金も厚生年金もないため、「生活防衛資金（生活費6か月分）→ 小規模企業共済 → iDeCo → NISA」の順がおすすめです。手取り月${man(net)}から生活費を引いた余力は月${man(surplus)}です。${sug ? `この余力なら、共済${man(sug.kyosai)}・iDeCo${man(sug.ideco)}・NISA${man(sug.nisa)}程度が無理のない目安です。` : "「資産形成」画面で生活費と預金を入力すると、あなたに合った積立額を試算できます。"}共済とiDeCoは掛金が全額所得控除になります。個別の商品選びは提携FPにご相談ください。`;
+    if (!s.isSelfEmployed) {
+      return `会社員のうちは小規模企業共済に入れないので、「生活防衛資金（生活費6か月分）→ iDeCo → NISA」の順がおすすめです。手取り月${man(net)}から生活費を引いた余力は月${man(surplus)}です。${sug ? `この余力なら、iDeCo${man(sug.ideco)}・NISA${man(sug.nisa)}程度が無理のない目安です。` : "「将来の備え」画面で年収と生活費を入力すると、あなたに合った積立額を試算できます。"}独立したら、退職金の代わりに小規模企業共済も検討しましょう。個別の商品選びは提携FPにご相談ください。`;
+    }
+    return `フリーランスには退職金も厚生年金もないため、「生活防衛資金（生活費6か月分）→ 小規模企業共済 → iDeCo → NISA」の順がおすすめです。手取り月${man(net)}から生活費を引いた余力は月${man(surplus)}です。${sug ? `この余力なら、共済${man(sug.kyosai)}・iDeCo${man(sug.ideco)}・NISA${man(sug.nisa)}程度が無理のない目安です。` : "「将来の備え」画面で生活費と預金を入力すると、あなたに合った積立額を試算できます。"}共済とiDeCoは掛金が全額所得控除になります。個別の商品選びは提携FPにご相談ください。`;
   }
 
+  if (!s.isSelfEmployed) {
+    return `今の手取りは月${man(net)}ほどの見込みです（年収の入力がなければ0円で計算しています）。「独立したら手取りはどう変わる？」「iDeCoとNISAどっちが先？」「生活防衛資金はいくら必要？」のように聞いてもらえれば、あなたの数字で試算します。`;
+  }
   return `今の状況をまとめると、手取りは月${man(net)}ほど、税金・保険料の取り分けは入金の約${Math.round((s.reserve?.reserveRate ?? 0.3) * 100)}%が目安です。「来月で案件が終わったら？」「単価が5万円上がったら？」「iDeCoと共済どっちが先？」のように聞いてもらえれば、あなたの数字で試算します。`;
 }

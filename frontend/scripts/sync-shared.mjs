@@ -15,6 +15,7 @@ const FILES = [
   "fpSnapshot.ts",
   "invoice.ts",
   "leadScore.ts",
+  "onboarding.ts",
   "rank.ts",
   "rateDiagnosis.ts",
   "recommend.ts",

@@ -87,7 +87,7 @@ export function buildAlerts(input: AlertInput): Alert[] {
     alerts.push({
       type: "tax_season",
       tone: "info",
-      message: "6月に住民税と国民健康保険の通知が届きます。取り分けておいたお金で足りるか確認しましょう。",
+      message: "6月に住民税と国民健康保険の通知が届きます。取り分けておいた分で足りるか確認しましょう。",
       actionLabel: "取り分けを確認",
       actionPath: "/money#tax",
     });

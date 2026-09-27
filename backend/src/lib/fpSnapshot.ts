@@ -1,5 +1,5 @@
-// AI FPに渡す「本人のお金の実データ」を計算する（DBに依存しない純粋関数。フロントのデモ版でも使う）
-import { simulateReward } from "./rewardSimulator";
+// AI FPに渡す「本人の契約・請求・資産の実データ」を計算する（DBに依存しない純粋関数。フロントのデモ版でも使う）
+import { simulateReward, simulateSalary } from "./rewardSimulator";
 import { calcTaxReserve } from "./taxReserve";
 import { simulateWealth, marginalRate } from "./wealth";
 import { invoiceState } from "./invoice";
@@ -13,6 +13,7 @@ export interface WealthPlanData {
   nisaMonthly: number;
   expectedReturn: number;
   retireAge: number;
+  annualSalary?: number | null;
 }
 
 export interface SnapshotInput {
@@ -38,6 +39,11 @@ export function computeSnapshot({ user, engagements, invoices, plan, now = new D
       })
     : null;
 
+  // 稼働中の案件がない人（SES会社員など）は、入力された年収から手取りを出す
+  const salary = !reward && plan?.annualSalary ? simulateSalary(plan.annualSalary) : null;
+  const monthlyNetIncome = reward?.netIncomeMonthly ?? salary?.netIncomeMonthly ?? 0;
+  const isSelfEmployed = user.workStyle === "freelance";
+
   const overdue = invoices.filter((i) => invoiceState(i, now) === "overdue");
   const unpaid = invoices.filter((i) => invoiceState(i, now) === "unpaid");
 
@@ -45,9 +51,17 @@ export function computeSnapshot({ user, engagements, invoices, plan, now = new D
   const wealth = plan
     ? simulateWealth({
         age,
-        ...plan,
-        monthlyNetIncome: reward?.netIncomeMonthly ?? 0,
-        marginalTaxRate: marginalRate(reward?.taxableIncome ?? 0),
+        retireAge: plan.retireAge,
+        monthlyLivingCost: plan.monthlyLivingCost,
+        cashSavings: plan.cashSavings,
+        investedAssets: plan.investedAssets,
+        kyosaiMonthly: isSelfEmployed ? plan.kyosaiMonthly : 0,
+        idecoMonthly: plan.idecoMonthly,
+        nisaMonthly: plan.nisaMonthly,
+        expectedReturn: plan.expectedReturn,
+        monthlyNetIncome,
+        marginalTaxRate: marginalRate(reward?.taxableIncome ?? salary?.taxableIncome ?? 0),
+        isSelfEmployed,
       })
     : null;
 
@@ -62,6 +76,9 @@ export function computeSnapshot({ user, engagements, invoices, plan, now = new D
       ? { title: current.project.title, monthlyRate, endDate: current.endDate, daysLeft, paymentTermDays: current.paymentTermDays }
       : null,
     reward,
+    salary,
+    monthlyNetIncome,
+    isSelfEmployed,
     reserve,
     invoices: {
       overdueCount: overdue.length,
@@ -91,6 +108,9 @@ export function snapshotToText(s: FinancialSnapshot): string {
     );
   } else {
     lines.push("稼働中の案件: なし");
+  }
+  if (s.salary) {
+    lines.push(`会社員の年収 ${man(s.salary.annualSalary)}／手取り月額の目安 ${yen(s.salary.netIncomeMonthly)}`);
   }
   if (s.reward) {
     lines.push(`年間売上見込み ${man(s.reward.annualRevenue)}／手取り月額の目安 ${yen(s.reward.netIncomeMonthly)}／課税所得 ${man(s.reward.taxableIncome)}`);

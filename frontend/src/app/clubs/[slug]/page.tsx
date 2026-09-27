@@ -7,6 +7,7 @@ import { Photo } from "../../../components/Photo";
 import { Reveal } from "../../../components/Reveal";
 import { EventDate } from "../../../components/EventDate";
 import { ClubJoinButton } from "../../../components/ClubJoinButton";
+import { InviteButton } from "../../../components/InviteButton";
 import { serverFetch, serverFetchOr } from "../../../lib/serverApi";
 import { dateParts } from "../../../lib/format";
 import type { ClubSummary, EventItem } from "../../../lib/types";
@@ -80,6 +81,12 @@ export default async function ClubDetailPage({ params }: { params: Promise<{ slu
               <dd>参加無料（施設利用料のみ実費を割り勘）</dd>
             </dl>
             <ClubJoinButton slug={club.slug} name={club.name} />
+            <InviteButton
+              path={`/clubs/${club.slug}/`}
+              title={`エンジニア1st ${club.name}`}
+              text={`${club.name}、いっしょにどう？ ${club.schedule}・${club.place}。参加は無料です。`}
+              className="btn-ghost btn-sm"
+            />
           </Reveal>
           <Reveal delay={120}>
             <Photo src={`/photos/${club.photo}`} alt={club.name} blob={club.color} priority />

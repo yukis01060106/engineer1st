@@ -6,6 +6,7 @@ import { SiteLayout } from "../../../components/SiteLayout";
 import { Photo } from "../../../components/Photo";
 import { Reveal } from "../../../components/Reveal";
 import { EventApply } from "../../../components/EventApply";
+import { InviteButton } from "../../../components/InviteButton";
 import { serverFetch, serverFetchOr } from "../../../lib/serverApi";
 import { fmtDateTime } from "../../../lib/format";
 import { SITE_URL } from "../../../lib/site";
@@ -122,6 +123,12 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
                 full: event._count.applications >= event.capacity,
                 clubName: event.club?.name ?? null,
               }}
+            />
+            <InviteButton
+              path={`/events/${event.id}/`}
+              title={event.title}
+              text={`「${event.title}」いっしょに参加しない？ ${fmtDateTime(event.date)}〜・参加無料`}
+              className="btn-ghost btn-sm"
             />
           </Reveal>
           <Reveal delay={120} style={{ position: "sticky", top: 96 }}>

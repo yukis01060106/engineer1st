@@ -1,15 +1,17 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { AlertTriangle, Check, Copy, Download, FilePlus2, Landmark, Mail, Receipt, Settings2, Info } from "lucide-react";
+import { AlertTriangle, Check, Copy, Download, FilePlus2, Landmark, Mail, Receipt, Settings2, Info, Plus } from "lucide-react";
 import { apiFetch, ApiError, downloadFile } from "../../../api/client";
 import { PageHeader } from "../../../components/PageHeader";
+import { EngagementForm } from "../../../components/EngagementForm";
 import { yen, man, pct, fmtDate } from "../../../lib/format";
 
 interface Engagement {
   id: string;
   monthlyRate: number;
   status: string;
+  endDate: string | null;
   settlementMin: number;
   settlementMax: number;
   paymentTermDays: number;
@@ -91,7 +93,8 @@ export default function MoneyPage() {
   const [issued, setIssued] = useState<string | null>(null);
 
   const [editTerms, setEditTerms] = useState(false);
-  const [terms, setTerms] = useState({ settlementMin: 140, settlementMax: 180, paymentTermDays: 30 });
+  const [terms, setTerms] = useState({ settlementMin: 140, settlementMax: 180, paymentTermDays: 30, monthlyRate: 0, endDate: "" });
+  const [addingEngagement, setAddingEngagement] = useState(false);
 
   const [reminder, setReminder] = useState<{ id: string; text: string } | null>(null);
   const [copied, setCopied] = useState(false);
@@ -100,6 +103,8 @@ export default function MoneyPage() {
   const [expenseRatio, setExpenseRatio] = useState(20);
   const [blue, setBlue] = useState(true);
   const [invoiceRegistered, setInvoiceRegistered] = useState(true);
+  const [reserveRate, setReserveRate] = useState<number | null>(null); // null: 稼働中の単価を使う
+  const [reserveBaseRate, setReserveBaseRate] = useState(0);
 
   const reload = useCallback(() => {
     apiFetch<{ invoices: Invoice[]; summary: typeof summary }>("/money/invoices").then((r) => {
@@ -137,8 +142,12 @@ export default function MoneyPage() {
 
   useEffect(() => {
     const q = new URLSearchParams({ expenseRatio: String(expenseRatio / 100), blue: String(blue), invoice: String(invoiceRegistered) });
-    apiFetch<{ result: TaxReserve }>(`/money/tax-reserve?${q}`).then((r) => setReserve(r.result));
-  }, [expenseRatio, blue, invoiceRegistered]);
+    if (reserveRate) q.set("monthlyRate", String(reserveRate));
+    apiFetch<{ monthlyRate: number; result: TaxReserve }>(`/money/tax-reserve?${q}`).then((r) => {
+      setReserve(r.result);
+      setReserveBaseRate(r.monthlyRate);
+    });
+  }, [expenseRatio, blue, invoiceRegistered, reserveRate, engagements]);
 
   async function issue() {
     setIssuing(true);
@@ -164,9 +173,12 @@ export default function MoneyPage() {
     }
   }
 
-  async function saveTerms() {
+  async function saveTerms(status?: "稼働中" | "終了") {
     try {
-      await apiFetch(`/money/engagements/${engagementId}`, { method: "PATCH", body: JSON.stringify(terms) });
+      await apiFetch(`/money/engagements/${engagementId}`, {
+        method: "PATCH",
+        body: JSON.stringify({ ...terms, endDate: terms.endDate || null, ...(status ? { status } : {}) }),
+      });
       setEditTerms(false);
       reload();
     } catch (e) {
@@ -188,7 +200,7 @@ export default function MoneyPage() {
   return (
     <div className="page">
       <PageHeader
-        eyebrow="Money"
+        eyebrow="Paperwork"
         title="請求・入金・税金"
         description="稼働時間を入れるだけで、精算幅・インボイス・源泉徴収まで計算した請求書をつくります。入金まで見守り、税金の取り分けも一緒に。"
       />
@@ -217,9 +229,21 @@ export default function MoneyPage() {
             <h2>
               <FilePlus2 size={18} /> 請求書をつくる
             </h2>
+            {engagements.length > 0 && !addingEngagement && (
+              <button className="btn-ghost btn-sm" onClick={() => setAddingEngagement(true)}>
+                <Plus size={14} /> 取引先を追加
+              </button>
+            )}
           </div>
-          {engagements.length === 0 ? (
-            <div className="empty-state">稼働中の案件がありません</div>
+          {engagements.length === 0 || addingEngagement ? (
+            <EngagementForm
+              onCreated={(id) => {
+                setAddingEngagement(false);
+                setEngagementId(id);
+                reload();
+              }}
+              onCancel={engagements.length > 0 ? () => setAddingEngagement(false) : undefined}
+            />
           ) : (
             <>
               <div className="form-grid">
@@ -262,21 +286,45 @@ export default function MoneyPage() {
                             支払サイト（月末締め＋日）
                             <input type="number" value={terms.paymentTermDays} onChange={(e) => setTerms({ ...terms, paymentTermDays: Number(e.target.value) })} />
                           </label>
+                          <label>
+                            月単価（円）
+                            <input type="number" step={10000} value={terms.monthlyRate} onChange={(e) => setTerms({ ...terms, monthlyRate: Number(e.target.value) })} />
+                          </label>
+                          <label>
+                            契約終了日
+                            <input type="date" value={terms.endDate} onChange={(e) => setTerms({ ...terms, endDate: e.target.value })} />
+                          </label>
                         </div>
                         <div className="inline">
-                          <button className="btn-primary btn-sm" onClick={saveTerms}>保存</button>
+                          <button className="btn-primary btn-sm" onClick={() => saveTerms()}>保存</button>
                           <button className="btn-ghost btn-sm" onClick={() => setEditTerms(false)}>キャンセル</button>
+                          {engagement.status === "稼働中" ? (
+                            <button className="btn-danger-outline" style={{ marginLeft: "auto" }} onClick={() => saveTerms("終了")}>
+                              この取引を終了にする
+                            </button>
+                          ) : (
+                            <button className="btn-ghost btn-sm" style={{ marginLeft: "auto" }} onClick={() => saveTerms("稼働中")}>
+                              稼働中に戻す
+                            </button>
+                          )}
                         </div>
                       </div>
                     ) : (
                       <div className="spread">
                         <span>
                           月額 <strong className="num">{yen(engagement.monthlyRate)}</strong>／精算幅 {engagement.settlementMin}〜{engagement.settlementMax}h／月末締め{engagement.paymentTermDays}日後払い
+                          {engagement.endDate && `／契約終了 ${fmtDate(engagement.endDate)}`}
                         </span>
                         <button
                           className="btn-link small"
                           onClick={() => {
-                            setTerms({ settlementMin: engagement.settlementMin, settlementMax: engagement.settlementMax, paymentTermDays: engagement.paymentTermDays });
+                            setTerms({
+                              settlementMin: engagement.settlementMin,
+                              settlementMax: engagement.settlementMax,
+                              paymentTermDays: engagement.paymentTermDays,
+                              monthlyRate: engagement.monthlyRate,
+                              endDate: engagement.endDate ? engagement.endDate.slice(0, 10) : "",
+                            });
                             setEditTerms(true);
                           }}
                         >
@@ -394,6 +442,18 @@ export default function MoneyPage() {
                   </tbody>
                 </table>
               </div>
+              <label>
+                月単価 {man(reserveRate ?? reserveBaseRate)}
+                {reserveRate == null && <span className="field-hint">{engagements.some((e) => e.status === "稼働中") ? "稼働中の単価で試算中" : "取引先が未登録のため仮の単価で試算中"}</span>}
+                <input
+                  type="range"
+                  min={300000}
+                  max={1500000}
+                  step={10000}
+                  value={reserveRate ?? reserveBaseRate}
+                  onChange={(e) => setReserveRate(Number(e.target.value))}
+                />
+              </label>
               <label>
                 経費率 {expenseRatio}%
                 <input type="range" min={0} max={50} value={expenseRatio} onChange={(e) => setExpenseRatio(Number(e.target.value))} />

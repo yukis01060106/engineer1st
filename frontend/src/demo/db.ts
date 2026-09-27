@@ -11,6 +11,7 @@ export interface DemoUser {
   role: string;
   interests: string;
   signupSource: string | null;
+  referredById?: string | null;
   birthYear: number | null;
   lastCheckupDate: string | null;
   joinedAt: string;
@@ -24,6 +25,7 @@ export interface DemoProject {
   unitPrice: number;
   workStyle: string;
   description: string;
+  isListed?: boolean;
   createdAt: string;
 }
 export interface DemoEngagement {

@@ -5,6 +5,7 @@ import { requireAuth, AuthedRequest } from "../middleware/auth";
 import { calcRank, calcTenureYears, unlockedBenefits, RANK_BENEFITS, formatMemberNumber } from "../lib/rank";
 import { scoreProjectsBySkills } from "../lib/recommend";
 import { buildAlerts, EVENT_REMINDER_DAYS } from "../lib/alerts";
+import { buildOnboarding } from "../lib/onboarding";
 import { publicUser } from "../lib/publicUser";
 
 export const mypageRouter = Router();
@@ -27,6 +28,23 @@ mypageRouter.get("/", requireAuth, async (req: AuthedRequest, res) => {
 
   const alerts = await collectAlerts(req.userId!, user, currentEngagement);
 
+  const [eventCount, healthLogCount, wealthPlan] = await Promise.all([
+    prisma.eventApplication.count({ where: { userId: user.id } }),
+    prisma.healthLog.count({ where: { userId: user.id } }),
+    prisma.wealthPlan.findUnique({ where: { userId: user.id } }),
+  ]);
+  const onboarding = buildOnboarding({
+    workStyle: user.workStyle,
+    clubCount: user.clubMemberships.length,
+    eventCount,
+    healthLogCount,
+    hasWealthPlan: !!wealthPlan,
+    hasSkillSheet: !!user.skillSheet,
+    engagementCount: user.engagements.length,
+    hasInvoiceNumber: !!user.invoiceRegistrationNumber,
+  });
+  const referralCount = await prisma.user.count({ where: { referredById: user.id } });
+
   // 申込済みで、これから開催されるもの（参加URLつき）
   const upcoming = await prisma.eventApplication.findMany({
     where: { userId: user.id, event: { date: { gte: new Date(Date.now() - 3 * 3600_000) } } },
@@ -42,6 +60,8 @@ mypageRouter.get("/", requireAuth, async (req: AuthedRequest, res) => {
       invoiceRegistrationNumber: user.invoiceRegistrationNumber,
       memberNumber: formatMemberNumber(user.id),
     },
+    onboarding,
+    referralCount,
     clubs: user.clubMemberships.map((m) => ({ slug: m.club.slug, name: m.club.name, color: m.club.color, photo: m.club.photo })),
     upcomingEvents: upcoming.map((a) => ({
       id: a.event.id,
@@ -97,7 +117,7 @@ async function collectAlerts(
   const userSkillNames = user.skillSheet ? (JSON.parse(user.skillSheet.skills) as { name: string }[]).map((s) => s.name) : [];
 
   const [projects, unpaid, issued, unsignedContractCount, soonEvents] = await Promise.all([
-    prisma.project.findMany({ orderBy: { createdAt: "desc" } }),
+    prisma.project.findMany({ where: { isListed: true }, orderBy: { createdAt: "desc" } }),
     prisma.invoice.findMany({ where: { engagement: { userId }, paidAt: null }, include: { engagement: { include: { project: true } } } }),
     currentEngagement ? prisma.invoice.findFirst({ where: { engagementId: currentEngagement.id, targetMonth: ym } }) : null,
     prisma.contract.count({ where: { engagement: { userId }, status: "未締結" } }),
