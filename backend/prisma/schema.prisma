@@ -1,0 +1,281 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// フリーランスエンジニア本人
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  invoiceRegistrationNumber String? // インボイス登録番号（本人が発行者になる場合）
+  workStyle    String   @default("freelance") // freelance: フリーランス / ses_employee: SES会社員 / considering: 独立検討中
+  role         String   @default("member") // member / admin（運営：見込み客の管理・勉強会の告知）
+  interests    String   @default("[]") // JSON: 登録時に選んだ関心（"health" | "study" | "money" | "career"）
+  signupSource String?  // 流入元（例: "club:running"）。部活経由の集客を計測する
+  birthYear    Int?     // 資産形成シミュレーション用
+  lastCheckupDate DateTime? // 最後に健康診断を受けた日（フリーランスは会社の健診がないためリマインドする）
+  joinedAt     DateTime @default(now()) // 継続ランク計算の起点
+  createdAt    DateTime @default(now())
+
+  skillSheet     SkillSheet?
+  engagements    Engagement[]
+  eventApplications EventApplication[]
+  mentorRequests MentorRequest[]
+  rateDiagnoses  RateDiagnosis[]
+  expenses       Expense[]
+  clubMemberships ClubMembership[]
+  healthLogs     HealthLog[]
+  wealthPlan     WealthPlan?
+  fpMessages     FpMessage[]
+}
+
+// 案件
+model Project {
+  id          String   @id @default(cuid())
+  title       String
+  client      String
+  skills      String   // カンマ区切り
+  unitPrice   Int      // 月単価（円）
+  workStyle   String   // フルリモート/一部常駐 等
+  description String
+  createdAt   DateTime @default(now())
+
+  engagements Engagement[]
+}
+
+// ユーザーの稼働（どの案件で稼働しているか）
+model Engagement {
+  id          String   @id @default(cuid())
+  userId      String
+  projectId   String
+  monthlyRate Int      // 月単価（円）
+  startDate   DateTime
+  endDate     DateTime?
+  status      String   @default("稼働中") // 稼働中 / 終了
+  settlementMin   Int @default(140) // 精算幅の下限（時間）
+  settlementMax   Int @default(180) // 精算幅の上限（時間）
+  paymentTermDays Int @default(30)  // 月末締めから支払期日までの日数（フリーランス法では60日以内）
+
+  user     User    @relation(fields: [userId], references: [id])
+  project  Project @relation(fields: [projectId], references: [id])
+
+  invoices       Invoice[]
+  contracts      Contract[]
+}
+
+// 請求書：稼働先へ提出する請求書を自動生成する（インボイス制度対応）
+model Invoice {
+  id           String   @id @default(cuid())
+  engagementId String
+  targetMonth  String
+  amount       Int      // 税抜の請求額（精算後）
+  baseAmount   Int      @default(0) // 精算前の月額
+  workHours    Float?   // 当月の稼働時間
+  adjustment   Int      @default(0) // 精算幅による超過(+)・控除(-)
+  withholding  Int      @default(0) // 源泉徴収税額（該当する場合のみ）
+  dueDate      DateTime? // 支払期日
+  paidAt       DateTime? // 入金を確認した日
+  taxRate      Int      @default(10)
+  taxAmount    Int
+  totalAmount  Int
+  registrationNumber String // ユーザー本人の適格請求書発行事業者登録番号
+  invoiceNumber String  @unique
+  status       String   @default("発行済み") // 発行済み / 入金済み（期日超過は dueDate と paidAt から判定する）
+  issuedAt     DateTime @default(now())
+
+  engagement Engagement @relation(fields: [engagementId], references: [id])
+}
+
+// 契約書（稼働開始時に締結。電子締結はプロトタイプにつき簡易的な同意記録）
+model Contract {
+  id           String   @id @default(cuid())
+  engagementId String
+  title        String
+  body         String   // 契約書本文（簡易テキスト）
+  status       String   @default("未締結") // 未締結 / 締結済み
+  signedAt     DateTime?
+  signedName   String?  // 電子締結時に本人が入力した氏名（同意の記録）
+  createdAt    DateTime @default(now())
+
+  engagement Engagement @relation(fields: [engagementId], references: [id])
+}
+
+// スキルシート・サマリーシート
+model SkillSheet {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  summary     String   // 自己PRサマリー（自動生成）
+  skills      String   // JSON文字列: [{name, level, years}]
+  experiences String   // JSON文字列: [{title, period, role, tech, description}]
+
+  // ■ 基本情報（登録情報から自動入力できない・本人にしか分からない項目のみヒアリング）
+  age               Int?    // 年齢
+  nearestStation    String? // 最寄駅・希望勤務形態（例: "東京都 ※フルリモート希望（月1回は出社可）"）
+  availability      String? // 稼働開始時期（例: "即日", "2026-09〜"）
+  desiredRate       Int?    // 希望単価（円）。稼働中の案件があればその単価を初期値として提案する
+  totalExperienceYears Int? // IT経験年数（保有スキルの最大経験年数から自動算出、編集可）
+  workProcesses     String? // 対応可能工程（カンマ区切り。例: "要件定義,設計,開発,テスト,運用保守"）
+  appealPoints      String? // アピールポイント（自由記述。改行区切りで箇条書き）
+  remarks           String? // 備考／PR（自由記述）
+
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+// 勉強会・オフ会・コミュニティイベント
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  type        String   // "勉強会" | "部活" | "交流会"
+  date        DateTime
+  durationMin Int      @default(90)
+  location    String   // "オンライン" 等
+  isOnline    Boolean  @default(true)
+  joinUrl     String?  // 参加URL（申込者にだけ公開する）
+  speaker     String?
+  tags        String   @default("") // カンマ区切り
+  description String
+  capacity    Int      @default(50)
+  clubId      String?
+  createdAt   DateTime @default(now())
+
+  club         Club? @relation(fields: [clubId], references: [id])
+  applications EventApplication[]
+}
+
+model EventApplication {
+  id        String   @id @default(cuid())
+  userId    String
+  eventId   String
+  purpose   String?  // 参加フォーム: 参加目的
+  level     String?  // 参加フォーム: 経験レベル
+  question  String?  // 参加フォーム: 事前質問
+  appliedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  event Event @relation(fields: [eventId], references: [id])
+
+  @@unique([userId, eventId])
+}
+
+// 単価・商流診断: 自己申告データを蓄積し、似た条件のユーザーとの相場比較に使う（クラウドソース型・断定はしない）
+model RateDiagnosis {
+  id                String   @id @default(cuid())
+  userId            String? // 本人アカウントに紐づく申告の場合のみ設定。比較母数を増やすための参考データはnull可
+  primarySkill       String  // 比較グルーピング用の主要スキル（例: "React", "Java", "AWS"）
+  role              String  // 例: フロントエンドエンジニア、バックエンドエンジニア、インフラエンジニア
+  yearsOfExperience Int
+  monthlyRate       Int     // 月単価（円）
+  chainDepth        Int?    // 商流の階層（元請けから何社目か。自己申告・任意）
+  createdAt         DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+}
+
+// 経費（レシートをOCRで読み取り、内容確認のうえ登録する。会計ソフトへのCSV出力に使う）
+model Expense {
+  id         String   @id @default(cuid())
+  userId     String
+  date       DateTime // 支出日
+  vendor     String   // 支払先
+  amount     Int      // 金額（円）
+  category   String   // 勘定科目（旅費交通費 等）
+  memo       String?  // 備考
+  ocrRawText String?  // OCRで読み取った生テキスト（確認用）
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+// メンター相談リクエスト
+model MentorRequest {
+  id        String   @id @default(cuid())
+  userId    String
+  topic     String
+  message   String
+  status    String   @default("受付中") // 受付中 / 対応中 / 完了
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+// 部活（健康推進 × 集客）。参加には無料会員登録が必要
+model Club {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  catchphrase String
+  description String
+  schedule    String   // 例: "毎月第2・第4土曜 7:30〜"
+  place       String
+  level       String   // 例: "初心者歓迎"
+  photo       String   // /photos 配下のファイル名
+  color       String   // アクセントカラー（ブランドパレットのキー）
+  sortOrder   Int      @default(0)
+
+  memberships ClubMembership[]
+  events      Event[]
+}
+
+model ClubMembership {
+  id       String   @id @default(cuid())
+  userId   String
+  clubId   String
+  joinedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+  club Club @relation(fields: [clubId], references: [id])
+
+  @@unique([userId, clubId])
+}
+
+// 日々のコンディション記録（自己申告）
+model HealthLog {
+  id          String   @id @default(cuid())
+  userId      String
+  date        String   // "2026-09-27"（1日1件）
+  steps       Int?
+  sleepHours  Float?
+  exerciseMin Int?
+  mood        Int?     // 1〜5
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([userId, date])
+}
+
+// 資産形成プラン（シミュレーションの入力値を保存する）
+model WealthPlan {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  monthlyLivingCost Int      @default(250000) // 毎月の生活費
+  cashSavings       Int      @default(0)      // 現在の預金
+  investedAssets    Int      @default(0)      // 現在の投資資産
+  kyosaiMonthly     Int      @default(0)      // 小規模企業共済の掛金（月）
+  idecoMonthly      Int      @default(0)      // iDeCoの掛金（月）
+  nisaMonthly       Int      @default(0)      // NISAの積立（月）
+  expectedReturn    Float    @default(0.03)   // 想定利回り（年）
+  retireAge         Int      @default(65)
+  updatedAt         DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+// AI FPとの会話履歴
+model FpMessage {
+  id        String   @id @default(cuid())
+  userId    String
+  role      String   // "user" | "assistant"
+  content   String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}

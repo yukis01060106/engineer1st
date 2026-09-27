@@ -1,0 +1,12 @@
+node_modules/
+.env
+.env*
+.DS_Store
+.next/
+dist/
+*.tsbuildinfo
+backend/prisma/dev.db
+backend/prisma/dev.db-journal
+# ローカル専用
+.claude/
+frontend-vite-backup/
