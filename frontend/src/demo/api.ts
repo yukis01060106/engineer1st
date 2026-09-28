@@ -1,20 +1,31 @@
 // デモ版（GitHub Pages）の「ブラウザの中のバックエンド」。
 // backend/src/routes と同じ形のレスポンスを返す。計算ロジックは backend/src/lib をそのまま共有している（@shared）。
 import {
-  calcTax,
-  calcSettlement,
-  calcWithholding,
-  calcDueDate,
   invoiceState,
   nextInvoiceNumber,
   paymentReminderText,
+  buildInvoiceRecord,
+  buildInvoiceDocument,
+  parseBillingProfile,
+  bankComplete,
+  REGISTRATION_NUMBER_PATTERN,
   FREELANCE_ACT_MAX_DAYS,
+  IssuerInfo,
 } from "@shared/invoice";
 import { calcTaxReserve } from "@shared/taxReserve";
 import { simulateReward, simulateSalary } from "@shared/rewardSimulator";
 import { calcRank, calcTenureYears, unlockedBenefits, RANK_BENEFITS, formatMemberNumber } from "@shared/rank";
 import { scoreProjectsBySkills } from "@shared/recommend";
-import { generateSummary } from "@shared/skillSummary";
+import {
+  normalizeExperience,
+  generateSummary,
+  buildSkillSheetDocument,
+  phasesUnion,
+  totalExperienceMonths,
+  completeness,
+  PHASES,
+  type SkillSheetSource,
+} from "@shared/skillSheet";
 import { diagnoseRate, EXPERIENCE_BAND } from "@shared/rateDiagnosis";
 import { computeSnapshot } from "@shared/fpSnapshot";
 import { ruleBasedAnswer } from "@shared/fpRules";
@@ -25,7 +36,7 @@ import { computeSkillGaps } from "@shared/skillGap";
 import { autoReply, CHAT_WELCOME } from "@shared/chatReply";
 import { buildAutoItems } from "@shared/planner";
 import { buildExpenseCsv } from "@shared/expenseCsv";
-import { getDB, freshDB, saveDB, newId, DemoDB, DemoUser, DemoEvent, DemoInvoice, DemoTask } from "./db";
+import { getDB, freshDB, saveDB, newId, DemoDB, DemoUser, DemoEvent, DemoInvoice, DemoTask, DemoEngagement, DemoSkillSheet } from "./db";
 
 export const DEMO_PASSWORD = "password123";
 const DAY = 86_400_000;
@@ -115,27 +126,19 @@ function snapshotFor(db: DemoDB, user: DemoUser) {
   });
 }
 
-function buildInvoice(
-  eng: { monthlyRate: number; settlementMin: number; settlementMax: number; paymentTermDays: number },
-  input: { targetMonth: string; workHours?: number | null; applyWithholding?: boolean }
-) {
-  const settlement = calcSettlement({
-    monthlyRate: eng.monthlyRate,
-    workHours: input.workHours ?? null,
-    settlementMin: eng.settlementMin,
-    settlementMax: eng.settlementMax,
-  });
-  const tax = calcTax(settlement.amount, 10);
-  const withholding = input.applyWithholding ? calcWithholding(settlement.amount) : 0;
-  return {
-    ...tax,
-    baseAmount: settlement.baseAmount,
-    adjustment: settlement.adjustment,
-    settlementNote: settlement.note,
-    withholding,
-    transferAmount: tax.totalAmount - withholding,
-    dueDate: calcDueDate(input.targetMonth, eng.paymentTermDays),
-  };
+function issuerOf(u: DemoUser): IssuerInfo {
+  const reg = u.invoiceRegistrationNumber;
+  return { name: u.name, email: u.email, ...parseBillingProfile(u.billingProfile), registrationNumber: reg && REGISTRATION_NUMBER_PATTERN.test(reg) ? reg : null };
+}
+
+function invoiceRecord(db: DemoDB, user: DemoUser, e: DemoEngagement, b: { targetMonth: string; workHours?: number | null; applyWithholding?: boolean; notes?: string | null }) {
+  const project = projectOf(db, e.projectId);
+  return buildInvoiceRecord(
+    e,
+    { targetMonth: b.targetMonth, workHours: b.workHours ?? null, applyWithholding: !!b.applyWithholding, notes: b.notes },
+    issuerOf(user),
+    { name: e.billingName || project.client, projectTitle: project.title }
+  );
 }
 
 function ownEngagement(c: Ctx, id: string) {
@@ -299,7 +302,7 @@ on("GET", "/mypage", (c) => {
   return {
     onboarding,
     referralCount: db.users.filter((u) => u.referredById === user.id).length,
-    user: { ...publicUser(user), joinedAt: user.joinedAt, invoiceRegistrationNumber: user.invoiceRegistrationNumber, memberNumber: formatMemberNumber(user.id) },
+    user: { ...publicUser(user), joinedAt: user.joinedAt, invoiceRegistrationNumber: user.invoiceRegistrationNumber, billingProfile: parseBillingProfile(user.billingProfile), memberNumber: formatMemberNumber(user.id) },
     rank: {
       current: rank,
       tenureYears: Math.round(calcTenureYears(new Date(user.joinedAt), now) * 10) / 10,
@@ -320,11 +323,15 @@ on("GET", "/mypage", (c) => {
 
 on("PATCH", "/mypage", (c) => {
   const user = requireUser(c);
-  const b = c.body as { name?: string; workStyle?: string; invoiceRegistrationNumber?: string | null };
-  if (b.name !== undefined) user.name = b.name;
+  const b = c.body as { name?: string; workStyle?: string; invoiceRegistrationNumber?: string | null; billingProfile?: Record<string, unknown> & { bank?: { accountNumber?: string } | null; postalCode?: string } };
+  if (b.invoiceRegistrationNumber && !REGISTRATION_NUMBER_PATTERN.test(b.invoiceRegistrationNumber)) throw new HttpError(400, "登録番号は T から始まる14桁で入力してください");
+  if (b.billingProfile?.bank && !/^\d{7}$/.test(b.billingProfile.bank.accountNumber ?? "")) throw new HttpError(400, "口座番号は7桁の数字で入力してください");
+  if (b.billingProfile?.postalCode && !/^\d{3}-?\d{4}$/.test(b.billingProfile.postalCode)) throw new HttpError(400, "郵便番号は7桁で入力してください");
+  if (b.name !== undefined) user.name = b.name.trim();
   if (b.workStyle !== undefined) user.workStyle = b.workStyle;
   if (b.invoiceRegistrationNumber !== undefined) user.invoiceRegistrationNumber = b.invoiceRegistrationNumber;
-  return { user: { ...publicUser(user), invoiceRegistrationNumber: user.invoiceRegistrationNumber } };
+  if (b.billingProfile) user.billingProfile = JSON.stringify(b.billingProfile);
+  return { user: { ...publicUser(user), invoiceRegistrationNumber: user.invoiceRegistrationNumber, billingProfile: parseBillingProfile(user.billingProfile) } };
 });
 
 // ---------- 案件 ----------
@@ -345,68 +352,103 @@ on("GET", "/projects/recommend/for-me", (c) => {
 });
 
 // ---------- スキルシート ----------
-function parseSheet(s: { skills: string; experiences: string; workProcesses: string | null; appealPoints: string | null }) {
+function sheetSource(sheet: DemoSkillSheet, user: DemoUser): SkillSheetSource {
+  const parse = <T,>(json: string | null | undefined, fallback: T): T => {
+    try {
+      return json ? (JSON.parse(json) as T) : fallback;
+    } catch {
+      return fallback;
+    }
+  };
   return {
-    skills: JSON.parse(s.skills),
-    experiences: JSON.parse(s.experiences),
-    workProcesses: s.workProcesses ? JSON.parse(s.workProcesses) : [],
-    appealPoints: s.appealPoints ? JSON.parse(s.appealPoints) : [],
+    name: user.name,
+    initials: sheet.initials ?? null,
+    showFullName: !!sheet.showFullName,
+    age: sheet.age,
+    gender: sheet.gender ?? null,
+    nearestStation: sheet.nearestStation,
+    availability: sheet.availability,
+    desiredRate: sheet.desiredRate,
+    totalExperienceYears: sheet.totalExperienceYears,
+    specialty: sheet.specialty ?? null,
+    qualifications: parse(sheet.qualifications, []),
+    appealPoints: parse(sheet.appealPoints, []),
+    remarks: sheet.remarks,
+    skills: parse(sheet.skills, []),
+    experiences: parse<Record<string, unknown>[]>(sheet.experiences, []).map(normalizeExperience),
   };
 }
 on("GET", "/skill-sheet", (c) => {
   const user = requireUser(c);
   const sheet = c.db.skillSheets.find((s) => s.userId === user.id);
-  return { skillSheet: sheet ? { ...sheet, ...parseSheet(sheet) } : null };
+  if (!sheet) return { skillSheet: null };
+  const src = sheetSource(sheet, user);
+  return { skillSheet: { ...src, summary: sheet.summary, updatedAt: sheet.updatedAt, completeness: completeness(src) } };
 });
 on("GET", "/skill-sheet/defaults", (c) => {
   const user = requireUser(c);
   const current = c.db.engagements.find((e) => e.userId === user.id && e.status === "稼働中");
-  const sheet = c.db.skillSheets.find((s) => s.userId === user.id);
-  const skills = sheet ? (JSON.parse(sheet.skills) as { years: number }[]) : [];
+  const project = current ? projectOf(c.db, current.projectId) : null;
   return {
     defaults: {
       desiredRate: current?.monthlyRate ?? null,
-      availability: current?.endDate ? `${current.endDate.slice(0, 10)}以降（応相談）` : "即日",
-      totalExperienceYears: skills.length ? Math.max(...skills.map((s) => s.years)) : null,
+      availability: current?.endDate ? `${current.endDate.slice(0, 7).replace("-", "年")}月〜（応相談）` : "即日",
+      experiences: current && project ? [normalizeExperience({ title: project.title, startMonth: current.startDate.slice(0, 7), endMonth: null })] : [],
     },
   };
 });
 on("POST", "/skill-sheet", (c) => {
   const user = requireUser(c);
-  const b = c.body as {
-    skills: { name: string; level: number; years: number }[];
-    experiences: { title: string; period: string; role: string; tech: string; description: string }[];
-    age?: number | null;
-    nearestStation?: string | null;
-    availability?: string | null;
-    desiredRate?: number | null;
-    totalExperienceYears?: number | null;
-    workProcesses?: string[];
-    appealPoints?: string[];
-    remarks?: string | null;
-  };
-  const workProcesses = b.workProcesses ?? [];
-  const appealPoints = b.appealPoints ?? [];
-  const totalExperienceYears = b.totalExperienceYears ?? (b.skills.length ? Math.max(...b.skills.map((s) => s.years)) : null);
-  const summary = generateSummary({ ...b, name: user.name, totalExperienceYears, workProcesses, appealPoints });
-  const data = {
-    skills: JSON.stringify(b.skills),
-    experiences: JSON.stringify(b.experiences),
+  const b = c.body as Partial<SkillSheetSource> & { skills: SkillSheetSource["skills"]; experiences: Record<string, unknown>[] };
+  const experiences = (b.experiences ?? []).map(normalizeExperience);
+  const badIdx = experiences.findIndex((e) => !e.title.trim() || !e.startMonth || (e.endMonth && e.endMonth < e.startMonth));
+  if (badIdx >= 0) throw new HttpError(400, `経歴${badIdx + 1}の入力内容を確認してください（期間は「開始月 ≦ 終了月」、開始月は必須です）`);
+  if (experiences.some((e) => e.phases.some((p) => !(PHASES as readonly string[]).includes(p)))) throw new HttpError(400, "入力内容を確認してください");
+  const src: SkillSheetSource = {
+    name: user.name,
+    initials: b.initials?.trim() || null,
+    showFullName: !!b.showFullName,
     age: b.age ?? null,
+    gender: b.gender ?? null,
     nearestStation: b.nearestStation ?? null,
     availability: b.availability ?? null,
     desiredRate: b.desiredRate ?? null,
-    totalExperienceYears,
-    workProcesses: JSON.stringify(workProcesses),
-    appealPoints: JSON.stringify(appealPoints),
-    remarks: b.remarks ?? null,
-    summary,
+    totalExperienceYears: b.totalExperienceYears ?? (Math.round(totalExperienceMonths(experiences) / 12) || null),
+    specialty: b.specialty?.trim() || null,
+    qualifications: (b.qualifications ?? []).filter((q) => q.name?.trim()),
+    appealPoints: (b.appealPoints ?? []).map((p) => p.trim()).filter(Boolean),
+    remarks: b.remarks?.trim() || null,
+    skills: (b.skills ?? []).filter((k) => k.name?.trim()),
+    experiences,
+  };
+  const data = {
+    skills: JSON.stringify(src.skills),
+    experiences: JSON.stringify(src.experiences),
+    age: src.age,
+    gender: src.gender,
+    initials: src.initials,
+    showFullName: src.showFullName,
+    nearestStation: src.nearestStation,
+    availability: src.availability,
+    desiredRate: src.desiredRate,
+    totalExperienceYears: src.totalExperienceYears,
+    specialty: src.specialty,
+    qualifications: JSON.stringify(src.qualifications),
+    workProcesses: JSON.stringify(phasesUnion(src.experiences)),
+    appealPoints: JSON.stringify(src.appealPoints),
+    remarks: src.remarks,
+    summary: generateSummary(src),
     updatedAt: nowIso(),
   };
   const existing = c.db.skillSheets.find((s) => s.userId === user.id);
   const sheet = existing ? Object.assign(existing, data) : { id: newId("sheet"), userId: user.id, ...data };
   if (!existing) c.db.skillSheets.push(sheet);
-  return { skillSheet: { ...sheet, skills: b.skills, experiences: b.experiences, workProcesses, appealPoints } };
+  return { skillSheet: { ...src, summary: sheet.summary, updatedAt: sheet.updatedAt, completeness: completeness(src) } };
+});
+on("GET", "/skill-sheet/document", (c) => {
+  const user = requireUser(c);
+  const sheet = c.db.skillSheets.find((s) => s.userId === user.id);
+  return { document: sheet ? buildSkillSheetDocument(sheetSource(sheet, user)) : null };
 });
 
 // ---------- シミュレーション・診断 ----------
@@ -450,6 +492,10 @@ on("POST", "/money/engagements", (c) => {
     settlementMin?: number;
     settlementMax?: number;
     paymentTermDays?: number;
+    settlementMethod?: string;
+    unitRounding?: number;
+    hoursUnitMinutes?: number;
+    billingName?: string | null;
   };
   if (!b.client || !b.title || !b.monthlyRate || !b.startDate) throw new HttpError(400, "入力内容を確認してください");
   const settlementMin = b.settlementMin ?? 140;
@@ -468,13 +514,28 @@ on("POST", "/money/engagements", (c) => {
     settlementMin,
     settlementMax,
     paymentTermDays: b.paymentTermDays ?? 30,
+    settlementMethod: b.settlementMethod ?? "updown",
+    unitRounding: b.unitRounding ?? 1,
+    hoursUnitMinutes: b.hoursUnitMinutes ?? 1,
+    billingName: b.billingName || null,
   };
   c.db.engagements.push(engagement);
   return { status: 201, data: { engagement: { ...engagement, project } } };
 });
 on("PATCH", "/money/engagements/:id", (c) => {
   const e = ownEngagement(c, c.params[0]);
-  const b = c.body as { settlementMin: number; settlementMax: number; paymentTermDays: number; monthlyRate?: number; endDate?: string | null; status?: string };
+  const b = c.body as {
+    settlementMin: number;
+    settlementMax: number;
+    paymentTermDays: number;
+    monthlyRate?: number;
+    endDate?: string | null;
+    status?: string;
+    settlementMethod?: string;
+    unitRounding?: number;
+    hoursUnitMinutes?: number;
+    billingName?: string | null;
+  };
   if (b.settlementMin > b.settlementMax) throw new HttpError(400, "精算幅は「下限 ≦ 上限」で入力してください");
   const { endDate, ...rest } = b;
   Object.assign(e, rest);
@@ -498,37 +559,51 @@ on("GET", "/money/invoices", (c) => {
   };
 });
 on("POST", "/money/invoices/preview", (c) => {
-  const b = c.body as { engagementId: string; targetMonth: string; workHours?: number | null; applyWithholding?: boolean };
-  return { preview: buildInvoice(ownEngagement(c, b.engagementId), b) };
+  const user = requireUser(c);
+  const b = c.body as { engagementId: string; targetMonth: string; workHours?: number | null; applyWithholding?: boolean; notes?: string | null };
+  const issuer = issuerOf(user);
+  return { preview: invoiceRecord(c.db, user, ownEngagement(c, b.engagementId), b), issuerReady: { registration: !!issuer.registrationNumber, bank: bankComplete(issuer.bank) } };
 });
 on("POST", "/money/invoices", (c) => {
   const user = requireUser(c);
-  const b = c.body as { engagementId: string; targetMonth: string; workHours?: number | null; applyWithholding?: boolean };
+  const b = c.body as { engagementId: string; targetMonth: string; workHours?: number | null; applyWithholding?: boolean; notes?: string | null };
   const e = ownEngagement(c, b.engagementId);
   const dup = c.db.invoices.find((i) => i.engagementId === e.id && i.targetMonth === b.targetMonth);
-  if (dup) throw new HttpError(409, `${b.targetMonth}分の請求書はすでに発行済みです（${dup.invoiceNumber}）`);
-  const x = buildInvoice(e, b);
+  if (dup) throw new HttpError(409, `${b.targetMonth}分の請求書はすでに発行済みです（${dup.invoiceNumber}）。直すときは、発行済みの請求書を取り消してから発行し直してください`);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- 振込額は表示用なので保存しない
+  const { transferAmount, dueDate, ...x } = invoiceRecord(c.db, user, e, b);
   const invoice: DemoInvoice = {
+    ...x,
     id: newId("inv"),
     engagementId: e.id,
-    targetMonth: b.targetMonth,
-    amount: x.amount,
-    baseAmount: x.baseAmount,
-    workHours: b.workHours ?? null,
-    adjustment: x.adjustment,
-    withholding: x.withholding,
-    dueDate: x.dueDate.toISOString(),
+    dueDate: dueDate.toISOString(),
     paidAt: null,
-    taxRate: x.taxRate,
-    taxAmount: x.taxAmount,
-    totalAmount: x.totalAmount,
-    registrationNumber: user.invoiceRegistrationNumber ?? "未登録（設定画面で登録番号を入力してください）",
     invoiceNumber: nextInvoiceNumber(b.targetMonth),
     status: "発行済み",
     issuedAt: nowIso(),
   };
   c.db.invoices.push(invoice);
   return { status: 201, data: { invoice } };
+});
+on("DELETE", "/money/invoices/:id", (c) => {
+  const inv = ownInvoice(c, c.params[0]);
+  if (inv.paidAt) throw new HttpError(400, "入金済みの請求書は取り消せません。先に入金の確認を取り消してください");
+  c.db.invoices = c.db.invoices.filter((i) => i.id !== inv.id);
+  return { status: 204, data: {} };
+});
+on("GET", "/money/invoices/:id/document", (c) => {
+  const inv = ownInvoice(c, c.params[0]);
+  const full = withEngagement(c.db, inv);
+  return {
+    document: buildInvoiceDocument({
+      ...inv,
+      issuedAt: new Date(inv.issuedAt),
+      dueDate: d(inv.dueDate),
+      fallbackIssuer: { name: c.user!.name, email: c.user!.email },
+      fallbackRecipient: full.engagement.billingName || full.engagement.project.client,
+      projectTitle: full.engagement.project.title,
+    }),
+  };
 });
 on("POST", "/money/invoices/:id/paid", (c) => {
   const inv = ownInvoice(c, c.params[0]);

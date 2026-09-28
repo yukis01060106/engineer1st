@@ -14,6 +14,7 @@ export interface DemoUser {
   referredById?: string | null;
   birthYear: number | null;
   lastCheckupDate: string | null;
+  billingProfile?: string; // JSON（屋号・住所・振込先）
   joinedAt: string;
   createdAt: string;
 }
@@ -39,6 +40,10 @@ export interface DemoEngagement {
   settlementMin: number;
   settlementMax: number;
   paymentTermDays: number;
+  settlementMethod?: string;
+  unitRounding?: number;
+  hoursUnitMinutes?: number;
+  billingName?: string | null;
 }
 export interface DemoInvoice {
   id: string;
@@ -58,6 +63,13 @@ export interface DemoInvoice {
   invoiceNumber: string;
   status: string;
   issuedAt: string;
+  settledHours?: number | null;
+  hourlyUnit?: number;
+  settlementNote?: string | null;
+  recipientName?: string;
+  subject?: string;
+  notes?: string | null;
+  issuerInfo?: string;
 }
 export interface DemoContract {
   id: string;
@@ -83,6 +95,11 @@ export interface DemoSkillSheet {
   workProcesses: string | null;
   appealPoints: string | null;
   remarks: string | null;
+  initials?: string | null;
+  showFullName?: boolean;
+  gender?: string | null;
+  specialty?: string | null;
+  qualifications?: string;
   updatedAt: string;
 }
 export interface DemoEvent {

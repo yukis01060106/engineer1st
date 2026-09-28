@@ -1,18 +1,19 @@
 {
- "exportedAt": "2026-09-27T16:20:23.628Z",
+ "exportedAt": "2026-09-28T03:36:18.863Z",
  "users": [
   {
    "id": "cmr9izvx90000jh6wwtov5p12",
    "email": "tanaka@example.com",
    "name": "青木 耶雲",
    "invoiceRegistrationNumber": "T9876543210987",
+   "billingProfile": "{\"businessName\":\"\",\"postalCode\":\"150-0000\",\"address\":\"東京都渋谷区（デモ用の住所）\",\"phone\":\"\",\"bank\":{\"bankName\":\"サンプル銀行\",\"branchName\":\"本店営業部\",\"accountType\":\"普通\",\"accountNumber\":\"1234567\",\"accountHolder\":\"アオキ ヤクモ\"}}",
    "workStyle": "freelance",
    "role": "member",
    "interests": "[\"money\",\"health\",\"study\"]",
    "signupSource": null,
    "referredById": null,
    "birthYear": 1994,
-   "lastCheckupDate": "2025-07-27T16:20:23.293Z",
+   "lastCheckupDate": "2025-07-28T03:36:18.522Z",
    "joinedAt": "2024-07-06T18:00:36.185Z",
    "createdAt": "2026-07-06T18:00:36.190Z"
   },
@@ -21,6 +22,7 @@
    "email": "admin@example.com",
    "name": "運営 事務局",
    "invoiceRegistrationNumber": null,
+   "billingProfile": "{}",
    "workStyle": "freelance",
    "role": "admin",
    "interests": "[]",
@@ -36,6 +38,7 @@
    "email": "sato@example.com",
    "name": "佐藤 陸",
    "invoiceRegistrationNumber": null,
+   "billingProfile": "{}",
    "workStyle": "ses_employee",
    "role": "member",
    "interests": "[]",
@@ -51,6 +54,7 @@
    "email": "kimura@example.com",
    "name": "木村 葵",
    "invoiceRegistrationNumber": null,
+   "billingProfile": "{}",
    "workStyle": "considering",
    "role": "member",
    "interests": "[]",
@@ -66,6 +70,7 @@
    "email": "ito@example.com",
    "name": "伊藤 湊",
    "invoiceRegistrationNumber": null,
+   "billingProfile": "{}",
    "workStyle": "freelance",
    "role": "member",
    "interests": "[]",
@@ -81,6 +86,7 @@
    "email": "yamada@example.com",
    "name": "山田 結衣",
    "invoiceRegistrationNumber": null,
+   "billingProfile": "{}",
    "workStyle": "ses_employee",
    "role": "member",
    "interests": "[]",
@@ -96,6 +102,7 @@
    "email": "nakamura@example.com",
    "name": "中村 蒼",
    "invoiceRegistrationNumber": null,
+   "billingProfile": "{}",
    "workStyle": "considering",
    "role": "member",
    "interests": "[]",
@@ -171,11 +178,15 @@
    "projectId": "cmr9izvxk0004jh6w6jokrjd2",
    "monthlyRate": 750000,
    "startDate": "2026-05-06T18:00:36.202Z",
-   "endDate": "2026-10-22T16:20:23.250Z",
+   "endDate": "2026-10-23T03:36:18.473Z",
    "status": "稼働中",
    "settlementMin": 140,
    "settlementMax": 180,
-   "paymentTermDays": 30
+   "paymentTermDays": 30,
+   "settlementMethod": "updown",
+   "unitRounding": 1,
+   "hoursUnitMinutes": 1,
+   "billingName": null
   },
   {
    "id": "seed-engagement-past",
@@ -183,11 +194,15 @@
    "projectId": "cmr9izvxf0001jh6w09jkfqce",
    "monthlyRate": 700000,
    "startDate": "2025-07-06T18:00:36.203Z",
-   "endDate": "2026-05-27T16:20:23.251Z",
+   "endDate": "2026-05-28T03:36:18.474Z",
    "status": "終了",
    "settlementMin": 140,
    "settlementMax": 180,
-   "paymentTermDays": 30
+   "paymentTermDays": 30,
+   "settlementMethod": "updown",
+   "unitRounding": 1,
+   "hoursUnitMinutes": 1,
+   "billingName": null
   }
  ],
  "invoices": [
@@ -198,7 +213,10 @@
    "amount": 700000,
    "baseAmount": 700000,
    "workHours": 162,
+   "settledHours": 162,
    "adjustment": 0,
+   "hourlyUnit": 0,
+   "settlementNote": "精算幅 140〜180h の範囲内（162h）",
    "withholding": 0,
    "dueDate": "2026-04-30T14:59:59.000Z",
    "paidAt": "2026-04-28T14:59:59.000Z",
@@ -207,8 +225,12 @@
    "totalAmount": 770000,
    "registrationNumber": "T9876543210987",
    "invoiceNumber": "INV-202603-SEED0",
+   "recipientName": "コマースフロンティア株式会社",
+   "subject": "大手ECサイト リプレイス案件 業務委託料（2026年3月分）",
+   "notes": null,
+   "issuerInfo": "{\"name\":\"青木 耶雲\",\"email\":\"tanaka@example.com\",\"businessName\":\"\",\"postalCode\":\"150-0000\",\"address\":\"東京都渋谷区（デモ用の住所）\",\"phone\":\"\",\"bank\":{\"bankName\":\"サンプル銀行\",\"branchName\":\"本店営業部\",\"accountType\":\"普通\",\"accountNumber\":\"1234567\",\"accountHolder\":\"アオキ ヤクモ\"},\"registrationNumber\":\"T9876543210987\"}",
    "status": "入金済み",
-   "issuedAt": "2026-09-27T16:20:23.253Z"
+   "issuedAt": "2026-04-02T14:59:59.000Z"
   },
   {
    "id": "seed-invoice-1",
@@ -217,7 +239,10 @@
    "amount": 731104,
    "baseAmount": 700000,
    "workHours": 188,
+   "settledHours": 188,
    "adjustment": 31104,
+   "hourlyUnit": 3888,
+   "settlementNote": "精算幅 140〜180h（上下割）／超過 8h × 超過単価 3,888円",
    "withholding": 0,
    "dueDate": "2026-05-30T14:59:59.000Z",
    "paidAt": "2026-05-28T14:59:59.000Z",
@@ -226,8 +251,12 @@
    "totalAmount": 804214,
    "registrationNumber": "T9876543210987",
    "invoiceNumber": "INV-202604-SEED1",
+   "recipientName": "コマースフロンティア株式会社",
+   "subject": "大手ECサイト リプレイス案件 業務委託料（2026年4月分）",
+   "notes": null,
+   "issuerInfo": "{\"name\":\"青木 耶雲\",\"email\":\"tanaka@example.com\",\"businessName\":\"\",\"postalCode\":\"150-0000\",\"address\":\"東京都渋谷区（デモ用の住所）\",\"phone\":\"\",\"bank\":{\"bankName\":\"サンプル銀行\",\"branchName\":\"本店営業部\",\"accountType\":\"普通\",\"accountNumber\":\"1234567\",\"accountHolder\":\"アオキ ヤクモ\"},\"registrationNumber\":\"T9876543210987\"}",
    "status": "入金済み",
-   "issuedAt": "2026-09-27T16:20:23.265Z"
+   "issuedAt": "2026-05-02T14:59:59.000Z"
   },
   {
    "id": "seed-invoice-2",
@@ -236,7 +265,10 @@
    "amount": 750000,
    "baseAmount": 750000,
    "workHours": 171,
+   "settledHours": 171,
    "adjustment": 0,
+   "hourlyUnit": 0,
+   "settlementNote": "精算幅 140〜180h の範囲内（171h）",
    "withholding": 0,
    "dueDate": "2026-08-30T14:59:59.000Z",
    "paidAt": null,
@@ -245,27 +277,38 @@
    "totalAmount": 825000,
    "registrationNumber": "T9876543210987",
    "invoiceNumber": "INV-202607-SEED2",
+   "recipientName": "テックパートナーズ合同会社",
+   "subject": "AIチャットボット開発 業務委託料（2026年7月分）",
+   "notes": null,
+   "issuerInfo": "{\"name\":\"青木 耶雲\",\"email\":\"tanaka@example.com\",\"businessName\":\"\",\"postalCode\":\"150-0000\",\"address\":\"東京都渋谷区（デモ用の住所）\",\"phone\":\"\",\"bank\":{\"bankName\":\"サンプル銀行\",\"branchName\":\"本店営業部\",\"accountType\":\"普通\",\"accountNumber\":\"1234567\",\"accountHolder\":\"アオキ ヤクモ\"},\"registrationNumber\":\"T9876543210987\"}",
    "status": "発行済み",
-   "issuedAt": "2026-09-27T16:20:23.266Z"
+   "issuedAt": "2026-08-02T14:59:59.000Z"
   },
   {
    "id": "seed-invoice-3",
    "engagementId": "seed-engagement-current",
    "targetMonth": "2026-08",
-   "amount": 731250,
+   "amount": 731251,
    "baseAmount": 750000,
    "workHours": 136.5,
-   "adjustment": -18750,
+   "settledHours": 136.5,
+   "adjustment": -18749,
+   "hourlyUnit": 5357,
+   "settlementNote": "精算幅 140〜180h（上下割）／不足 3.5h × 控除単価 5,357円",
    "withholding": 0,
    "dueDate": "2026-09-30T14:59:59.000Z",
    "paidAt": null,
    "taxRate": 10,
    "taxAmount": 73125,
-   "totalAmount": 804375,
+   "totalAmount": 804376,
    "registrationNumber": "T9876543210987",
    "invoiceNumber": "INV-202608-SEED3",
+   "recipientName": "テックパートナーズ合同会社",
+   "subject": "AIチャットボット開発 業務委託料（2026年8月分）",
+   "notes": null,
+   "issuerInfo": "{\"name\":\"青木 耶雲\",\"email\":\"tanaka@example.com\",\"businessName\":\"\",\"postalCode\":\"150-0000\",\"address\":\"東京都渋谷区（デモ用の住所）\",\"phone\":\"\",\"bank\":{\"bankName\":\"サンプル銀行\",\"branchName\":\"本店営業部\",\"accountType\":\"普通\",\"accountNumber\":\"1234567\",\"accountHolder\":\"アオキ ヤクモ\"},\"registrationNumber\":\"T9876543210987\"}",
    "status": "発行済み",
-   "issuedAt": "2026-09-27T16:20:23.267Z"
+   "issuedAt": "2026-09-02T14:59:59.000Z"
   }
  ],
  "contracts": [
@@ -294,23 +337,28 @@
   {
    "id": "cmr9izvxt0007jh6w4ih4zgtr",
    "userId": "cmr9izvx90000jh6wwtov5p12",
-   "summary": "■ 基本情報\n氏名   ：青木 耶雲\n年齢   ：32歳\n最寄駅  ：東京都 ※フルリモート希望（月1回は出社可能）\n稼働開始 ：2026-08-02以降（応相談）\n単価   ：750,000円〜\n\n■ スキルサマリー（★＝特に強い領域）\n フロントエンド：★ TypeScript / ★ React\n バックエンド：Node.js / Java\n インフラ・環境：AWS\n\n■ 対応可能工程\n 設計 → 開発（フロントエンド） → 開発（バックエンド） → テスト\n\n■ アピールポイント\n1. TypeScript / React / Node.js を軸としたモダン開発スキルで、画面構築からAPI開発まで独力かつハイレベルに遂行可能。\n2. 生成AIを活用したチャットボット開発プロジェクトに参画し、AI技術の実務応用への知見を保有。\n\n■ 経験概要（IT開発経験：約3年）\n バックエンドエンジニアとして3件のプロジェクトに参画。プロジェクト経歴・保有スキルをもとに自動生成されたサマリーです（必要に応じて編集してください）。",
-   "skills": "[{\"name\":\"TypeScript\",\"level\":4,\"years\":3},{\"name\":\"React\",\"level\":4,\"years\":3},{\"name\":\"Node.js\",\"level\":3,\"years\":2},{\"name\":\"AWS\",\"level\":2,\"years\":1}]",
-   "experiences": "[{\"title\":\"AIチャットボット開発\",\"period\":\"2026-05〜稼働中\",\"role\":\"バックエンドエンジニア\",\"tech\":\"Python, TypeScript, AWS\",\"description\":\"生成AIを活用した社内向けチャットボットのバックエンドAPI開発を担当。\"},{\"title\":\"大手ECサイト リプレイス案件\",\"period\":\"2026-04〜2026-06\",\"role\":\"フロントエンドエンジニア\",\"tech\":\"React, TypeScript, Node.js\",\"description\":\"ECサイトのフロントエンド刷新。コンポーネント設計・API連携を担当。\"},{\"title\":\"金融系基幹システム保守開発\",\"period\":\"2025-03〜2026-03\",\"role\":\"バックエンドエンジニア\",\"tech\":\"Java, Spring, AWS\",\"description\":\"基幹システムの保守・機能改修を担当。\"}]",
+   "summary": "【氏名】Y.A（32歳）\n【最寄駅】JR山手線 渋谷駅（フルリモート希望・月1回の出社可）\n【稼働開始】2026年11月〜（応相談）\n【希望単価】80万円〜（税抜・月額）\n【IT経験】約7年\n【得意分野】Webアプリの設計〜開発、生成AI（RAG）の実装\n【対応工程】要件定義〜運用・保守\n【スキル】\n・言語：Java（6年）、TypeScript（3年）、Python（1年）\n・フレームワーク：Spring Boot（4年）、React（3年）、Node.js（2年）、Next.js（1年）\n・DB：PostgreSQL（3年）、Oracle（3年）\n・OS：Linux（5年）\n・クラウド・インフラ：AWS（3年）、Docker（2年）\n・ツール・その他：Git（7年）\n【資格】基本情報技術者試験、AWS Certified Solutions Architect - Associate\n【直近の経歴】\n・2026/07 〜 現在（3ヶ月） 社内向けAIチャットボット開発［SE／5名／基本設計〜結合テスト］\n　環境：Python, TypeScript, FastAPI, Next.js, PostgreSQL（pgvector）, AWS（ECS, Lambda, Bedrock）\n　RAG（検索拡張生成）のAPI設計・実装、回答精度の評価の仕組みづくりを担当。回答の正答率を62%から85%に改善。\n・2025/09 〜 2026/05（9ヶ月） 大手ECサイト リプレイス［テックリード／8名／要件定義〜結合テスト］\n　環境：TypeScript, React, Next.js, Node.js, AWS（CloudFront, S3）, Vercel\n　商品一覧・カート画面の設計と実装、共通コンポーネントの整備をリード。表示速度（LCP）を3.1秒から1.8秒に短縮。\n・2022/06 〜 2025/08（3年3ヶ月） 金融機関向け 基幹システム保守開発［SE／20名／詳細設計〜運用・保守］\n　環境：Java, SQL, Spring Boot, Oracle, AWS（EC2, RDS）\n　改修案件の詳細設計〜総合テストを担当。バッチ処理の見直しで夜間処理時間を40%短縮。\n【アピールポイント】\n・Java 6年・TypeScript 3年。業務システムとWebサービスの両方で、設計から実装・テストまで一人で担当できます。\n・直近は生成AI（RAG）の実務経験あり。回答精度の評価の仕組みまで作り、数字で改善を示しました。\n・テックリードとして8名のチームで、レビューと共通コンポーネントの整備を進めた経験があります。\n【備考】フルリモートでも、朝会・チャットでの進捗共有をこまめに行います。",
+   "skills": "[{\"name\":\"TypeScript\",\"level\":4,\"years\":3},{\"name\":\"React\",\"level\":4,\"years\":3},{\"name\":\"Java\",\"level\":4,\"years\":6},{\"name\":\"Spring Boot\",\"level\":3,\"years\":4},{\"name\":\"Node.js\",\"level\":3,\"years\":2},{\"name\":\"Next.js\",\"level\":3,\"years\":1},{\"name\":\"Python\",\"level\":2,\"years\":1},{\"name\":\"PostgreSQL\",\"level\":3,\"years\":3},{\"name\":\"Oracle\",\"level\":3,\"years\":3},{\"name\":\"Linux\",\"level\":3,\"years\":5},{\"name\":\"AWS\",\"level\":3,\"years\":3},{\"name\":\"Docker\",\"level\":3,\"years\":2},{\"name\":\"Git\",\"level\":4,\"years\":7}]",
+   "experiences": "[{\"title\":\"社内向けAIチャットボット開発\",\"industry\":\"IT・人材\",\"startMonth\":\"2026-07\",\"endMonth\":null,\"overview\":\"社内規程やFAQを検索して回答する生成AIチャットボットの新規開発。\",\"tasks\":\"RAG（検索拡張生成）のAPI設計・実装、回答精度の評価の仕組みづくりを担当。回答の正答率を62%から85%に改善。\",\"role\":\"SE\",\"teamSize\":5,\"phases\":[\"基本設計\",\"詳細設計\",\"製造\",\"単体テスト\",\"結合テスト\"],\"languages\":\"Python, TypeScript\",\"frameworks\":\"FastAPI, Next.js\",\"databases\":\"PostgreSQL（pgvector）\",\"os\":\"Linux\",\"cloud\":\"AWS（ECS, Lambda, Bedrock）\",\"tools\":\"GitHub, Docker, Slack\"},{\"title\":\"大手ECサイト リプレイス\",\"industry\":\"小売・EC\",\"startMonth\":\"2025-09\",\"endMonth\":\"2026-05\",\"overview\":\"月間500万人が利用するECサイトのフロントエンドを、SPAからNext.jsへ段階的に移行。\",\"tasks\":\"商品一覧・カート画面の設計と実装、共通コンポーネントの整備をリード。表示速度（LCP）を3.1秒から1.8秒に短縮。\",\"role\":\"テックリード\",\"teamSize\":8,\"phases\":[\"要件定義\",\"基本設計\",\"詳細設計\",\"製造\",\"単体テスト\",\"結合テスト\"],\"languages\":\"TypeScript\",\"frameworks\":\"React, Next.js, Node.js\",\"databases\":\"\",\"os\":\"macOS\",\"cloud\":\"AWS（CloudFront, S3）, Vercel\",\"tools\":\"GitHub Actions, Storybook, Figma\"},{\"title\":\"金融機関向け 基幹システム保守開発\",\"industry\":\"金融\",\"startMonth\":\"2022-06\",\"endMonth\":\"2025-08\",\"overview\":\"融資管理システムの保守と、法改正にともなう機能改修。\",\"tasks\":\"改修案件の詳細設計〜総合テストを担当。バッチ処理の見直しで夜間処理時間を40%短縮。\",\"role\":\"SE\",\"teamSize\":20,\"phases\":[\"詳細設計\",\"製造\",\"単体テスト\",\"結合テスト\",\"総合テスト\",\"運用・保守\"],\"languages\":\"Java, SQL\",\"frameworks\":\"Spring Boot\",\"databases\":\"Oracle\",\"os\":\"Linux（RHEL）\",\"cloud\":\"AWS（EC2, RDS）\",\"tools\":\"Jenkins, Git, JIRA\"},{\"title\":\"物流会社 在庫管理システム開発\",\"industry\":\"物流\",\"startMonth\":\"2019-10\",\"endMonth\":\"2022-05\",\"overview\":\"倉庫の入出庫・在庫を管理するWebシステムの新規開発と機能追加。\",\"tasks\":\"画面とAPIの製造・単体テストを担当。2年目からは新人2名のコードレビューも担当。\",\"role\":\"PG\",\"teamSize\":10,\"phases\":[\"製造\",\"単体テスト\",\"結合テスト\"],\"languages\":\"Java, JavaScript\",\"frameworks\":\"Spring, jQuery\",\"databases\":\"PostgreSQL\",\"os\":\"Windows Server\",\"cloud\":\"\",\"tools\":\"Subversion, Redmine\"}]",
    "age": 32,
-   "nearestStation": "東京都 ※フルリモート希望（月1回は出社可能）",
-   "availability": "2026-08-02以降（応相談）",
-   "desiredRate": 750000,
-   "totalExperienceYears": 3,
-   "workProcesses": "[\"設計\",\"開発（フロントエンド）\",\"開発（バックエンド）\",\"テスト\"]",
-   "appealPoints": "[\"TypeScript / React / Node.js を軸としたモダン開発スキルで、画面構築からAPI開発まで独力かつハイレベルに遂行可能。\",\"生成AIを活用したチャットボット開発プロジェクトに参画し、AI技術の実務応用への知見を保有。\"]",
-   "remarks": "フルリモート環境でも自走力高く安定した成果を出せる自信があります。生成AIを活用した開発にも意欲的に取り組んでいます。",
-   "updatedAt": "2026-09-27T16:20:23.268Z"
+   "nearestStation": "JR山手線 渋谷駅（フルリモート希望・月1回の出社可）",
+   "availability": "2026年11月〜（応相談）",
+   "desiredRate": 800000,
+   "totalExperienceYears": 7,
+   "workProcesses": "[\"要件定義\",\"基本設計\",\"詳細設計\",\"製造\",\"単体テスト\",\"結合テスト\",\"総合テスト\",\"運用・保守\"]",
+   "appealPoints": "[\"Java 6年・TypeScript 3年。業務システムとWebサービスの両方で、設計から実装・テストまで一人で担当できます。\",\"直近は生成AI（RAG）の実務経験あり。回答精度の評価の仕組みまで作り、数字で改善を示しました。\",\"テックリードとして8名のチームで、レビューと共通コンポーネントの整備を進めた経験があります。\"]",
+   "remarks": "フルリモートでも、朝会・チャットでの進捗共有をこまめに行います。",
+   "initials": "Y.A",
+   "showFullName": false,
+   "gender": null,
+   "specialty": "Webアプリの設計〜開発、生成AI（RAG）の実装",
+   "qualifications": "[{\"name\":\"基本情報技術者試験\",\"acquired\":\"2019-11\"},{\"name\":\"AWS Certified Solutions Architect - Associate\",\"acquired\":\"2024-06\"}]",
+   "updatedAt": "2026-09-28T03:36:18.497Z"
   }
  ],
  "events": [
   {
-   "id": "cmuk0ypo1000bkwq6vc6eek16",
+   "id": "cmukp3ya7000b5y4meohnq9dk",
    "title": "Claude Code 実践：レビューとテストをAIに任せる開発フロー",
    "type": "勉強会",
    "date": "2026-10-03T11:00:00.000Z",
@@ -323,10 +371,10 @@
    "description": "AIエージェントに実装・テスト・レビューを任せるときの、現場で使える手順を紹介します。SESの現場でAIツールが使えない場合の、個人での練習方法もお話しします。",
    "capacity": 100,
    "clubId": null,
-   "createdAt": "2026-09-27T16:20:23.282Z"
+   "createdAt": "2026-09-28T03:36:18.511Z"
   },
   {
-   "id": "cmuk0ypo2000ckwq6c0fz1n61",
+   "id": "cmukp3ya7000c5y4ms86ppp7m",
    "title": "Next.js 16 と React 19 の変更点をまとめて押さえる",
    "type": "勉強会",
    "date": "2026-10-10T11:00:00.000Z",
@@ -339,10 +387,10 @@
    "description": "Server Components、Actions、キャッシュまわりの変更を、実務で困るポイントに絞って解説します。",
    "capacity": 80,
    "clubId": null,
-   "createdAt": "2026-09-27T16:20:23.282Z"
+   "createdAt": "2026-09-28T03:36:18.512Z"
   },
   {
-   "id": "cmuk0ypo2000dkwq6afekv845",
+   "id": "cmukp3ya8000d5y4m8rs8xwto",
    "title": "40代からの単価の上げ方：要件定義・調整役の経験を積む",
    "type": "勉強会",
    "date": "2026-10-17T11:00:00.000Z",
@@ -355,10 +403,10 @@
    "description": "開発工程に閉じがちなSESの現場で、調整役・要件定義の経験をどう積むか。実例をもとに話します。",
    "capacity": 60,
    "clubId": null,
-   "createdAt": "2026-09-27T16:20:23.283Z"
+   "createdAt": "2026-09-28T03:36:18.513Z"
   },
   {
-   "id": "cmuk0ypo3000fkwq6gzscn9dz",
+   "id": "cmukp3ya9000f5y4mbdn7cpfn",
    "title": "ピックルボール部：はじめての人向けラリー練習",
    "type": "部活",
    "date": "2026-10-05T01:00:00.000Z",
@@ -371,10 +419,10 @@
    "description": "持ち方・打ち方の基本から、2対2のゲームまで。パドルは貸し出しあり。動きやすい服装と室内シューズでどうぞ。終わったらランチ会です。",
    "capacity": 16,
    "clubId": "cmujiynkq000311x7oj5x10xn",
-   "createdAt": "2026-09-27T16:20:23.283Z"
+   "createdAt": "2026-09-28T03:36:18.513Z"
   },
   {
-   "id": "cmuk0ypo4000hkwq6ozy19lnf",
+   "id": "cmukp3ya9000h5y4muetd3xym",
    "title": "ピックルボール部：ダブルス練習会",
    "type": "部活",
    "date": "2026-10-19T01:00:00.000Z",
@@ -387,10 +435,10 @@
    "description": "ダブルスのゲームを中心に。経験者と未経験者でペアを組むので、初参加でも大丈夫です。",
    "capacity": 16,
    "clubId": "cmujiynkq000311x7oj5x10xn",
-   "createdAt": "2026-09-27T16:20:23.284Z"
+   "createdAt": "2026-09-28T03:36:18.514Z"
   },
   {
-   "id": "cmuk0ypo5000jkwq663j4p89b",
+   "id": "cmukp3yaa000j5y4mqthjd4y2",
    "title": "筋トレ部：肩こり・腰痛予防の全身トレーニング",
    "type": "部活",
    "date": "2026-10-01T10:30:00.000Z",
@@ -403,10 +451,10 @@
    "description": "スクワット・ヒップリフト・ローイングなど、デスクワークで弱りやすい筋肉を中心に。フォームは部員のトレーナーがチェックします。",
    "capacity": 10,
    "clubId": "cmujiynks000411x7vm702l31",
-   "createdAt": "2026-09-27T16:20:23.285Z"
+   "createdAt": "2026-09-28T03:36:18.515Z"
   },
   {
-   "id": "cmuk0ypo5000lkwq6hgpp6au3",
+   "id": "cmukp3yab000l5y4msxk3drrg",
    "title": "筋トレ部：自宅でできる30分トレーニング（オンライン）",
    "type": "部活",
    "date": "2026-09-29T12:00:00.000Z",
@@ -419,10 +467,10 @@
    "description": "道具なし・マット1枚でできるメニューを30分。カメラオフでもOKです。",
    "capacity": 50,
    "clubId": "cmujiynks000411x7vm702l31",
-   "createdAt": "2026-09-27T16:20:23.286Z"
+   "createdAt": "2026-09-28T03:36:18.515Z"
   },
   {
-   "id": "cmuk0ypo6000mkwq61wj35o9s",
+   "id": "cmukp3yab000m5y4m65a4ek6v",
    "title": "フリーランス・SESエンジニア交流会（渋谷）",
    "type": "交流会",
    "date": "2026-10-14T10:00:00.000Z",
@@ -435,36 +483,36 @@
    "description": "独立している人も、これから考えている人も。案件の選び方やお金の話を気軽に聞ける会です。",
    "capacity": 30,
    "clubId": null,
-   "createdAt": "2026-09-27T16:20:23.287Z"
+   "createdAt": "2026-09-28T03:36:18.516Z"
   }
  ],
  "eventApplications": [
   {
-   "id": "cmuk0ypo7000okwq6ohuj2pj7",
+   "id": "cmukp3yac000o5y4mia7tdyso",
    "userId": "cmr9izvx90000jh6wwtov5p12",
-   "eventId": "cmuk0ypo1000bkwq6vc6eek16",
+   "eventId": "cmukp3ya7000b5y4meohnq9dk",
    "purpose": "現場でのAI活用を知りたい",
    "level": "実務で少し",
    "question": null,
-   "appliedAt": "2026-09-27T16:20:23.287Z"
+   "appliedAt": "2026-09-28T03:36:18.516Z"
   },
   {
-   "id": "cmuk0ypo7000qkwq6ucqx4npo",
+   "id": "cmukp3yac000q5y4mirbhywd7",
    "userId": "cmr9izvx90000jh6wwtov5p12",
-   "eventId": "cmuk0ypo3000fkwq6gzscn9dz",
+   "eventId": "cmukp3ya9000f5y4mbdn7cpfn",
    "purpose": null,
    "level": null,
    "question": null,
-   "appliedAt": "2026-09-27T16:20:23.288Z"
+   "appliedAt": "2026-09-28T03:36:18.517Z"
   },
   {
-   "id": "cmuk0ypol0020kwq6plze28vh",
+   "id": "cmukp3yar00205y4msasffd9z",
    "userId": "cmujeh8ty001f134b32bax9r3",
-   "eventId": "cmuk0ypo2000dkwq6afekv845",
+   "eventId": "cmukp3ya8000d5y4m8rs8xwto",
    "purpose": "独立前に単価の相場を知りたい",
    "level": "実務でがっつり",
    "question": null,
-   "appliedAt": "2026-09-27T16:20:23.301Z"
+   "appliedAt": "2026-09-28T03:36:18.532Z"
   }
  ],
  "clubs": [
@@ -555,142 +603,142 @@
  ],
  "clubMemberships": [
   {
-   "id": "cmuk0ypo0000akwq6q8yuqej1",
+   "id": "cmukp3ya5000a5y4mr96vx5r4",
    "userId": "cmr9izvx90000jh6wwtov5p12",
    "clubId": "cmujiynkq000311x7oj5x10xn",
-   "joinedAt": "2026-09-27T16:20:23.280Z"
+   "joinedAt": "2026-09-28T03:36:18.510Z"
   },
   {
-   "id": "cmuk0ypog001mkwq686napn69",
+   "id": "cmukp3yam001m5y4maj26ylbe",
    "userId": "cmujeh8tx001c134br3v6lkbw",
    "clubId": "cmujiynkq000311x7oj5x10xn",
-   "joinedAt": "2026-09-27T16:20:23.297Z"
+   "joinedAt": "2026-09-28T03:36:18.527Z"
   },
   {
-   "id": "cmuk0ypoh001pkwq6c4g84wf9",
+   "id": "cmukp3yan001p5y4mdpro90jl",
    "userId": "cmujeh8ty001f134b32bax9r3",
    "clubId": "cmujiynks000411x7vm702l31",
-   "joinedAt": "2026-09-27T16:20:23.298Z"
+   "joinedAt": "2026-09-28T03:36:18.528Z"
   },
   {
-   "id": "cmuk0ypoi001rkwq659vcv576",
+   "id": "cmukp3yao001r5y4mzelmvhoc",
    "userId": "cmujeh8ty001f134b32bax9r3",
    "clubId": "cmujiynkq000311x7oj5x10xn",
-   "joinedAt": "2026-09-27T16:20:23.298Z"
+   "joinedAt": "2026-09-28T03:36:18.529Z"
   },
   {
-   "id": "cmuk0ypoj001vkwq6y9uxsmc0",
+   "id": "cmukp3yap001v5y4mnibd41xq",
    "userId": "cmujeh8u0001l134b4dkbtdiq",
    "clubId": "cmujiynks000411x7vm702l31",
-   "joinedAt": "2026-09-27T16:20:23.299Z"
+   "joinedAt": "2026-09-28T03:36:18.530Z"
   },
   {
-   "id": "cmuk0ypok001ykwq6npomkxr3",
+   "id": "cmukp3yaq001y5y4mmx6fjvqp",
    "userId": "cmujeh8u2001o134bxh5jpeia",
    "clubId": "cmujiynks000411x7vm702l31",
-   "joinedAt": "2026-09-27T16:20:23.300Z"
+   "joinedAt": "2026-09-28T03:36:18.531Z"
   }
  ],
  "healthLogs": [
   {
-   "id": "cmuk0ypo8000skwq6efs0ms9w",
+   "id": "cmukp3yad000s5y4m4keiy7td",
    "userId": "cmr9izvx90000jh6wwtov5p12",
    "date": "2026-09-27",
    "steps": 3200,
    "sleepHours": 6,
    "exerciseMin": 0,
    "mood": 3,
-   "createdAt": "2026-09-27T16:20:23.288Z"
+   "createdAt": "2026-09-28T03:36:18.517Z"
   },
   {
-   "id": "cmuk0ypo8000ukwq6o2akltqc",
+   "id": "cmukp3yae000u5y4mv14n4ez4",
    "userId": "cmr9izvx90000jh6wwtov5p12",
    "date": "2026-09-26",
    "steps": 8400,
    "sleepHours": 7,
    "exerciseMin": 30,
    "mood": 4,
-   "createdAt": "2026-09-27T16:20:23.289Z"
+   "createdAt": "2026-09-28T03:36:18.518Z"
   },
   {
-   "id": "cmuk0ypo9000wkwq6ep0liq8e",
+   "id": "cmukp3yae000w5y4mm5uoe5v7",
    "userId": "cmr9izvx90000jh6wwtov5p12",
    "date": "2026-09-25",
    "steps": 2900,
    "sleepHours": 5.5,
    "exerciseMin": 0,
    "mood": 2,
-   "createdAt": "2026-09-27T16:20:23.289Z"
+   "createdAt": "2026-09-28T03:36:18.519Z"
   },
   {
-   "id": "cmuk0ypo9000ykwq6lziwefmn",
+   "id": "cmukp3yaf000y5y4m33y6ezfs",
    "userId": "cmr9izvx90000jh6wwtov5p12",
    "date": "2026-09-24",
    "steps": 4100,
    "sleepHours": 6.5,
    "exerciseMin": 10,
    "mood": 3,
-   "createdAt": "2026-09-27T16:20:23.290Z"
+   "createdAt": "2026-09-28T03:36:18.519Z"
   },
   {
-   "id": "cmuk0ypoa0010kwq6m9env4md",
+   "id": "cmukp3yaf00105y4muw8mlq85",
    "userId": "cmr9izvx90000jh6wwtov5p12",
    "date": "2026-09-23",
    "steps": 11200,
    "sleepHours": 7.5,
    "exerciseMin": 60,
    "mood": 5,
-   "createdAt": "2026-09-27T16:20:23.290Z"
+   "createdAt": "2026-09-28T03:36:18.520Z"
   },
   {
-   "id": "cmuk0ypoa0012kwq6dh2subk1",
+   "id": "cmukp3yag00125y4mvbz03rm0",
    "userId": "cmr9izvx90000jh6wwtov5p12",
    "date": "2026-09-22",
    "steps": 3600,
    "sleepHours": 6,
    "exerciseMin": 0,
    "mood": 3,
-   "createdAt": "2026-09-27T16:20:23.291Z"
+   "createdAt": "2026-09-28T03:36:18.520Z"
   },
   {
-   "id": "cmuk0ypob0014kwq62ocxaazb",
+   "id": "cmukp3yag00145y4maw6k9b2y",
    "userId": "cmr9izvx90000jh6wwtov5p12",
    "date": "2026-09-21",
    "steps": 2500,
    "sleepHours": 5,
    "exerciseMin": 0,
    "mood": 2,
-   "createdAt": "2026-09-27T16:20:23.291Z"
+   "createdAt": "2026-09-28T03:36:18.521Z"
   },
   {
-   "id": "cmuk0ypob0016kwq6fkiebp3h",
+   "id": "cmukp3yah00165y4milegm4ut",
    "userId": "cmr9izvx90000jh6wwtov5p12",
    "date": "2026-09-20",
    "steps": 7800,
    "sleepHours": 7,
    "exerciseMin": 25,
    "mood": 4,
-   "createdAt": "2026-09-27T16:20:23.292Z"
+   "createdAt": "2026-09-28T03:36:18.521Z"
   },
   {
-   "id": "cmuk0ypoc0018kwq6ql4vcefy",
+   "id": "cmukp3yah00185y4mglnuo133",
    "userId": "cmr9izvx90000jh6wwtov5p12",
    "date": "2026-09-19",
    "steps": 3900,
    "sleepHours": 6.5,
    "exerciseMin": 0,
    "mood": 3,
-   "createdAt": "2026-09-27T16:20:23.292Z"
+   "createdAt": "2026-09-28T03:36:18.522Z"
   },
   {
-   "id": "cmuk0ypoc001akwq66vg18hp0",
+   "id": "cmukp3yai001a5y4mih2ujdvt",
    "userId": "cmr9izvx90000jh6wwtov5p12",
    "date": "2026-09-18",
    "steps": 5200,
    "sleepHours": 6,
    "exerciseMin": 15,
    "mood": 3,
-   "createdAt": "2026-09-27T16:20:23.293Z"
+   "createdAt": "2026-09-28T03:36:18.522Z"
   }
  ],
  "wealthPlans": [
@@ -706,7 +754,7 @@
    "nisaMonthly": 30000,
    "expectedReturn": 0.03,
    "retireAge": 65,
-   "updatedAt": "2026-09-27T16:20:23.295Z"
+   "updatedAt": "2026-09-28T03:36:18.525Z"
   }
  ],
  "rateDiagnoses": [
@@ -821,21 +869,21 @@
    "createdAt": "2026-09-27T06:24:22.287Z"
   },
   {
-   "id": "cmuk0ypom0022kwq619nlweh6",
+   "id": "cmukp3yas00225y4mpl6c78i6",
    "userId": "cmujeh8ty001f134b32bax9r3",
    "primarySkill": "Java",
    "role": "バックエンドエンジニア",
    "yearsOfExperience": 6,
    "monthlyRate": 550000,
    "chainDepth": 3,
-   "createdAt": "2026-09-27T16:20:23.302Z"
+   "createdAt": "2026-09-28T03:36:18.533Z"
   }
  ],
  "expenses": [
   {
    "id": "seed-expense-0",
    "userId": "cmr9izvx90000jh6wwtov5p12",
-   "date": "2026-09-24T16:20:23.271Z",
+   "date": "2026-09-25T03:36:18.501Z",
    "vendor": "JR東日本",
    "amount": 1200,
    "category": "旅費交通費",
@@ -846,7 +894,7 @@
   {
    "id": "seed-expense-1",
    "userId": "cmr9izvx90000jh6wwtov5p12",
-   "date": "2026-09-17T16:20:23.271Z",
+   "date": "2026-09-18T03:36:18.501Z",
    "vendor": "コワーキングスペース渋谷",
    "amount": 3300,
    "category": "地代家賃",
@@ -857,7 +905,7 @@
   {
    "id": "seed-expense-2",
    "userId": "cmr9izvx90000jh6wwtov5p12",
-   "date": "2026-09-12T16:20:23.271Z",
+   "date": "2026-09-13T03:36:18.501Z",
    "vendor": "Amazon",
    "amount": 8980,
    "category": "消耗品費",
@@ -868,17 +916,17 @@
  ],
  "mentorRequests": [
   {
-   "id": "cmuk0ypon0024kwq648hfzrrz",
+   "id": "cmukp3yat00245y4m0gpw8lq9",
    "userId": "cmujeh8ty001f134b32bax9r3",
    "topic": "独立・フリーランスの始め方",
    "message": "SES6年目のJavaエンジニアです。来年の春に独立したいのですが、何か月前から何を準備すればいいか相談したいです。",
    "status": "受付中",
-   "createdAt": "2026-09-25T16:20:23.303Z"
+   "createdAt": "2026-09-26T03:36:18.533Z"
   }
  ],
  "tasks": [
   {
-   "id": "cmuk0ypoe001bkwq6mpv3dmtb",
+   "id": "cmukp3yak001b5y4mm17uzkzf",
    "userId": "cmr9izvx90000jh6wwtov5p12",
    "title": "今月の稼働時間を先方に送る",
    "kind": "todo",
@@ -886,10 +934,10 @@
    "time": null,
    "memo": null,
    "doneAt": null,
-   "createdAt": "2026-09-27T16:20:23.295Z"
+   "createdAt": "2026-09-28T03:36:18.524Z"
   },
   {
-   "id": "cmuk0ypoe001ckwq63y0xf5b0",
+   "id": "cmukp3yak001c5y4mk19tpl1n",
    "userId": "cmr9izvx90000jh6wwtov5p12",
    "title": "健康診断を予約する",
    "kind": "todo",
@@ -897,10 +945,10 @@
    "time": null,
    "memo": null,
    "doneAt": null,
-   "createdAt": "2026-09-27T16:20:23.295Z"
+   "createdAt": "2026-09-28T03:36:18.524Z"
   },
   {
-   "id": "cmuk0ypoe001dkwq64geins1u",
+   "id": "cmukp3yak001d5y4mwhiz0lqy",
    "userId": "cmr9izvx90000jh6wwtov5p12",
    "title": "次の案件の希望条件をまとめる",
    "kind": "todo",
@@ -908,21 +956,21 @@
    "time": null,
    "memo": null,
    "doneAt": null,
-   "createdAt": "2026-09-27T16:20:23.295Z"
+   "createdAt": "2026-09-28T03:36:18.524Z"
   },
   {
-   "id": "cmuk0ypoe001ekwq63l7o077e",
+   "id": "cmukp3yak001e5y4m7ufif88a",
    "userId": "cmr9izvx90000jh6wwtov5p12",
    "title": "経費のレシートを登録する",
    "kind": "todo",
    "date": "2026-09-26",
    "time": null,
    "memo": null,
-   "doneAt": "2026-09-27T16:20:23.294Z",
-   "createdAt": "2026-09-27T16:20:23.295Z"
+   "doneAt": "2026-09-28T03:36:18.524Z",
+   "createdAt": "2026-09-28T03:36:18.524Z"
   },
   {
-   "id": "cmuk0ypoe001fkwq6qt6apfpq",
+   "id": "cmukp3yak001f5y4mo06i89ln",
    "userId": "cmr9izvx90000jh6wwtov5p12",
    "title": "定例ミーティング",
    "kind": "event",
@@ -930,10 +978,10 @@
    "time": "10:00",
    "memo": null,
    "doneAt": null,
-   "createdAt": "2026-09-27T16:20:23.295Z"
+   "createdAt": "2026-09-28T03:36:18.524Z"
   },
   {
-   "id": "cmuk0ypoe001gkwq6qpu7mj94",
+   "id": "cmukp3yak001g5y4m8imnkszx",
    "userId": "cmr9izvx90000jh6wwtov5p12",
    "title": "次の案件の面談",
    "kind": "event",
@@ -941,25 +989,25 @@
    "time": "15:00",
    "memo": "オンライン（担当者から届いたURL）",
    "doneAt": null,
-   "createdAt": "2026-09-27T16:20:23.295Z"
+   "createdAt": "2026-09-28T03:36:18.524Z"
   }
  ],
  "chatMessages": [
   {
-   "id": "cmuk0ypoo0026kwq6z0n93dql",
+   "id": "cmukp3yau00265y4m2pcfuff9",
    "userId": "cmujeh8ty001f134b32bax9r3",
    "role": "user",
    "content": "独立について相談したい",
    "auto": false,
-   "createdAt": "2026-09-27T11:20:23.304Z"
+   "createdAt": "2026-09-27T22:36:18.534Z"
   },
   {
-   "id": "cmuk0ypoo0028kwq6kz8roidg",
+   "id": "cmukp3yav00285y4mt8oqv8cf",
    "userId": "cmujeh8ty001f134b32bax9r3",
    "role": "staff",
    "content": "独立のご相談ありがとうございます。担当が、独立までの段取り（開業届・保険・年金・最初の案件の探し方）をご案内します。\n「手取りシミュレーション」で、いまの年収と独立後の手取りを比べておくのもおすすめです。",
    "auto": true,
-   "createdAt": "2026-09-27T11:20:23.305Z"
+   "createdAt": "2026-09-27T22:36:18.535Z"
   }
  ]
 }

@@ -58,6 +58,7 @@ mypageRouter.get("/", requireAuth, async (req: AuthedRequest, res) => {
       ...publicUser(user),
       joinedAt: user.joinedAt,
       invoiceRegistrationNumber: user.invoiceRegistrationNumber,
+      billingProfile: JSON.parse(user.billingProfile),
       memberNumber: formatMemberNumber(user.id),
     },
     onboarding,
@@ -86,25 +87,46 @@ mypageRouter.get("/", requireAuth, async (req: AuthedRequest, res) => {
   });
 });
 
+const bankSchema = z.object({
+  bankName: z.string().trim().max(40),
+  branchName: z.string().trim().max(40),
+  accountType: z.enum(["普通", "当座"]),
+  accountNumber: z.string().regex(/^\d{7}$/, "口座番号は7桁の数字で入力してください"),
+  accountHolder: z.string().trim().max(60),
+});
+
+const billingProfileSchema = z.object({
+  businessName: z.string().trim().max(60).optional(),
+  postalCode: z.string().regex(/^(\d{3}-?\d{4})?$/, "郵便番号は7桁で入力してください").optional(),
+  address: z.string().trim().max(120).optional(),
+  phone: z.string().regex(/^[\d-]{0,15}$/, "電話番号は数字とハイフンで入力してください").optional(),
+  bank: bankSchema.nullable().optional(),
+});
+
 const updateProfileSchema = z.object({
-  name: z.string().min(1).optional(),
+  name: z.string().trim().min(1).max(50).optional(),
   workStyle: z.enum(["freelance", "ses_employee", "considering"]).optional(),
-  invoiceRegistrationNumber: z.string().min(1).max(20).nullable().optional(),
+  invoiceRegistrationNumber: z.string().regex(/^T\d{13}$/, "登録番号は T から始まる14桁で入力してください").nullable().optional(),
+  billingProfile: billingProfileSchema.optional(),
 });
 
 // プロフィール更新（氏名・インボイス登録番号の自己設定）
 mypageRouter.patch("/", requireAuth, async (req: AuthedRequest, res) => {
   const parsed = updateProfileSchema.safeParse(req.body);
   if (!parsed.success) {
-    return res.status(400).json({ error: "入力内容を確認してください", details: parsed.error.flatten() });
+    const first = parsed.error.issues[0]?.message;
+    return res.status(400).json({ error: first && !first.startsWith("Invalid") && !first.startsWith("Expected") ? first : "入力内容を確認してください", details: parsed.error.flatten() });
   }
+  const { billingProfile, ...rest } = parsed.data;
 
   const user = await prisma.user.update({
     where: { id: req.userId },
-    data: parsed.data,
+    data: { ...rest, ...(billingProfile ? { billingProfile: JSON.stringify(billingProfile) } : {}) },
   });
 
-  res.json({ user: { ...publicUser(user), invoiceRegistrationNumber: user.invoiceRegistrationNumber } });
+  res.json({
+    user: { ...publicUser(user), invoiceRegistrationNumber: user.invoiceRegistrationNumber, billingProfile: JSON.parse(user.billingProfile) },
+  });
 });
 
 async function collectAlerts(

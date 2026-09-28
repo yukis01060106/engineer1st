@@ -1,10 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { AlertTriangle, Check, Copy, Download, FilePlus2, Landmark, Mail, Receipt, Settings2, Info, Plus } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { AlertTriangle, Check, Copy, Download, Eye, FilePlus2, Landmark, Mail, Receipt, Settings2, Info, Plus, Undo2 } from "lucide-react";
+import { buildInvoiceDocument, SETTLEMENT_METHOD_LABEL, type SettlementMethod } from "@shared/invoice";
 import { apiFetch, ApiError, downloadFile } from "../../../api/client";
 import { PageHeader } from "../../../components/PageHeader";
-import { EngagementForm } from "../../../components/EngagementForm";
+import { EngagementForm, SettlementFields, type SettlementTermsValue } from "../../../components/EngagementForm";
+import { InvoiceSheet } from "../../../components/InvoiceSheet";
+import { useAuth } from "../../../context/AuthContext";
+import { IS_DEMO } from "../../../lib/demo";
 import { yen, man, pct, fmtDate } from "../../../lib/format";
 
 interface Engagement {
@@ -16,6 +21,10 @@ interface Engagement {
   settlementMax: number;
   paymentTermDays: number;
   paymentTermWarning: boolean;
+  settlementMethod: string;
+  unitRounding: number;
+  hoursUnitMinutes: number;
+  billingName: string | null;
   project: { title: string; client: string };
 }
 
@@ -38,15 +47,25 @@ interface Invoice {
 }
 
 interface Preview {
+  targetMonth: string;
   amount: number;
+  taxRate: number;
   taxAmount: number;
   totalAmount: number;
   baseAmount: number;
+  workHours: number | null;
+  settledHours: number | null;
   adjustment: number;
+  hourlyUnit: number;
   settlementNote: string;
   withholding: number;
   transferAmount: number;
   dueDate: string;
+  registrationNumber: string;
+  recipientName: string;
+  subject: string;
+  notes: string | null;
+  issuerInfo: string;
 }
 
 interface TaxReserve {
@@ -73,8 +92,10 @@ const RESERVE_COLORS: Record<string, string> = {
   consumption: "var(--yellow)",
 };
 
-function thisMonth() {
+// 請求する月の初期値: 月の前半は先月分、後半は今月分（月末締めで月初に請求することが多い）
+function defaultTargetMonth() {
   const d = new Date();
+  if (d.getDate() <= 15) d.setMonth(d.getMonth() - 1, 1);
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
 }
 
@@ -84,16 +105,31 @@ export default function MoneyPage() {
   const [summary, setSummary] = useState<{ outstandingAmount: number; overdueCount: number; paidThisYear: number } | null>(null);
 
   const [engagementId, setEngagementId] = useState("");
-  const [targetMonth, setTargetMonth] = useState(thisMonth);
+  const { user } = useAuth();
+  const [targetMonth, setTargetMonth] = useState(defaultTargetMonth);
   const [workHours, setWorkHours] = useState("");
   const [withholding, setWithholding] = useState(false);
+  const [notes, setNotes] = useState("");
   const [preview, setPreview] = useState<Preview | null>(null);
+  const [issuerReady, setIssuerReady] = useState<{ registration: boolean; bank: boolean } | null>(null);
+  const [showSheet, setShowSheet] = useState(false);
+  const [cancelId, setCancelId] = useState<string | null>(null);
   const [issuing, setIssuing] = useState(false);
   const [issueError, setIssueError] = useState<string | null>(null);
   const [issued, setIssued] = useState<string | null>(null);
 
   const [editTerms, setEditTerms] = useState(false);
-  const [terms, setTerms] = useState({ settlementMin: 140, settlementMax: 180, paymentTermDays: 30, monthlyRate: 0, endDate: "" });
+  const [terms, setTerms] = useState<SettlementTermsValue & { monthlyRate: number; endDate: string; billingName: string }>({
+    settlementMin: 140,
+    settlementMax: 180,
+    paymentTermDays: 30,
+    settlementMethod: "updown",
+    unitRounding: 1,
+    hoursUnitMinutes: 1,
+    monthlyRate: 0,
+    endDate: "",
+    billingName: "",
+  });
   const [addingEngagement, setAddingEngagement] = useState(false);
 
   const [reminder, setReminder] = useState<{ id: string; text: string } | null>(null);
@@ -125,20 +161,24 @@ export default function MoneyPage() {
   useEffect(() => {
     if (!engagementId) return;
     const t = setTimeout(() => {
-      apiFetch<{ preview: Preview }>("/money/invoices/preview", {
+      apiFetch<{ preview: Preview; issuerReady: { registration: boolean; bank: boolean } }>("/money/invoices/preview", {
         method: "POST",
         body: JSON.stringify({
           engagementId,
           targetMonth,
           workHours: workHours === "" ? null : Number(workHours),
           applyWithholding: withholding,
+          notes: notes || null,
         }),
       })
-        .then((r) => setPreview(r.preview))
+        .then((r) => {
+          setPreview(r.preview);
+          setIssuerReady(r.issuerReady);
+        })
         .catch(() => setPreview(null));
     }, 250);
     return () => clearTimeout(t);
-  }, [engagementId, targetMonth, workHours, withholding, engagements]);
+  }, [engagementId, targetMonth, workHours, withholding, notes, engagements]);
 
   useEffect(() => {
     const q = new URLSearchParams({ expenseRatio: String(expenseRatio / 100), blue: String(blue), invoice: String(invoiceRegistered) });
@@ -161,10 +201,13 @@ export default function MoneyPage() {
           targetMonth,
           workHours: workHours === "" ? null : Number(workHours),
           applyWithholding: withholding,
+          notes: notes || null,
         }),
       });
       setIssued(r.invoice.invoiceNumber);
       setWorkHours("");
+      setNotes("");
+      setShowSheet(false);
       reload();
     } catch (e) {
       setIssueError(e instanceof ApiError ? e.message : "発行に失敗しました");
@@ -177,7 +220,7 @@ export default function MoneyPage() {
     try {
       await apiFetch(`/money/engagements/${engagementId}`, {
         method: "PATCH",
-        body: JSON.stringify({ ...terms, endDate: terms.endDate || null, ...(status ? { status } : {}) }),
+        body: JSON.stringify({ ...terms, endDate: terms.endDate || null, billingName: terms.billingName.trim() || null, ...(status ? { status } : {}) }),
       });
       setEditTerms(false);
       reload();
@@ -191,11 +234,35 @@ export default function MoneyPage() {
     reload();
   }
 
+  async function cancelInvoice(inv: Invoice) {
+    setCancelId(null);
+    try {
+      await apiFetch(`/money/invoices/${inv.id}`, { method: "DELETE" });
+      reload();
+    } catch (e) {
+      setIssueError(e instanceof ApiError ? e.message : "取り消せませんでした");
+    }
+  }
+
   async function showReminder(inv: Invoice) {
     const r = await apiFetch<{ text: string }>(`/money/invoices/${inv.id}/reminder`);
     setReminder({ id: inv.id, text: r.text });
     setCopied(false);
   }
+
+  // 発行前のプレビュー（発行後と同じ見た目）
+  const draftDoc = useMemo(() => {
+    if (!preview || !engagement || !user) return null;
+    return buildInvoiceDocument({
+      ...preview,
+      invoiceNumber: "（発行時に採番）",
+      issuedAt: new Date(),
+      dueDate: new Date(preview.dueDate),
+      fallbackIssuer: { name: user.name, email: user.email },
+      fallbackRecipient: engagement.project.client,
+      projectTitle: engagement.project.title,
+    });
+  }, [preview, engagement, user]);
 
   return (
     <div className="page">
@@ -275,19 +342,11 @@ export default function MoneyPage() {
                       <div className="stack" style={{ gap: 10 }}>
                         <div className="form-grid">
                           <label>
-                            精算幅 下限（h）
-                            <input type="number" value={terms.settlementMin} onChange={(e) => setTerms({ ...terms, settlementMin: Number(e.target.value) })} />
+                            請求先の正式名称 <span className="field-hint">請求書の宛名。空欄なら「{engagement.project.client}」</span>
+                            <input value={terms.billingName} onChange={(e) => setTerms({ ...terms, billingName: e.target.value })} placeholder={engagement.project.client} maxLength={100} />
                           </label>
                           <label>
-                            精算幅 上限（h）
-                            <input type="number" value={terms.settlementMax} onChange={(e) => setTerms({ ...terms, settlementMax: Number(e.target.value) })} />
-                          </label>
-                          <label>
-                            支払サイト（月末締め＋日）
-                            <input type="number" value={terms.paymentTermDays} onChange={(e) => setTerms({ ...terms, paymentTermDays: Number(e.target.value) })} />
-                          </label>
-                          <label>
-                            月単価（円）
+                            月単価（円・税抜）
                             <input type="number" step={10000} value={terms.monthlyRate} onChange={(e) => setTerms({ ...terms, monthlyRate: Number(e.target.value) })} />
                           </label>
                           <label>
@@ -295,6 +354,7 @@ export default function MoneyPage() {
                             <input type="date" value={terms.endDate} onChange={(e) => setTerms({ ...terms, endDate: e.target.value })} />
                           </label>
                         </div>
+                        <SettlementFields value={terms} onChange={(v) => setTerms({ ...terms, ...v })} />
                         <div className="inline">
                           <button className="btn-primary btn-sm" onClick={() => saveTerms()}>保存</button>
                           <button className="btn-ghost btn-sm" onClick={() => setEditTerms(false)}>キャンセル</button>
@@ -312,7 +372,11 @@ export default function MoneyPage() {
                     ) : (
                       <div className="spread">
                         <span>
-                          月額 <strong className="num">{yen(engagement.monthlyRate)}</strong>／精算幅 {engagement.settlementMin}〜{engagement.settlementMax}h／月末締め{engagement.paymentTermDays}日後払い
+                          宛名 <strong>{engagement.billingName || engagement.project.client}</strong>／月額 <strong className="num">{yen(engagement.monthlyRate)}</strong>／
+                          {engagement.settlementMethod === "fixed"
+                            ? "精算なし"
+                            : `精算幅 ${engagement.settlementMin}〜${engagement.settlementMax}h（${SETTLEMENT_METHOD_LABEL[(engagement.settlementMethod as SettlementMethod) ?? "updown"]}${engagement.unitRounding > 1 ? `・単価${engagement.unitRounding}円未満切捨て` : ""}${engagement.hoursUnitMinutes > 1 ? `・${engagement.hoursUnitMinutes}分単位` : ""}）`}
+                          ／月末締め{engagement.paymentTermDays}日後払い
                           {engagement.endDate && `／契約終了 ${fmtDate(engagement.endDate)}`}
                         </span>
                         <button
@@ -322,8 +386,12 @@ export default function MoneyPage() {
                               settlementMin: engagement.settlementMin,
                               settlementMax: engagement.settlementMax,
                               paymentTermDays: engagement.paymentTermDays,
+                              settlementMethod: (engagement.settlementMethod as SettlementMethod) ?? "updown",
+                              unitRounding: engagement.unitRounding ?? 1,
+                              hoursUnitMinutes: engagement.hoursUnitMinutes ?? 1,
                               monthlyRate: engagement.monthlyRate,
                               endDate: engagement.endDate ? engagement.endDate.slice(0, 10) : "",
+                              billingName: engagement.billingName ?? "",
                             });
                             setEditTerms(true);
                           }}
@@ -344,8 +412,23 @@ export default function MoneyPage() {
 
               <label className="checkbox-label">
                 <input type="checkbox" checked={withholding} onChange={(e) => setWithholding(e.target.checked)} />
-                源泉徴収する（デザイン・原稿など対象業務を含む場合のみ。システム開発は通常不要）
+                源泉徴収する（デザイン・原稿・講演など対象業務を含む場合のみ。システム開発は通常不要）
               </label>
+              <label>
+                備考 <span className="field-hint">任意。請求書の備考欄に載ります</span>
+                <input value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="例：9/15〜9/16 は休業日のため稼働なし" maxLength={300} />
+              </label>
+
+              {issuerReady && (!issuerReady.bank || !issuerReady.registration) && (
+                <div className="callout-inline callout-warning">
+                  <AlertTriangle size={16} />
+                  <div>
+                    {!issuerReady.bank && <div>振込先の口座が未登録です。請求書に振込先が載りません。</div>}
+                    {!issuerReady.registration && <div>インボイスの登録番号が未登録のため、適格請求書ではない通常の請求書になります。</div>}
+                    <Link href="/settings#billing" className="btn-link">設定で登録する</Link>
+                  </div>
+                </div>
+              )}
 
               {preview && (
                 <table className="invoice-table">
@@ -387,10 +470,16 @@ export default function MoneyPage() {
                   </tbody>
                 </table>
               )}
+              {draftDoc && (
+                <button className="btn-ghost btn-sm" style={{ justifySelf: "start" }} onClick={() => setShowSheet((v) => !v)}>
+                  <Eye size={14} /> {showSheet ? "プレビューを閉じる" : "請求書のプレビューを見る"}
+                </button>
+              )}
+              {showSheet && draftDoc && <InvoiceSheet doc={draftDoc} draft />}
               {issueError && <div className="form-error">{issueError}</div>}
               {issued && (
                 <div className="form-success">
-                  <Check size={14} /> {issued} を発行しました。下の一覧からPDFをダウンロードできます。
+                  <Check size={14} /> {issued} を発行しました。下の一覧から表示・印刷できます。
                 </div>
               )}
               <button className="btn-primary btn-lg" onClick={issue} disabled={issuing || !engagementId}>
@@ -511,9 +600,14 @@ export default function MoneyPage() {
                     <div className="small muted">税込</div>
                   </div>
                   <div className="money-card-actions">
-                    <button className="btn-secondary btn-sm" onClick={() => downloadFile(`/money/invoices/${inv.id}/pdf`, `${inv.invoiceNumber}.pdf`)}>
-                      <Download size={14} /> PDF
-                    </button>
+                    <Link href={`/print/invoice?id=${inv.id}`} className="btn-secondary btn-sm">
+                      <Eye size={14} /> 表示・印刷
+                    </Link>
+                    {!IS_DEMO && (
+                      <button className="btn-secondary btn-sm" onClick={() => downloadFile(`/money/invoices/${inv.id}/pdf`, `${inv.invoiceNumber}.pdf`)}>
+                        <Download size={14} /> PDF
+                      </button>
+                    )}
                     {inv.state === "overdue" && (
                       <button className="btn-accent btn-sm" onClick={() => showReminder(inv)}>
                         <Mail size={14} /> 催促文
@@ -522,6 +616,17 @@ export default function MoneyPage() {
                     <button className={inv.state === "paid" ? "btn-ghost btn-sm" : "btn-primary btn-sm"} onClick={() => togglePaid(inv)}>
                       {inv.state === "paid" ? "入金を取り消す" : (<><Check size={14} /> 入金を確認</>)}
                     </button>
+                    {inv.state !== "paid" &&
+                      (cancelId === inv.id ? (
+                        <span className="inline" style={{ gap: 4 }}>
+                          <button className="btn-danger-outline btn-sm" onClick={() => cancelInvoice(inv)}>取り消す</button>
+                          <button className="btn-ghost btn-sm" onClick={() => setCancelId(null)}>やめる</button>
+                        </span>
+                      ) : (
+                        <button className="btn-ghost btn-sm" onClick={() => setCancelId(inv.id)} title="内容を直すときは、取り消してから発行し直します">
+                          <Undo2 size={14} /> 発行を取り消す
+                        </button>
+                      ))}
                   </div>
                 </div>
                 {reminder?.id === inv.id && (

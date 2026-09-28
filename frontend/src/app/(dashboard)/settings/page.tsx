@@ -6,6 +6,8 @@ import { Check, KeyRound, LogOut, UserX } from "lucide-react";
 import { apiFetch, ApiError } from "../../../api/client";
 import { useAuth, WorkStyle } from "../../../context/AuthContext";
 import { PageHeader } from "../../../components/PageHeader";
+import { BillingProfileForm } from "../../../components/BillingProfileForm";
+import type { BillingProfile } from "@shared/invoice";
 
 interface RankBenefit {
   rank: string;
@@ -14,7 +16,7 @@ interface RankBenefit {
 }
 
 interface ProfileData {
-  user: { name: string; email: string; workStyle: WorkStyle; invoiceRegistrationNumber: string | null };
+  user: { name: string; email: string; workStyle: WorkStyle; invoiceRegistrationNumber: string | null; billingProfile?: BillingProfile };
   rank: { current: string; tenureYears: number; unlockedBenefits: RankBenefit[]; allRanks: RankBenefit[] };
 }
 
@@ -167,6 +169,8 @@ export default function SettingsPage() {
           </div>
         </section>
       )}
+
+      {data && workStyle === "freelance" && <BillingProfileForm initial={data.user.billingProfile ?? {}} />}
 
       <section className="panel stack" style={{ maxWidth: 640 }}>
         <div className="panel-head">

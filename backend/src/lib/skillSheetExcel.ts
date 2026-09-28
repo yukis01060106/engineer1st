@@ -1,140 +1,144 @@
 import ExcelJS from "exceljs";
 import { Response } from "express";
-import { groupSkillsByCategory } from "./skillCategory";
+import type { SkillSheetDocument } from "./skillSheet";
 
-export interface SkillSheetExcelData {
-  name: string;
-  age: number | null;
-  nearestStation: string | null;
-  availability: string | null;
-  desiredRate: number | null;
-  totalExperienceYears: number | null;
-  workProcesses: string[];
-  appealPoints: string[];
-  remarks: string | null;
-  skills: { name: string; level: number; years: number }[];
-  experiences: { title: string; period: string; role: string; tech: string; description: string }[];
-}
+// SESのスキルシートで一般的な体裁（A4横・1枚目に基本情報とスキル要約、続けて職務経歴の表と工程の●）
+const INK = "FF1D1D1D";
+const PAPER = "FFF6F5F0";
+const LINE = "FFBFBDB5";
+const FONT = "游ゴシック";
 
-const HEADER_FILL: ExcelJS.Fill = {
-  type: "pattern",
-  pattern: "solid",
-  fgColor: { argb: "FF4338CA" },
+const thin: Partial<ExcelJS.Borders> = {
+  top: { style: "thin", color: { argb: LINE } },
+  left: { style: "thin", color: { argb: LINE } },
+  bottom: { style: "thin", color: { argb: LINE } },
+  right: { style: "thin", color: { argb: LINE } },
 };
 
-function sectionHeader(sheet: ExcelJS.Worksheet, row: number, title: string, span = 5) {
-  sheet.mergeCells(row, 1, row, span);
-  const cell = sheet.getCell(row, 1);
-  cell.value = title;
-  cell.font = { bold: true, color: { argb: "FFFFFFFF" }, size: 12 };
-  cell.fill = HEADER_FILL;
-  cell.alignment = { vertical: "middle" };
-  sheet.getRow(row).height = 22;
-}
+// 列: A=No B=期間 C=業務内容 D=役割・規模 E=環境 F〜M=工程（8つ）
+const COLS = [5, 15, 50, 13, 34, 5.2, 5.2, 5.2, 5.2, 5.2, 5.2, 5.2, 5.2];
+const LAST = COLS.length;
 
-export async function streamSkillSheetExcel(res: Response, data: SkillSheetExcelData) {
-  const workbook = new ExcelJS.Workbook();
-  workbook.creator = "ソトバ";
-  const sheet = workbook.addWorksheet("スキルシート");
-  sheet.columns = [{ width: 16 }, { width: 22 }, { width: 16 }, { width: 22 }, { width: 40 }];
+const lineCount = (text: string, widthChars: number) =>
+  text.split("\n").reduce((n, l) => n + Math.max(1, Math.ceil([...l].reduce((w, ch) => w + (ch.charCodeAt(0) > 0xff ? 2 : 1), 0) / (widthChars * 1.1))), 0);
 
-  let row = 1;
-
-  // ■ 基本情報
-  sectionHeader(sheet, row++, "■ 基本情報");
-  const basicRows: [string, string][] = [
-    ["氏名", data.name],
-    ["年齢", data.age ? `${data.age}歳` : "-"],
-    ["最寄駅", data.nearestStation ?? "-"],
-    ["稼働開始", data.availability ?? "応相談"],
-    ["希望単価", data.desiredRate ? `${data.desiredRate.toLocaleString()}円〜` : "応相談"],
-    ["IT経験年数", data.totalExperienceYears ? `約${data.totalExperienceYears}年` : "-"],
-  ];
-  for (const [label, value] of basicRows) {
-    sheet.getCell(row, 1).value = label;
-    sheet.getCell(row, 1).font = { bold: true };
-    sheet.mergeCells(row, 2, row, 5);
-    sheet.getCell(row, 2).value = value;
-    row++;
-  }
-  row++;
-
-  // ■ スキルサマリー
-  sectionHeader(sheet, row++, "■ スキルサマリー（★＝特に強い領域）");
-  const grouped = groupSkillsByCategory(data.skills);
-  for (const group of grouped) {
-    sheet.getCell(row, 1).value = group.category;
-    sheet.getCell(row, 1).font = { bold: true };
-    const skillsText = group.skills
-      .map((s) => `${s.strong ? "★" : ""}${s.name}(${s.years}年)`)
-      .join(" / ");
-    sheet.mergeCells(row, 2, row, 5);
-    sheet.getCell(row, 2).value = skillsText;
-    sheet.getCell(row, 2).alignment = { wrapText: true };
-    row++;
-  }
-  row++;
-
-  // ■ 対応可能工程
-  sectionHeader(sheet, row++, "■ 対応可能工程");
-  sheet.mergeCells(row, 1, row, 5);
-  sheet.getCell(row, 1).value = data.workProcesses.length > 0 ? data.workProcesses.join(" → ") : "-";
-  sheet.getCell(row, 1).alignment = { wrapText: true };
-  row += 2;
-
-  // ■ アピールポイント
-  sectionHeader(sheet, row++, "■ アピールポイント");
-  for (const [i, point] of data.appealPoints.entries()) {
-    sheet.mergeCells(row, 1, row, 5);
-    const cell = sheet.getCell(row, 1);
-    cell.value = `${i + 1}. ${point}`;
-    cell.alignment = { wrapText: true };
-    sheet.getRow(row).height = 32;
-    row++;
-  }
-  row++;
-
-  // ■ 経歴一覧
-  sectionHeader(sheet, row++, "■ 経歴一覧");
-  const expHeader = sheet.getRow(row);
-  expHeader.values = ["期間", "案件名", "役割", "使用技術", "内容"];
-  expHeader.font = { bold: true };
-  expHeader.eachCell((cell) => {
-    cell.border = { bottom: { style: "thin" } };
+export async function streamSkillSheetExcel(res: Response, d: SkillSheetDocument) {
+  const wb = new ExcelJS.Workbook();
+  wb.creator = "ソトバ";
+  const ws = wb.addWorksheet("スキルシート", {
+    pageSetup: { paperSize: 9, orientation: "landscape", fitToPage: true, fitToWidth: 1, fitToHeight: 0, margins: { left: 0.4, right: 0.4, top: 0.5, bottom: 0.5, header: 0.2, footer: 0.2 } },
+    views: [{ showGridLines: false }],
   });
-  row++;
-  for (const exp of data.experiences) {
-    sheet.getCell(row, 1).value = exp.period;
-    sheet.getCell(row, 2).value = exp.title;
-    sheet.getCell(row, 3).value = exp.role;
-    sheet.getCell(row, 4).value = exp.tech;
-    sheet.getCell(row, 5).value = exp.description;
-    sheet.getCell(row, 5).alignment = { wrapText: true };
-    row++;
+  ws.columns = COLS.map((width) => ({ width }));
+  ws.properties.defaultRowHeight = 18;
+
+  const style = (cell: ExcelJS.Cell, opts: { bold?: boolean; size?: number; color?: string; fill?: string; align?: "left" | "center" | "right"; border?: boolean; wrap?: boolean }) => {
+    cell.font = { name: FONT, size: opts.size ?? 9.5, bold: opts.bold, color: { argb: opts.color ?? INK } };
+    if (opts.fill) cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: opts.fill } };
+    cell.alignment = { vertical: "middle", horizontal: opts.align ?? "left", wrapText: opts.wrap ?? true };
+    if (opts.border) cell.border = thin;
+  };
+  const merge = (row: number, from: number, to: number, value: string, opts: Parameters<typeof style>[1] = {}) => {
+    if (to > from) ws.mergeCells(row, from, row, to);
+    const cell = ws.getCell(row, from);
+    cell.value = value;
+    style(cell, opts);
+    if (opts.border) for (let c = from; c <= to; c++) ws.getCell(row, c).border = thin;
+  };
+  const section = (row: number, title: string) => {
+    merge(row, 1, LAST, `■ ${title}`, { bold: true, size: 10.5, color: "FFFFFFFF", fill: INK });
+    ws.getRow(row).height = 20;
+  };
+
+  let r = 1;
+  merge(r, 1, LAST, "スキルシート", { bold: true, size: 16, align: "center" });
+  ws.getRow(r).height = 30;
+  r++;
+  merge(r, 1, LAST, `作成日：${d.createdAt}`, { size: 9, align: "right", color: "FF666666" });
+  r += 2;
+
+  // 基本情報（2項目ずつ横に並べる）
+  section(r++, "基本情報");
+  for (let i = 0; i < d.basics.length; i += 2) {
+    const pair = d.basics.slice(i, i + 2);
+    merge(r, 1, 2, pair[0][0], { bold: true, fill: PAPER, border: true });
+    merge(r, 3, 3, pair[0][1], { border: true });
+    if (pair[1]) {
+      merge(r, 4, 4, pair[1][0], { bold: true, fill: PAPER, border: true });
+      merge(r, 5, LAST, pair[1][1], { border: true });
+    }
+    ws.getRow(r).height = 20;
+    r++;
   }
-  row++;
+  r++;
 
-  // ■ 備考／PR
-  if (data.remarks) {
-    sectionHeader(sheet, row++, "■ 備考／PR");
-    sheet.mergeCells(row, 1, row, 5);
-    sheet.getCell(row, 1).value = data.remarks;
-    sheet.getCell(row, 1).alignment = { wrapText: true };
-    sheet.getRow(row).height = 60;
-    row++;
+  // スキル要約
+  section(r++, "スキル要約（経験年数・★は特に得意）");
+  for (const g of d.skillGroups) {
+    const text = g.skills.map((s) => `${s.strong ? "★" : ""}${s.name}（${s.years}年）`).join("　");
+    merge(r, 1, 2, g.category, { bold: true, fill: PAPER, border: true });
+    merge(r, 3, LAST, text, { border: true });
+    ws.getRow(r).height = Math.max(20, lineCount(text, 110) * 15);
+    r++;
+  }
+  if (d.qualifications.length > 0) {
+    merge(r, 1, 2, "資格", { bold: true, fill: PAPER, border: true });
+    merge(r, 3, LAST, d.qualifications.join("\n"), { border: true });
+    ws.getRow(r).height = Math.max(20, d.qualifications.length * 15);
+    r++;
+  }
+  r++;
+
+  // 自己PR
+  if (d.pr.length > 0) {
+    section(r++, "自己PR");
+    const text = d.pr.map((p) => `・${p}`).join("\n");
+    merge(r, 1, LAST, text, { border: true });
+    ws.getRow(r).height = Math.max(22, lineCount(text, 150) * 15 + 6);
+    r += 2;
   }
 
-  res.setHeader(
-    "Content-Type",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-  );
-  // 氏名に日本語が含まれるとヘッダーに直接使えないため、RFC 5987 形式でエンコードする
-  const encodedFilename = encodeURIComponent(`skillsheet_${data.name}.xlsx`);
-  res.setHeader(
-    "Content-Disposition",
-    `attachment; filename="skillsheet.xlsx"; filename*=UTF-8''${encodedFilename}`
-  );
+  // 職務経歴
+  section(r++, "職務経歴");
+  const headers = ["No", "期間", "業務内容", "役割・規模", "環境", ...d.phaseHeaders];
+  headers.forEach((h, i) => {
+    const cell = ws.getCell(r, i + 1);
+    cell.value = h;
+    style(cell, { bold: true, fill: PAPER, align: "center", border: true, size: i >= 5 ? 8.5 : 9.5 });
+  });
+  ws.getRow(r).height = 22;
+  const headerRow = r;
+  r++;
+  for (const e of d.experiences) {
+    const content = [
+      `【${e.title}】${e.industry ? `（${e.industry}）` : ""}`,
+      e.overview ? `概要：${e.overview}` : "",
+      e.tasks ? `担当：${e.tasks}` : "",
+    ]
+      .filter(Boolean)
+      .join("\n");
+    const env = e.env.map((x) => `${x.label}：${x.value}`).join("\n");
+    const values = [String(e.no), `${e.period}\n（${e.duration}）`, content, [e.role, e.teamSize].filter(Boolean).join("\n"), env];
+    values.forEach((v, i) => {
+      const cell = ws.getCell(r, i + 1);
+      cell.value = v;
+      style(cell, { border: true, align: i === 0 ? "center" : "left", size: i === 2 || i === 4 ? 9 : 9.5 });
+      cell.alignment = { ...cell.alignment, vertical: "top" };
+    });
+    e.phases.forEach((on, i) => {
+      const cell = ws.getCell(r, 6 + i);
+      cell.value = on ? "●" : "";
+      style(cell, { border: true, align: "center" });
+    });
+    ws.getRow(r).height = Math.max(40, Math.max(lineCount(content, COLS[2]), lineCount(env, COLS[4]), 2) * 14 + 8);
+    r++;
+  }
+  ws.pageSetup.printTitlesRow = `${headerRow}:${headerRow}`;
 
-  await workbook.xlsx.write(res);
+  res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+  // 日本語のファイル名はヘッダーに直接使えないため、RFC 5987 形式でエンコードする
+  const encoded = encodeURIComponent(`スキルシート_${d.displayName}.xlsx`);
+  res.setHeader("Content-Disposition", `attachment; filename="skillsheet.xlsx"; filename*=UTF-8''${encoded}`);
+  await wb.xlsx.write(res);
   res.end();
 }

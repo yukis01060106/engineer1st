@@ -14,6 +14,7 @@ model User {
   passwordHash String
   name         String
   invoiceRegistrationNumber String? // インボイス登録番号（本人が発行者になる場合）
+  billingProfile String @default("{}") // JSON: 請求書に載せる屋号・住所・電話・振込先口座
   workStyle    String   @default("freelance") // freelance: フリーランス / ses_employee: SES会社員 / considering: 独立検討中
   role         String   @default("member") // member / admin（運営：見込み客の管理・勉強会の告知）
   interests    String   @default("[]") // JSON: 登録時に選んだ関心（"health" | "study" | "money" | "career"）
@@ -65,6 +66,10 @@ model Engagement {
   settlementMin   Int @default(140) // 精算幅の下限（時間）
   settlementMax   Int @default(180) // 精算幅の上限（時間）
   paymentTermDays Int @default(30)  // 月末締めから支払期日までの日数（フリーランス法では60日以内）
+  settlementMethod String @default("updown") // updown: 上下割 / middle: 中間割 / fixed: 精算なし
+  unitRounding     Int    @default(1)        // 時間単価の切り捨て単位（1・10・100円）
+  hoursUnitMinutes Int    @default(1)        // 稼働時間の切り捨て単位（1・15・30・60分）
+  billingName      String?                   // 請求先の正式名称（未入力なら取引先名）
 
   user     User    @relation(fields: [userId], references: [id])
   project  Project @relation(fields: [projectId], references: [id])
@@ -80,8 +85,11 @@ model Invoice {
   targetMonth  String
   amount       Int      // 税抜の請求額（精算後）
   baseAmount   Int      @default(0) // 精算前の月額
-  workHours    Float?   // 当月の稼働時間
+  workHours    Float?   // 当月の稼働時間（入力値）
+  settledHours Float?   // 精算に使った稼働時間（時間の単位で切り捨て後）
   adjustment   Int      @default(0) // 精算幅による超過(+)・控除(-)
+  hourlyUnit   Int      @default(0) // 超過・控除の時間単価
+  settlementNote String? // 精算の内訳（表示用）
   withholding  Int      @default(0) // 源泉徴収税額（該当する場合のみ）
   dueDate      DateTime? // 支払期日
   paidAt       DateTime? // 入金を確認した日
@@ -90,6 +98,10 @@ model Invoice {
   totalAmount  Int
   registrationNumber String // ユーザー本人の適格請求書発行事業者登録番号
   invoiceNumber String  @unique
+  recipientName String  @default("") // 請求先の名称（発行時点）
+  subject      String   @default("") // 件名
+  notes        String?  // 備考
+  issuerInfo   String   @default("{}") // JSON: 発行時点の発行者情報（氏名・屋号・住所・登録番号・振込先）
   status       String   @default("発行済み") // 発行済み / 入金済み（期日超過は dueDate と paidAt から判定する）
   issuedAt     DateTime @default(now())
 
@@ -127,6 +139,11 @@ model SkillSheet {
   workProcesses     String? // 対応可能工程（カンマ区切り。例: "要件定義,設計,開発,テスト,運用保守"）
   appealPoints      String? // アピールポイント（自由記述。改行区切りで箇条書き）
   remarks           String? // 備考／PR（自由記述）
+  initials          String? // 紹介用のイニシャル（例: "Y.A"）。SESのスキルシートは氏名をイニシャルで出すのが一般的
+  showFullName      Boolean @default(false) // スキルシートに氏名をそのまま載せる
+  gender            String? // 任意（男性 / 女性 / 回答しない）
+  specialty         String? // 得意分野（例: "Webアプリの設計〜開発、AWSでの構築"）
+  qualifications    String  @default("[]") // JSON: [{name, acquired: "2024-06"}]
 
   updatedAt   DateTime @updatedAt
 

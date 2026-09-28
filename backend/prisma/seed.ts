@@ -1,8 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import { calcTax, calcSettlement, calcDueDate } from "../src/lib/invoice";
+import { buildInvoiceRecord, parseBillingProfile, IssuerInfo } from "../src/lib/invoice";
 import { autoReply } from "../src/lib/chatReply";
 import { deleteUserData } from "../src/lib/deleteUser";
+import { generateSummary, normalizeExperience, phasesUnion, totalExperienceMonths, SkillSheetSource } from "../src/lib/skillSheet";
 
 const prisma = new PrismaClient();
 
@@ -12,6 +13,13 @@ async function main() {
   const joinedAt = new Date();
   joinedAt.setFullYear(joinedAt.getFullYear() - 2); // 2年前に登録 = シルバーランク
 
+  const DEMO_BILLING_PROFILE = JSON.stringify({
+        businessName: "",
+        postalCode: "150-0000",
+        address: "東京都渋谷区（デモ用の住所）",
+        phone: "",
+        bank: { bankName: "サンプル銀行", branchName: "本店営業部", accountType: "普通", accountNumber: "1234567", accountHolder: "アオキ ヤクモ" },
+      });
   const user = await prisma.user.upsert({
     where: { email: "tanaka@example.com" },
     update: {
@@ -21,12 +29,14 @@ async function main() {
       interests: JSON.stringify(["money", "health", "study"]),
       invoiceRegistrationNumber: "T9876543210987",
       signupSource: null,
+      billingProfile: DEMO_BILLING_PROFILE,
     },
     create: {
       email: "tanaka@example.com",
       passwordHash,
       name: "青木 耶雲",
       invoiceRegistrationNumber: "T9876543210987",
+      billingProfile: DEMO_BILLING_PROFILE,
       workStyle: "freelance",
       birthYear: new Date().getFullYear() - 32,
       interests: JSON.stringify(["money", "health", "study"]),
@@ -103,6 +113,10 @@ async function main() {
       settlementMin: 140,
       settlementMax: 180,
       paymentTermDays: 30,
+      settlementMethod: "updown",
+      unitRounding: 1,
+      hoursUnitMinutes: 1,
+      billingName: null,
     },
     create: {
       id: "seed-engagement-current",
@@ -155,26 +169,32 @@ async function main() {
     { engagementId: currentEngagement.id, month: ym(2), rate: 750000, hours: 171, paid: false, term: 30 },
     { engagementId: currentEngagement.id, month: ym(1), rate: 750000, hours: 136.5, paid: false, term: 30 },
   ];
+  const issuer: IssuerInfo = {
+    name: user.name,
+    email: user.email,
+    ...parseBillingProfile(DEMO_BILLING_PROFILE),
+    registrationNumber: "T9876543210987",
+  };
+  const engagementProjects = new Map([
+    [currentEngagement.id, projects[3]],
+    [pastEngagement.id, projects[0]],
+  ]);
   for (const [i, seed] of invoiceSeeds.entries()) {
-    const settlement = calcSettlement({ monthlyRate: seed.rate, workHours: seed.hours, settlementMin: 140, settlementMax: 180 });
-    const tax = calcTax(settlement.amount, 10);
-    const dueDate = calcDueDate(seed.month, seed.term);
+    const project = engagementProjects.get(seed.engagementId)!;
+    const { transferAmount: _t, ...record } = buildInvoiceRecord(
+      { monthlyRate: seed.rate, settlementMin: 140, settlementMax: 180, paymentTermDays: seed.term },
+      { targetMonth: seed.month, workHours: seed.hours, applyWithholding: false },
+      issuer,
+      { name: project.client, projectTitle: project.title }
+    );
     await prisma.invoice.create({
       data: {
+        ...record,
         id: `seed-invoice-${i}`,
         engagementId: seed.engagementId,
-        targetMonth: seed.month,
-        amount: tax.amount,
-        baseAmount: settlement.baseAmount,
-        workHours: seed.hours,
-        adjustment: settlement.adjustment,
-        taxRate: tax.taxRate,
-        taxAmount: tax.taxAmount,
-        totalAmount: tax.totalAmount,
-        dueDate,
-        paidAt: seed.paid ? new Date(dueDate.getTime() - 2 * 86_400_000) : null,
+        issuedAt: new Date(record.dueDate.getTime() - (seed.term - 2) * 86_400_000),
+        paidAt: seed.paid ? new Date(record.dueDate.getTime() - 2 * 86_400_000) : null,
         status: seed.paid ? "入金済み" : "発行済み",
-        registrationNumber: "T9876543210987",
         invoiceNumber: `INV-${seed.month.replace("-", "")}-SEED${i}`,
       },
     });
@@ -213,77 +233,145 @@ async function main() {
     },
   });
 
-  // スキルシート
+  // スキルシート（経歴の期間は、稼働中・過去の取引先の期間とそろえる）
+  const ymOffset = (months: number) => {
+    const d = new Date();
+    d.setDate(1);
+    d.setMonth(d.getMonth() - months);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+  };
   const seedSkills = [
     { name: "TypeScript", level: 4, years: 3 },
     { name: "React", level: 4, years: 3 },
+    { name: "Java", level: 4, years: 6 },
+    { name: "Spring Boot", level: 3, years: 4 },
     { name: "Node.js", level: 3, years: 2 },
-    { name: "AWS", level: 2, years: 1 },
+    { name: "Next.js", level: 3, years: 1 },
+    { name: "Python", level: 2, years: 1 },
+    { name: "PostgreSQL", level: 3, years: 3 },
+    { name: "Oracle", level: 3, years: 3 },
+    { name: "Linux", level: 3, years: 5 },
+    { name: "AWS", level: 3, years: 3 },
+    { name: "Docker", level: 3, years: 2 },
+    { name: "Git", level: 4, years: 7 },
   ];
   const seedExperiences = [
     {
-      title: "AIチャットボット開発",
-      period: "2026-05〜稼働中",
-      role: "バックエンドエンジニア",
-      tech: "Python, TypeScript, AWS",
-      description: "生成AIを活用した社内向けチャットボットのバックエンドAPI開発を担当。",
+      title: "社内向けAIチャットボット開発",
+      industry: "IT・人材",
+      startMonth: ymOffset(2),
+      endMonth: null,
+      overview: "社内規程やFAQを検索して回答する生成AIチャットボットの新規開発。",
+      tasks: "RAG（検索拡張生成）のAPI設計・実装、回答精度の評価の仕組みづくりを担当。回答の正答率を62%から85%に改善。",
+      role: "SE",
+      teamSize: 5,
+      phases: ["基本設計", "詳細設計", "製造", "単体テスト", "結合テスト"],
+      languages: "Python, TypeScript",
+      frameworks: "FastAPI, Next.js",
+      databases: "PostgreSQL（pgvector）",
+      os: "Linux",
+      cloud: "AWS（ECS, Lambda, Bedrock）",
+      tools: "GitHub, Docker, Slack",
     },
     {
-      title: "大手ECサイト リプレイス案件",
-      period: "2026-04〜2026-06",
-      role: "フロントエンドエンジニア",
-      tech: "React, TypeScript, Node.js",
-      description: "ECサイトのフロントエンド刷新。コンポーネント設計・API連携を担当。",
+      title: "大手ECサイト リプレイス",
+      industry: "小売・EC",
+      startMonth: ymOffset(12),
+      endMonth: ymOffset(4),
+      overview: "月間500万人が利用するECサイトのフロントエンドを、SPAからNext.jsへ段階的に移行。",
+      tasks: "商品一覧・カート画面の設計と実装、共通コンポーネントの整備をリード。表示速度（LCP）を3.1秒から1.8秒に短縮。",
+      role: "テックリード",
+      teamSize: 8,
+      phases: ["要件定義", "基本設計", "詳細設計", "製造", "単体テスト", "結合テスト"],
+      languages: "TypeScript",
+      frameworks: "React, Next.js, Node.js",
+      databases: "",
+      os: "macOS",
+      cloud: "AWS（CloudFront, S3）, Vercel",
+      tools: "GitHub Actions, Storybook, Figma",
     },
     {
-      title: "金融系基幹システム保守開発",
-      period: "2025-03〜2026-03",
-      role: "バックエンドエンジニア",
-      tech: "Java, Spring, AWS",
-      description: "基幹システムの保守・機能改修を担当。",
+      title: "金融機関向け 基幹システム保守開発",
+      industry: "金融",
+      startMonth: ymOffset(12 * 4 + 3),
+      endMonth: ymOffset(13),
+      overview: "融資管理システムの保守と、法改正にともなう機能改修。",
+      tasks: "改修案件の詳細設計〜総合テストを担当。バッチ処理の見直しで夜間処理時間を40%短縮。",
+      role: "SE",
+      teamSize: 20,
+      phases: ["詳細設計", "製造", "単体テスト", "結合テスト", "総合テスト", "運用・保守"],
+      languages: "Java, SQL",
+      frameworks: "Spring Boot",
+      databases: "Oracle",
+      os: "Linux（RHEL）",
+      cloud: "AWS（EC2, RDS）",
+      tools: "Jenkins, Git, JIRA",
+    },
+    {
+      title: "物流会社 在庫管理システム開発",
+      industry: "物流",
+      startMonth: ymOffset(12 * 7 - 1),
+      endMonth: ymOffset(12 * 4 + 4),
+      overview: "倉庫の入出庫・在庫を管理するWebシステムの新規開発と機能追加。",
+      tasks: "画面とAPIの製造・単体テストを担当。2年目からは新人2名のコードレビューも担当。",
+      role: "PG",
+      teamSize: 10,
+      phases: ["製造", "単体テスト", "結合テスト"],
+      languages: "Java, JavaScript",
+      frameworks: "Spring, jQuery",
+      databases: "PostgreSQL",
+      os: "Windows Server",
+      cloud: "",
+      tools: "Subversion, Redmine",
     },
   ];
   const seedAppealPoints = [
-    "TypeScript / React / Node.js を軸としたモダン開発スキルで、画面構築からAPI開発まで独力かつハイレベルに遂行可能。",
-    "生成AIを活用したチャットボット開発プロジェクトに参画し、AI技術の実務応用への知見を保有。",
+    "Java 6年・TypeScript 3年。業務システムとWebサービスの両方で、設計から実装・テストまで一人で担当できます。",
+    "直近は生成AI（RAG）の実務経験あり。回答精度の評価の仕組みまで作り、数字で改善を示しました。",
+    "テックリードとして8名のチームで、レビューと共通コンポーネントの整備を進めた経験があります。",
+  ];
+  const seedQualifications = [
+    { name: "基本情報技術者試験", acquired: "2019-11" },
+    { name: "AWS Certified Solutions Architect - Associate", acquired: "2024-06" },
   ];
 
+  const sheetSource: SkillSheetSource = {
+    name: user.name,
+    initials: "Y.A",
+    showFullName: false,
+    age: 32,
+    gender: null,
+    nearestStation: "JR山手線 渋谷駅（フルリモート希望・月1回の出社可）",
+    availability: `${ymOffset(-2).replace("-", "年")}月〜（応相談）`,
+    desiredRate: 800000,
+    totalExperienceYears: null,
+    specialty: "Webアプリの設計〜開発、生成AI（RAG）の実装",
+    qualifications: seedQualifications,
+    appealPoints: seedAppealPoints,
+    remarks: "フルリモートでも、朝会・チャットでの進捗共有をこまめに行います。",
+    skills: seedSkills,
+    experiences: seedExperiences.map((e) => normalizeExperience(e)),
+  };
+  sheetSource.totalExperienceYears = Math.round(totalExperienceMonths(sheetSource.experiences) / 12);
+
   const skillSheetData = {
-      userId: user.id,
-      summary: [
-        "■ 基本情報",
-        "氏名   ：青木 耶雲",
-        "年齢   ：32歳",
-        "最寄駅  ：東京都 ※フルリモート希望（月1回は出社可能）",
-        "稼働開始 ：2026-08-02以降（応相談）",
-        "単価   ：750,000円〜",
-        "",
-        "■ スキルサマリー（★＝特に強い領域）",
-        " フロントエンド：★ TypeScript / ★ React",
-        " バックエンド：Node.js / Java",
-        " インフラ・環境：AWS",
-        "",
-        "■ 対応可能工程",
-        " 設計 → 開発（フロントエンド） → 開発（バックエンド） → テスト",
-        "",
-        "■ アピールポイント",
-        "1. " + seedAppealPoints[0],
-        "2. " + seedAppealPoints[1],
-        "",
-        "■ 経験概要（IT開発経験：約3年）",
-        " バックエンドエンジニアとして3件のプロジェクトに参画。プロジェクト経歴・保有スキルをもとに自動生成されたサマリーです（必要に応じて編集してください）。",
-      ].join("\n"),
-      skills: JSON.stringify(seedSkills),
-      experiences: JSON.stringify(seedExperiences),
-      age: 32,
-      nearestStation: "東京都 ※フルリモート希望（月1回は出社可能）",
-      availability: "2026-08-02以降（応相談）",
-      desiredRate: 750000,
-      totalExperienceYears: 3,
-      workProcesses: JSON.stringify(["設計", "開発（フロントエンド）", "開発（バックエンド）", "テスト"]),
-      appealPoints: JSON.stringify(seedAppealPoints),
-      remarks:
-        "フルリモート環境でも自走力高く安定した成果を出せる自信があります。生成AIを活用した開発にも意欲的に取り組んでいます。",
+    userId: user.id,
+    skills: JSON.stringify(sheetSource.skills),
+    experiences: JSON.stringify(sheetSource.experiences),
+    age: sheetSource.age,
+    gender: sheetSource.gender,
+    initials: sheetSource.initials,
+    showFullName: sheetSource.showFullName,
+    nearestStation: sheetSource.nearestStation,
+    availability: sheetSource.availability,
+    desiredRate: sheetSource.desiredRate,
+    totalExperienceYears: sheetSource.totalExperienceYears,
+    specialty: sheetSource.specialty,
+    qualifications: JSON.stringify(sheetSource.qualifications),
+    workProcesses: JSON.stringify(phasesUnion(sheetSource.experiences)),
+    appealPoints: JSON.stringify(sheetSource.appealPoints),
+    remarks: sheetSource.remarks,
+    summary: generateSummary(sheetSource),
   };
 
   await prisma.skillSheet.upsert({

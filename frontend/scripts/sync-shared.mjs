@@ -24,7 +24,7 @@ const FILES = [
   "rewardSimulator.ts",
   "skillCategory.ts",
   "skillGap.ts",
-  "skillSummary.ts",
+  "skillSheet.ts",
   "taxReserve.ts",
   "wealth.ts",
 ];

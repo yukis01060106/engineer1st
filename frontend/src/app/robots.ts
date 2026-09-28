@@ -6,6 +6,8 @@ export const dynamic = "force-static";
 // ログイン必須の個人データ画面はクロール対象外にする
 const DASHBOARD_PATHS = [
   "/mypage",
+  "/calendar",
+  "/print",
   "/money",
   "/expenses",
   "/wealth",
