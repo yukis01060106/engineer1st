@@ -1,0 +1,22 @@
+User-Agent: *
+Allow: /
+Disallow: /mypage
+Disallow: /calendar
+Disallow: /print
+Disallow: /money
+Disallow: /expenses
+Disallow: /wealth
+Disallow: /reward-sim
+Disallow: /community
+Disallow: /health
+Disallow: /mentor
+Disallow: /chat
+Disallow: /projects
+Disallow: /skill-sheet
+Disallow: /rate-diagnosis
+Disallow: /skill-gap
+Disallow: /contracts
+Disallow: /settings
+Disallow: /admin
+
+Sitemap: https://yukis01060106.github.io/engineer1st/sitemap.xml
