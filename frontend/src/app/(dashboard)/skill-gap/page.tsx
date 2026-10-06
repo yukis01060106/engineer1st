@@ -150,7 +150,7 @@ export default function SkillGapPage() {
       )}
 
       <div className="spread">
-        <p className="disclaimer">需要は、ソトバの案件と公開求人をもとにした目安（0〜100）です。あなたのレベルは、スキルシートの5段階評価を100点に換算しています。</p>
+        <p className="disclaimer">需要は、エンジニア・ガレージの案件と公開求人をもとにした目安（0〜100）です。あなたのレベルは、スキルシートの5段階評価を100点に換算しています。</p>
         <Link href="/events" className="btn-secondary btn-sm">
           <CalendarDays size={14} /> 勉強会をさがす <ArrowRight size={14} />
         </Link>

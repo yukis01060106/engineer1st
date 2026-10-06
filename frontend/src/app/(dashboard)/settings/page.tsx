@@ -206,7 +206,7 @@ export default function SettingsPage() {
             <div className="divider" />
             {!leaving ? (
               <div className="stack" style={{ gap: 6 }}>
-                <p className="small muted">退会すると、請求書・経費・スキルシート・健康の記録など、ソトバに保存したデータはすべて消え、元に戻せません。必要なものは先にダウンロードしておいてください。</p>
+                <p className="small muted">退会すると、請求書・経費・スキルシート・健康の記録など、エンジニア・ガレージに保存したデータはすべて消え、元に戻せません。必要なものは先にダウンロードしておいてください。</p>
                 <button className="btn-danger-outline btn-sm" style={{ justifySelf: "start" }} onClick={() => setLeaving(true)}>
                   <UserX size={14} /> 退会する
                 </button>

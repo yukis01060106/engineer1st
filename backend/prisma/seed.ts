@@ -202,8 +202,8 @@ async function main() {
 
   // 契約書（現在の稼働先は未締結のままデモ用に残す。過去の稼働先分は締結済み）
   const currentContractBody =
-    "本契約は、ソトバを通じて青木耶雲氏がテックパートナーズ合同会社の業務に従事するにあたっての条件を定めるものです。稼働期間、報酬、秘密保持等の一般条項を含みます。";
-  const pastContractBody = "本契約は、ソトバを通じて青木耶雲氏がコマースフロンティア株式会社の業務に従事した業務委託の条件を定めるものです。";
+    "本契約は、エンジニア・ガレージを通じて青木耶雲氏がテックパートナーズ合同会社の業務に従事するにあたっての条件を定めるものです。稼働期間、報酬、秘密保持等の一般条項を含みます。";
+  const pastContractBody = "本契約は、エンジニア・ガレージを通じて青木耶雲氏がコマースフロンティア株式会社の業務に従事した業務委託の条件を定めるものです。";
   await prisma.contract.upsert({
     where: { id: "seed-contract-current" },
     update: { body: currentContractBody, status: "未締結", signedAt: null, signedName: null },
@@ -544,7 +544,7 @@ async function main() {
       isOnline: true,
       location: "オンライン（Zoom）",
       joinUrl: "https://zoom.us/j/0000000001",
-      speaker: "ソトバ 技術顧問",
+      speaker: "エンジニア・ガレージ 技術顧問",
       tags: "生成AI,Claude Code,開発効率化",
       description:
         "AIエージェントに実装・テスト・レビューを任せるときの、現場で使える手順を紹介します。SESの現場でAIツールが使えない場合の、個人での練習方法もお話しします。",

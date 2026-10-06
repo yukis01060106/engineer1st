@@ -108,7 +108,7 @@ export default function ContractsPage() {
       {contracts && contracts.length === 0 && (
         <div className="empty-state">
           <FileSignature size={22} />
-          <p>契約書はまだありません。ソトバ経由の案件が決まると、ここに契約書が届きます。</p>
+          <p>契約書はまだありません。エンジニア・ガレージ経由の案件が決まると、ここに契約書が届きます。</p>
           <Link href="/projects" className="btn-secondary btn-sm">
             案件をさがす <ArrowRight size={14} />
           </Link>

@@ -19,7 +19,7 @@ export function MembershipCard({ name, rank, memberNumber, joinedAt }: Membershi
   return (
     <div className={"membership-card " + rankClass}>
       <div className="membership-card-top">
-        <span className="membership-card-brand">SOTOBA MEMBER</span>
+        <span className="membership-card-brand">ENGINEER GARAGE</span>
         <span className="membership-card-rank">{rank}</span>
       </div>
       <div className="membership-card-name">{name}</div>

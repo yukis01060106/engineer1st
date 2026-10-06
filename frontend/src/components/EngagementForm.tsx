@@ -102,7 +102,7 @@ export function SettlementFields({ value, onChange, monthlyRate }: { value: Sett
   );
 }
 
-// いま働いている取引先を登録する。ソトバ以外で見つけた案件でも、請求書・入金チェック・契約終了のお知らせが使える
+// いま働いている取引先を登録する。エンジニア・ガレージ以外で見つけた案件でも、請求書・入金チェック・契約終了のお知らせが使える
 export function EngagementForm({ onCreated, onCancel }: { onCreated: (id: string) => void; onCancel?: () => void }) {
   const today = todayJst();
   const [form, setForm] = useState({
@@ -152,7 +152,7 @@ export function EngagementForm({ onCreated, onCancel }: { onCreated: (id: string
       <div className="callout-inline callout-info">
         <Building2 size={16} />
         <span>
-          いま働いている取引先を登録すると、請求書づくり・入金チェック・契約終了前のお知らせが使えます。ソトバ以外で見つけた案件でもOKです（案件一覧には公開されません）。契約書の「報酬・精算条件」の欄を見ながら入れてください。
+          いま働いている取引先を登録すると、請求書づくり・入金チェック・契約終了前のお知らせが使えます。エンジニア・ガレージ以外で見つけた案件でもOKです（案件一覧には公開されません）。契約書の「報酬・精算条件」の欄を見ながら入れてください。
         </span>
       </div>
       <div className="form-grid">

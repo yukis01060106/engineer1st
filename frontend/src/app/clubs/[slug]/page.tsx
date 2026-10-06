@@ -51,7 +51,7 @@ export default async function ClubDetailPage({ params }: { params: Promise<{ slu
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "SportsOrganization",
-    name: `ソトバ ${club.name}`,
+    name: `エンジニア・ガレージ ${club.name}`,
     description: club.description,
     location: club.place,
   };
@@ -101,7 +101,7 @@ export default async function ClubDetailPage({ params }: { params: Promise<{ slu
             {!preparing && (
             <InviteButton
               path={`/clubs/${club.slug}/`}
-              title={`ソトバ ${club.name}`}
+              title={`エンジニア・ガレージ ${club.name}`}
               text={`${club.name}、いっしょにどう？ ${club.schedule}・${club.place}。参加は無料です。`}
               className="btn-ghost btn-sm"
               style={{ justifySelf: "start" }}

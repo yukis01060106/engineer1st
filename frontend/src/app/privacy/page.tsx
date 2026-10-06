@@ -3,7 +3,7 @@ import { LegalPage } from "../../components/LegalPage";
 
 export const metadata: Metadata = {
   title: "プライバシーポリシー",
-  description: "ソトバ（SOTOBA）で預かる情報と、その使い方について。",
+  description: "エンジニア・ガレージ（ENGINEER GARAGE）で預かる情報と、その使い方について。",
   alternates: { canonical: "/privacy" },
 };
 
@@ -13,7 +13,7 @@ export default function PrivacyPage() {
     <LegalPage
       eyebrow="Privacy"
       title="プライバシーポリシー"
-      lead="ソトバでは、請求や契約、体調の記録など、大切な情報をお預かりします。何を預かり、何に使い、何に使わないかをまとめました。"
+      lead="エンジニア・ガレージでは、請求や契約、体調の記録など、大切な情報をお預かりします。何を預かり、何に使い、何に使わないかをまとめました。"
       updatedAt="2026年9月28日"
       sections={[
         {

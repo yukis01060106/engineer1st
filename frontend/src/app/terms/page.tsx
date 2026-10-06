@@ -3,7 +3,7 @@ import { LegalPage } from "../../components/LegalPage";
 
 export const metadata: Metadata = {
   title: "利用規約",
-  description: "ソトバ（SOTOBA）の利用規約です。",
+  description: "エンジニア・ガレージ（ENGINEER GARAGE）の利用規約です。",
   alternates: { canonical: "/terms" },
 };
 
@@ -13,7 +13,7 @@ export default function TermsPage() {
     <LegalPage
       eyebrow="Terms"
       title="利用規約"
-      lead="この規約は、ソトバ（以下「本サービス」）を使うときのルールです。会員登録をされた時点で、この規約に同意いただいたものとします。"
+      lead="この規約は、エンジニア・ガレージ（以下「本サービス」）を使うときのルールです。会員登録をされた時点で、この規約に同意いただいたものとします。"
       updatedAt="2026年9月28日"
       sections={[
         {

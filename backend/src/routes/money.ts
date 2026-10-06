@@ -51,7 +51,7 @@ const createEngagementSchema = z.object({
   billingName: z.string().trim().max(100).nullable().optional(),
 });
 
-// いま働いている取引先を本人が登録する（ソトバ以外で見つけた案件でも、請求・入金管理が使える）
+// いま働いている取引先を本人が登録する（エンジニア・ガレージ以外で見つけた案件でも、請求・入金管理が使える）
 moneyRouter.post("/engagements", requireAuth, async (req: AuthedRequest, res) => {
   const parsed = createEngagementSchema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: "入力内容を確認してください", details: parsed.error.flatten() });

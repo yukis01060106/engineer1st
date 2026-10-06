@@ -6,7 +6,7 @@ import { buildAutoItems, TASK_KINDS } from "../lib/planner";
 
 export const plannerRouter = Router();
 
-// 本人の予定・ToDoと、ソトバ内の予定（申込済みの勉強会・入金期日・契約終了）をまとめて返す
+// 本人の予定・ToDoと、エンジニア・ガレージ内の予定（申込済みの勉強会・入金期日・契約終了）をまとめて返す
 plannerRouter.get("/", requireAuth, async (req: AuthedRequest, res) => {
   const userId = req.userId!;
   const [tasks, applications, invoices, currentEngagement] = await Promise.all([

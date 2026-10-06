@@ -120,9 +120,9 @@ eventsRouter.get("/:id/calendar.ics", requireAuth, async (req: AuthedRequest, re
   const ics = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//SOTOBA//Events//JA",
+    "PRODID:-//ENGINEER GARAGE//Events//JA",
     "BEGIN:VEVENT",
-    `UID:${e.id}@sotoba`,
+    `UID:${e.id}@engineer-garage`,
     `DTSTAMP:${icsDate(new Date())}`,
     `DTSTART:${icsDate(e.date)}`,
     `DTEND:${icsDate(end)}`,

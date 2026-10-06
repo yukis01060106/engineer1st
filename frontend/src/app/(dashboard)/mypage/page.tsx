@@ -379,7 +379,7 @@ export default function MyPage() {
             <p className="small">現場の同僚や、独立を考えている友だちに。あなたの招待リンクから登録すると、部活でいっしょに活動できます。</p>
             <InviteButton
               path="/clubs/"
-              title="ソトバ"
+              title="エンジニア・ガレージ"
               text="エンジニア向けの部活と勉強会、いっしょにどう？ 参加は無料だよ。"
               label="招待リンクを送る"
               className="btn-primary btn-sm"
@@ -395,7 +395,7 @@ export default function MyPage() {
               <span className="eyebrow">Paperwork</span>
               <h2>いまの取引先を登録して、請求と入金をラクに</h2>
               <p className="small">
-                ソトバ以外で見つけた案件でもOK。稼働時間を入れるだけの請求書づくり、支払期日のチェック、契約終了45日前のお知らせが使えるようになります。
+                エンジニア・ガレージ以外で見つけた案件でもOK。稼働時間を入れるだけの請求書づくり、支払期日のチェック、契約終了45日前のお知らせが使えるようになります。
               </p>
             </div>
             <Link href="/money#engagement" className="btn-primary">

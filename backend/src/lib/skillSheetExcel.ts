@@ -24,7 +24,7 @@ const lineCount = (text: string, widthChars: number) =>
 
 export async function streamSkillSheetExcel(res: Response, d: SkillSheetDocument) {
   const wb = new ExcelJS.Workbook();
-  wb.creator = "ソトバ";
+  wb.creator = "エンジニア・ガレージ";
   const ws = wb.addWorksheet("スキルシート", {
     pageSetup: { paperSize: 9, orientation: "landscape", fitToPage: true, fitToWidth: 1, fitToHeight: 0, margins: { left: 0.4, right: 0.4, top: 0.5, bottom: 0.5, header: 0.2, footer: 0.2 } },
     views: [{ showGridLines: false }],

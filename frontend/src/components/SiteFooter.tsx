@@ -16,7 +16,7 @@ export function SiteFooter() {
           <Link href="/privacy">プライバシーポリシー</Link>
           <a href={asset("/photos/credits.json")}>写真クレジット</a>
         </nav>
-        <p>© ソトバ</p>
+        <p>© エンジニア・ガレージ</p>
       </div>
     </footer>
   );

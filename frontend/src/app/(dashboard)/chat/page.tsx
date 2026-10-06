@@ -79,7 +79,7 @@ export default function ChatPage() {
         title="担当者チャット"
         description={
           <>
-            案件のご紹介、単価や契約の相談、請求・入金のトラブルまで、ソトバの担当者が受け付けます。キャリアや技術の悩みは{" "}
+            案件のご紹介、単価や契約の相談、請求・入金のトラブルまで、エンジニア・ガレージの担当者が受け付けます。キャリアや技術の悩みは{" "}
             <Link href="/mentor" className="btn-link">
               メンター相談
             </Link>
@@ -107,7 +107,7 @@ export default function ChatPage() {
                   </div>
                 )}
                 <div style={{ alignSelf: m.from === "user" ? "flex-end" : "flex-start", maxWidth: "82%", display: "grid", gap: 4 }}>
-                  {m.from === "staff" && <span className="small muted" style={{ fontSize: 11.5 }}>{m.auto ? "ソトバ受付（自動応答）" : "ソトバ担当"}</span>}
+                  {m.from === "staff" && <span className="small muted" style={{ fontSize: 11.5 }}>{m.auto ? "エンジニア・ガレージ 受付（自動応答）" : "エンジニア・ガレージ 担当"}</span>}
                   <div className={"chat-bubble " + (m.from === "user" ? "chat-bubble-user" : "chat-bubble-staff")} style={{ maxWidth: "none" }}>
                     {m.text}
                   </div>

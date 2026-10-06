@@ -153,6 +153,6 @@ export function streamInvoicePdf(res: Response, d: InvoiceDocument) {
 
   // 下余白の中に書くと改ページされるので、余白を外してから1行だけ書く
   doc.page.margins.bottom = 0;
-  doc.fontSize(7).fillColor("#999999").text("ソトバで作成", L, doc.page.height - 32, { width: W, align: "right", lineBreak: false });
+  doc.fontSize(7).fillColor("#999999").text("エンジニア・ガレージで作成", L, doc.page.height - 32, { width: W, align: "right", lineBreak: false });
   doc.end();
 }

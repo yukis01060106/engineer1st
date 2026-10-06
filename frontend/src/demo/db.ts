@@ -242,7 +242,7 @@ export interface DemoDB {
   tasks: DemoTask[];
 }
 
-const STORAGE_KEY = "sotoba_demo_db_v1";
+const STORAGE_KEY = "engineer_garage_demo_db_v1";
 const DAY = 86_400_000;
 const ISO_DATETIME = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/;
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;

@@ -28,7 +28,7 @@ import type { ClubSummary, EventItem } from "../lib/types";
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: { absolute: "ソトバ | エンジニアの、からだと、くらしと、仲間。" },
+  title: { absolute: "エンジニア・ガレージ | エンジニアの、からだと、くらしと、仲間。" },
   description:
     "フリーランス・SESエンジニアのための無料プラットフォーム。ピックルボール部・筋トレ部などの部活、最新技術のオンライン勉強会、請求書・入金管理・税金の取り分け・AI FPによる資産形成までまとめてサポート。",
   alternates: { canonical: "/" },
@@ -95,7 +95,7 @@ const FAQ = [
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Service",
-  name: "ソトバ",
+  name: "エンジニア・ガレージ",
   serviceType: "フリーランス・SESエンジニア支援プラットフォーム",
   description:
     "部活・勉強会・健康推進と、請求書・入金管理・税金の取り分け・資産形成をまとめて支援する無料プラットフォーム。",

@@ -1,5 +1,5 @@
 /* =========================================================
-   ソトバ（SOTOBA）Design System
+   エンジニア・ガレージ（ENGINEER GARAGE）Design System
    - 白地 × 墨色の文字 × ポップな差し色（黄・ピンク・ミント・バイオレット）
    - 見出し: Zen Kaku Gothic New（太いゴシック）／欧文・数字: Heebo／本文: Noto Sans JP
    - 写真: 明るいハイキー調に一括加工し、角丸＋網点＋色丸で飾る
@@ -615,6 +615,7 @@ label {
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  white-space: nowrap;
   font-family: var(--font-head);
   font-weight: 900;
   font-size: 18px;
@@ -1452,6 +1453,8 @@ a.event-row:hover {
 }
 .sidebar .brand {
   padding: 0 8px 6px;
+  font-size: 16px;
+  letter-spacing: 0.02em;
 }
 .nav-group {
   display: grid;

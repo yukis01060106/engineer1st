@@ -51,5 +51,5 @@ app.use("/api/planner", plannerRouter);
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4000;
 app.listen(PORT, () => {
-  console.log(`sotoba backend listening on http://localhost:${PORT}`);
+  console.log(`engineer-garage backend listening on http://localhost:${PORT}`);
 });

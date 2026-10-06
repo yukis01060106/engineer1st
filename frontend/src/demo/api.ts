@@ -1150,9 +1150,9 @@ export function demoDownload(path: string, token: string | null): { content: str
       const content = [
         "BEGIN:VCALENDAR",
         "VERSION:2.0",
-        "PRODID:-//SOTOBA Demo//JA",
+        "PRODID:-//ENGINEER GARAGE Demo//JA",
         "BEGIN:VEVENT",
-        `UID:${e.id}@sotoba`,
+        `UID:${e.id}@engineer-garage`,
         `DTSTAMP:${fmt(new Date())}`,
         `DTSTART:${fmt(start)}`,
         `DTEND:${fmt(end)}`,
