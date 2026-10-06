@@ -1,0 +1,5 @@
+:HL["/engineer1st/_next/static/chunks/eff1fed53e5241db.css","style"]
+:HL["/engineer1st/_next/static/chunks/812667cbc9bc543c.css","style"]
+:HL["/engineer1st/_next/static/chunks/7d9d7670632d94b0.css","style"]
+:HL["/engineer1st/_next/static/media/1c9ef42b327f16c7-s.p.045a486d.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+0:{"buildId":"Z1lZUbk0vprPspSefLSy4","tree":{"name":"","paramType":null,"paramKey":"","hasRuntimePrefetch":false,"slots":{"children":{"name":"clubs","paramType":null,"paramKey":"clubs","hasRuntimePrefetch":false,"slots":{"children":{"name":"slug","paramType":"d","paramKey":"futsal","hasRuntimePrefetch":false,"slots":{"children":{"name":"__PAGE__","paramType":null,"paramKey":"__PAGE__","hasRuntimePrefetch":false,"slots":null,"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":false}},"isRootLayout":true},"staleTime":300}
